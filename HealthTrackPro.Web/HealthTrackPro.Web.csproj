@@ -175,8 +175,12 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\Fitness\FitnessGoal.cs" />
+    <Compile Include="Models\Fitness\HealthMetric.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\Profiles\TrainerClient.cs" />
+    <Compile Include="Models\Profiles\TrainerProfile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
@@ -189,6 +193,17 @@
     <Compile Include="Enums\UserStatus.cs" />
     <Compile Include="Enums\ActivityLevel.cs" />
     <Compile Include="Models\Profiles\ClientProfile.cs" />
+    <Compile Include="Models\Workouts\Exercise.cs" />
+    <Compile Include="Models\Workouts\WorkoutPlan.cs" />
+    <Compile Include="Models\Workouts\WorkoutExercise.cs" />
+    <Compile Include="Models\Workouts\WorkoutLog.cs" />
+    <Compile Include="Models\Diet\DietPlan.cs" />
+    <Compile Include="Models\Diet\Meal.cs" />
+    <Compile Include="Models\Diet\MealLog.cs" />
+    <Compile Include="Models\Scheduling\Appointment.cs" />
+    <Compile Include="Models\Scheduling\TrainerAvailability.cs" />
+    <Compile Include="Models\Communication\Notification.cs" />
+    <Compile Include="Models\Communication\TrainerFeedback.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-grid.css" />
