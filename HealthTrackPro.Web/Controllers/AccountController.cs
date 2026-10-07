@@ -9,6 +9,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using HealthTrackPro.Web.Models;
+using HealthTrackPro.Web.Models.Profiles;
 
 namespace HealthTrackPro.Web.Controllers
 {
@@ -79,7 +80,23 @@ namespace HealthTrackPro.Web.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    return RedirectToLocal(returnUrl);
+                {
+                    var user =
+                        await UserManager.FindByEmailAsync(model.Email);
+
+                    if (user == null)
+                    {
+                        ModelState.AddModelError(
+                            "",
+                            "Unable to identify the signed-in account."
+                        );
+
+                        return View(model);
+                    }
+
+                    return await RedirectToRoleDashboardAsync(user);
+                }
+
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
@@ -151,24 +168,81 @@ namespace HealthTrackPro.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-                var result = await UserManager.CreateAsync(user, model.Password);
+                var user = new ApplicationUser
+                {
+                    UserName = model.Email,
+                    Email = model.Email
+                };
+
+                var result = await UserManager.CreateAsync(
+                    user,
+                    model.Password
+                );
+
                 if (result.Succeeded)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
-                    // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
-                    // Send an email with this link
-                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                    using (var db = new ApplicationDbContext())
+                    {
+                        var profile = new ClientProfile
+                        {
+                            UserId = user.Id,
+                            FullName = model.FullName,
+                            CreatedAt = DateTime.UtcNow
+                        };
 
-                    return RedirectToAction("Index", "Home");
+                        db.ClientProfiles.Add(profile);
+
+                        try
+                        {
+                            await db.SaveChangesAsync();
+                        }
+                        catch
+                        {
+                            await UserManager.DeleteAsync(user);
+
+                            ModelState.AddModelError(
+                                "",
+                                "Unable to create your client profile. Please try again."
+                            );
+
+                            return View(model);
+                        }
+
+                        var roleResult =
+                            await UserManager.AddToRoleAsync(
+                                user.Id,
+                                "Client"
+                            );
+
+                        if (!roleResult.Succeeded)
+                        {
+                            db.ClientProfiles.Remove(profile);
+                            await db.SaveChangesAsync();
+
+                            await UserManager.DeleteAsync(user);
+
+                            AddErrors(roleResult);
+
+                            return View(model);
+                        }
+                    }
+
+                    await SignInManager.SignInAsync(
+                        user,
+                        isPersistent: false,
+                        rememberBrowser: false
+                    );
+
+                    return RedirectToAction(
+                        "Index",
+                        "Dashboard",
+                        new { area = "Client" }
+                    );
                 }
+
                 AddErrors(result);
             }
 
-            // If we got this far, something failed, redisplay form
             return View(model);
         }
 
@@ -443,6 +517,48 @@ namespace HealthTrackPro.Web.Controllers
             }
         }
 
+        private async Task<ActionResult> RedirectToRoleDashboardAsync(
+            ApplicationUser user)
+        {
+            if (await UserManager.IsInRoleAsync(
+                user.Id,
+                "Administrator"))
+            {
+                return RedirectToAction(
+                    "Index",
+                    "Dashboard",
+                    new { area = "Admin" }
+                );
+            }
+
+            if (await UserManager.IsInRoleAsync(
+                user.Id,
+                "Trainer"))
+            {
+                return RedirectToAction(
+                    "Index",
+                    "Dashboard",
+                    new { area = "Trainer" }
+                );
+            }
+
+            if (await UserManager.IsInRoleAsync(
+                user.Id,
+                "Client"))
+            {
+                return RedirectToAction(
+                    "Index",
+                    "Dashboard",
+                    new { area = "Client" }
+                );
+            }
+
+            return RedirectToAction(
+                "Index",
+                "Home",
+                new { area = "" }
+            );
+        }
         private ActionResult RedirectToLocal(string returnUrl)
         {
             if (Url.IsLocalUrl(returnUrl))
@@ -483,3 +599,6 @@ namespace HealthTrackPro.Web.Controllers
         #endregion
     }
 }
+
+
+
