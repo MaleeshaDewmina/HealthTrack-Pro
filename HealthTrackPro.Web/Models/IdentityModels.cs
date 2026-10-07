@@ -1,28 +1,88 @@
-﻿using System.Data.Entity;
+using System.Data.Entity;
+using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Security.Claims;
 using System.Threading.Tasks;
+
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 
+using HealthTrackPro.Web.Models.Administration;
+using HealthTrackPro.Web.Models.Communication;
+using HealthTrackPro.Web.Models.Diet;
+using HealthTrackPro.Web.Models.Fitness;
+using HealthTrackPro.Web.Models.Profiles;
+using HealthTrackPro.Web.Models.Scheduling;
+using HealthTrackPro.Web.Models.Workouts;
+
 namespace HealthTrackPro.Web.Models
 {
-    // You can add profile data for the user by adding more properties to your ApplicationUser class, please visit https://go.microsoft.com/fwlink/?LinkID=317594 to learn more.
     public class ApplicationUser : IdentityUser
     {
-        public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
+        public async Task<ClaimsIdentity> GenerateUserIdentityAsync(
+            UserManager<ApplicationUser> manager)
         {
-            // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
-            var userIdentity = await manager.CreateIdentityAsync(this, DefaultAuthenticationTypes.ApplicationCookie);
-            // Add custom user claims here
+            var userIdentity = await manager.CreateIdentityAsync(
+                this,
+                DefaultAuthenticationTypes.ApplicationCookie);
+
             return userIdentity;
         }
     }
 
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    public class ApplicationDbContext
+        : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
         {
+        }
+
+        public DbSet<ClientProfile> ClientProfiles { get; set; }
+
+        public DbSet<TrainerProfile> TrainerProfiles { get; set; }
+
+        public DbSet<TrainerClient> TrainerClients { get; set; }
+
+        public DbSet<FitnessGoal> FitnessGoals { get; set; }
+
+        public DbSet<HealthMetric> HealthMetrics { get; set; }
+
+        public DbSet<Exercise> Exercises { get; set; }
+
+        public DbSet<WorkoutPlan> WorkoutPlans { get; set; }
+
+        public DbSet<WorkoutExercise> WorkoutExercises { get; set; }
+
+        public DbSet<WorkoutLog> WorkoutLogs { get; set; }
+
+        public DbSet<DietPlan> DietPlans { get; set; }
+
+        public DbSet<Meal> Meals { get; set; }
+
+        public DbSet<MealLog> MealLogs { get; set; }
+
+        public DbSet<Appointment> Appointments { get; set; }
+
+        public DbSet<TrainerAvailability> TrainerAvailabilities { get; set; }
+
+        public DbSet<Notification> Notifications { get; set; }
+
+        public DbSet<TrainerFeedback> TrainerFeedbacks { get; set; }
+
+        public DbSet<AuditLog> AuditLogs { get; set; }
+
+        protected override void OnModelCreating(
+            DbModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // Prevent accidental cascading deletes across
+            // HealthTrack's related domain entities.
+            modelBuilder.Conventions.Remove<
+                OneToManyCascadeDeleteConvention>();
+
+            modelBuilder.Conventions.Remove<
+                ManyToManyCascadeDeleteConvention>();
         }
 
         public static ApplicationDbContext Create()
