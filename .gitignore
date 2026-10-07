@@ -1,0 +1,39 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+
+# NuGet packages
+packages/
+*.nupkg
+
+# Test results
+TestResults/
+*.trx
+
+# Local databases
+*.mdf
+*.ldf
+
+# Visual Studio generated files
+Generated\ Files/
+_ReSharper*/
+*.DotSettings.user
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+~$*
