@@ -177,6 +177,8 @@
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\Profiles\TrainerClient.cs" />
+    <Compile Include="Models\Profiles\TrainerProfile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
