@@ -197,6 +197,9 @@
     <Compile Include="Models\Workouts\WorkoutPlan.cs" />
     <Compile Include="Models\Workouts\WorkoutExercise.cs" />
     <Compile Include="Models\Workouts\WorkoutLog.cs" />
+    <Compile Include="Models\Diet\DietPlan.cs" />
+    <Compile Include="Models\Diet\Meal.cs" />
+    <Compile Include="Models\Diet\MealLog.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-grid.css" />
