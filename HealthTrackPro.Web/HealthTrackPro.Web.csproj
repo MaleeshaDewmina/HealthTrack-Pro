@@ -200,6 +200,10 @@
     <Compile Include="Models\Diet\DietPlan.cs" />
     <Compile Include="Models\Diet\Meal.cs" />
     <Compile Include="Models\Diet\MealLog.cs" />
+    <Compile Include="Models\Scheduling\Appointment.cs" />
+    <Compile Include="Models\Scheduling\TrainerAvailability.cs" />
+    <Compile Include="Models\Communication\Notification.cs" />
+    <Compile Include="Models\Communication\TrainerFeedback.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-grid.css" />
