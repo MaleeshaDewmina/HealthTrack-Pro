@@ -5,6 +5,7 @@
     using (Html.BeginForm(
         "LogOff",
         "Account",
+        new { area = "" },
         FormMethod.Post,
         new
         {
@@ -37,7 +38,7 @@ else
             "Sign In",
             "Login",
             "Account",
-            null,
+            new { area = "" },
             null
         )
 
@@ -45,7 +46,7 @@ else
             "Create Account",
             "Register",
             "Account",
-            null,
+            new { area = "" },
             new { @class = "ht-register-link" }
         )
 
