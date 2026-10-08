@@ -1,53 +1,82 @@
 
 using System;
-using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
-using HealthTrackPro.Web.Models;
+
 using HealthTrackPro.Web.Areas.Client.Models;
+using HealthTrackPro.Web.Services.Interfaces;
+using HealthTrackPro.Web.Services.Implementations;
 
 namespace HealthTrackPro.Web.Areas.Client.Controllers
 {
     [Authorize(Roles = "Client")]
     public class DashboardController : Controller
     {
-        public ActionResult Index()
-        {
-            var model = new ClientDashboardViewModel();
+        private readonly IClientService _clientService;
+        private readonly IProgressService _progressService;
 
-            // Get the currently logged-in Client
+        public DashboardController()
+        {
+            _clientService = new ClientService();
+            _progressService = new ProgressService();
+        }
+
+        public async Task<ActionResult> Index()
+        {
+            // Get the currently logged-in Client ID
             string userId = User.Identity.GetUserId();
 
-            using (var db = new ApplicationDbContext())
+            // Retrieve Client information using shared services
+            var profile = await _clientService
+                .GetProfileAsync(userId);
+
+            var bmi = await _progressService
+                .GetCurrentBmiAsync(userId);
+
+            // Prepare data for the Dashboard
+            var model = new ClientDashboardViewModel
             {
-                // Only retrieve this Client's profile
-                var profile = db.ClientProfiles
-                    .FirstOrDefault(p => p.UserId == userId);
+                FullName = profile != null
+                    ? profile.FullName
+                    : "Client",
 
-                if (profile != null)
+                CurrentWeightKg = profile != null
+                    ? profile.CurrentWeightKg
+                    : null,
+
+                HeightCm = profile != null
+                    ? profile.HeightCm
+                    : null,
+
+                BMI = bmi
+            };
+
+            return View(model);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                var clientDisposable =
+                    _clientService as IDisposable;
+
+                if (clientDisposable != null)
                 {
-                    model.FullName = profile.FullName;
-                    model.CurrentWeightKg = profile.CurrentWeightKg;
-                    model.HeightCm = profile.HeightCm;
+                    clientDisposable.Dispose();
+                }
 
-                    // Calculate BMI when measurements exist
-                    if (profile.CurrentWeightKg.HasValue &&
-                        profile.HeightCm.HasValue &&
-                        profile.HeightCm.Value > 0)
-                    {
-                        decimal heightMeters =
-                            profile.HeightCm.Value / 100m;
+                var progressDisposable =
+                    _progressService as IDisposable;
 
-                        model.BMI = Math.Round(
-                            profile.CurrentWeightKg.Value /
-                            (heightMeters * heightMeters),
-                            1
-                        );
-                    }
+                if (progressDisposable != null)
+                {
+                    progressDisposable.Dispose();
                 }
             }
 
-            return View(model);
+            base.Dispose(disposing);
         }
     }
 }
