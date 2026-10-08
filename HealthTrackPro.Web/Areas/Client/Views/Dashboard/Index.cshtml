@@ -1,6 +1,87 @@
+
 @{
     ViewBag.Title = "Client Dashboard";
 }
 
-<h2>Client Dashboard</h2>
-<p>Authenticated as Client.</p>
+<div class="container-fluid">
+
+    <!-- Dashboard Heading -->
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Client Dashboard</h2>
+            <p>Welcome to your HealthTrack Pro dashboard.</p>
+        </div>
+    </div>
+
+    <!-- Health Statistics -->
+    <div class="ht-stat-grid">
+
+        <div class="ht-stat-card">
+            <div class="ht-stat-label">CURRENT WEIGHT</div>
+            <div class="ht-stat-value">-- kg</div>
+            <p>No measurements recorded yet</p>
+        </div>
+
+        <div class="ht-stat-card">
+            <div class="ht-stat-label">BMI</div>
+            <div class="ht-stat-value">--</div>
+            <p>Waiting for health information</p>
+        </div>
+
+        <div class="ht-stat-card">
+            <div class="ht-stat-label">CALORIES BURNED</div>
+            <div class="ht-stat-value">-- kcal</div>
+            <p>No workouts recorded yet</p>
+        </div>
+
+        <div class="ht-stat-card">
+            <div class="ht-stat-label">GOAL PROGRESS</div>
+            <div class="ht-stat-value">--%</div>
+            <p>No active fitness goal</p>
+        </div>
+
+    </div>
+
+    <!-- Workout and Diet -->
+    <div class="row">
+
+        <div class="col-md-6">
+            <div class="ht-card">
+                <h3 class="ht-card-title">Today's Workout</h3>
+                <p>No workout plan assigned yet.</p>
+                <p>Your trainer's workout plan will appear here.</p>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="ht-card">
+                <h3 class="ht-card-title">My Diet Plan</h3>
+                <p>No diet plan assigned yet.</p>
+                <p>Your daily nutrition plan will appear here.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Progress and Appointments -->
+    <div class="row">
+
+        <div class="col-md-6">
+            <div class="ht-card">
+                <h3 class="ht-card-title">Health Progress</h3>
+                <p>Your weight and fitness progress will appear here.</p>
+                <p>Start recording health measurements to track changes.</p>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="ht-card">
+                <h3 class="ht-card-title">Upcoming Appointment</h3>
+                <p>No upcoming appointments.</p>
+                <p>Your scheduled trainer consultations will appear here.</p>
+            </div>
+        </div>
+
+    </div>
+
+</div>
