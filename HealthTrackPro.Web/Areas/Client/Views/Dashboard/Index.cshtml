@@ -1,6 +1,30 @@
 
+@model HealthTrackPro.Web.Areas.Client.Models.ClientDashboardViewModel
+
 @{
     ViewBag.Title = "Client Dashboard";
+
+    // Display information belonging to the logged-in Client
+    var clientName = Model != null &&
+        !string.IsNullOrWhiteSpace(Model.FullName)
+        ? Model.FullName
+        : "Client";
+
+    var weightText = Model != null &&
+        Model.CurrentWeightKg.HasValue
+        ? Model.CurrentWeightKg.Value.ToString("0.0") + " kg"
+        : "-- kg";
+
+    var bmiText = Model != null &&
+        Model.BMI.HasValue
+        ? Model.BMI.Value.ToString("0.0")
+        : "--";
+
+    var hasWeight = Model != null &&
+        Model.CurrentWeightKg.HasValue;
+
+    var hasBMI = Model != null &&
+        Model.BMI.HasValue;
 }
 
 <div class="container-fluid">
@@ -8,57 +32,154 @@
     <!-- Dashboard Heading -->
     <div class="row">
         <div class="col-md-12">
+
             <h2>Client Dashboard</h2>
-            <p>Welcome to your HealthTrack Pro dashboard.</p>
+
+            <p>
+                Welcome back,
+                <strong>@clientName</strong>!
+            </p>
+
+            <p>
+                Track your fitness journey and monitor
+                your health progress.
+            </p>
+
         </div>
     </div>
 
     <!-- Health Statistics -->
     <div class="ht-stat-grid">
 
+        <!-- Current Weight -->
         <div class="ht-stat-card">
-            <div class="ht-stat-label">CURRENT WEIGHT</div>
-            <div class="ht-stat-value">-- kg</div>
-            <p>No measurements recorded yet</p>
+
+            <div class="ht-stat-label">
+                CURRENT WEIGHT
+            </div>
+
+            <div class="ht-stat-value">
+                @weightText
+            </div>
+
+            @if (hasWeight)
+            {
+                <p>Your current recorded weight</p>
+            }
+            else
+            {
+                <p>No weight recorded yet</p>
+            }
+
         </div>
 
+        <!-- BMI -->
         <div class="ht-stat-card">
-            <div class="ht-stat-label">BMI</div>
-            <div class="ht-stat-value">--</div>
-            <p>Waiting for health information</p>
+
+            <div class="ht-stat-label">
+                BMI
+            </div>
+
+            <div class="ht-stat-value">
+                @bmiText
+            </div>
+
+            @if (hasBMI)
+            {
+                <p>Calculated from your height and weight</p>
+            }
+            else
+            {
+                <p>Add your height and weight to calculate BMI</p>
+            }
+
         </div>
 
+        <!-- Calories Burned -->
         <div class="ht-stat-card">
-            <div class="ht-stat-label">CALORIES BURNED</div>
-            <div class="ht-stat-value">-- kcal</div>
-            <p>No workouts recorded yet</p>
+
+            <div class="ht-stat-label">
+                CALORIES BURNED
+            </div>
+
+            <div class="ht-stat-value">
+                -- kcal
+            </div>
+
+            <p>
+                Workout statistics will appear here
+                when connected.
+            </p>
+
         </div>
 
+        <!-- Goal Progress -->
         <div class="ht-stat-card">
-            <div class="ht-stat-label">GOAL PROGRESS</div>
-            <div class="ht-stat-value">--%</div>
-            <p>No active fitness goal</p>
+
+            <div class="ht-stat-label">
+                GOAL PROGRESS
+            </div>
+
+            <div class="ht-stat-value">
+                --%
+            </div>
+
+            <p>
+                Fitness goal progress will appear here
+                when connected.
+            </p>
+
         </div>
 
     </div>
 
-    <!-- Workout and Diet -->
+    <!-- Workout and Diet Section -->
     <div class="row">
 
+        <!-- Today's Workout -->
         <div class="col-md-6">
+
             <div class="ht-card">
-                <h3 class="ht-card-title">Today's Workout</h3>
-                <p>No workout plan assigned yet.</p>
-                <p>Your trainer's workout plan will appear here.</p>
+
+                <h3 class="ht-card-title">
+                    Today's Workout
+                </h3>
+
+                <p>
+                    Your assigned workout information
+                    will appear here.
+                </p>
+
+                <p>
+                    View exercises, sets, repetitions,
+                    and workout schedules.
+                </p>
+
             </div>
+
         </div>
 
+        <!-- Diet Plan -->
         <div class="col-md-6">
+
             <div class="ht-card">
-                <h3 class="ht-card-title">My Diet Plan</h3>
-                <p>No diet plan assigned yet.</p>
-                <p>Your daily nutrition plan will appear here.</p>
+
+                <h3 class="ht-card-title">
+                    My Diet Plan
+                </h3>
+
+                <p>
+                    Your personalized diet plan
+                    will appear here.
+                </p>
+
+                <p>
+                    Monitor calories, protein,
+                    carbohydrates, and fats.
+                </p>
+
             </div>
+
         </div>
 
     </div>
@@ -66,20 +187,50 @@
     <!-- Progress and Appointments -->
     <div class="row">
 
+        <!-- Health Progress -->
         <div class="col-md-6">
+
             <div class="ht-card">
-                <h3 class="ht-card-title">Health Progress</h3>
-                <p>Your weight and fitness progress will appear here.</p>
-                <p>Start recording health measurements to track changes.</p>
+
+                <h3 class="ht-card-title">
+                    Health Progress
+                </h3>
+
+                <p>
+                    Your health progress charts
+                    will appear here.
+                </p>
+
+                <p>
+                    Track weight changes, BMI trends,
+                    and fitness achievements.
+                </p>
+
             </div>
+
         </div>
 
+        <!-- Upcoming Appointments -->
         <div class="col-md-6">
+
             <div class="ht-card">
-                <h3 class="ht-card-title">Upcoming Appointment</h3>
-                <p>No upcoming appointments.</p>
-                <p>Your scheduled trainer consultations will appear here.</p>
+
+                <h3 class="ht-card-title">
+                    Upcoming Appointment
+                </h3>
+
+                <p>
+                    Your upcoming trainer appointments
+                    will appear here.
+                </p>
+
+                <p>
+                    View scheduled consultations
+                    and appointment updates.
+                </p>
+
             </div>
+
         </div>
 
     </div>
