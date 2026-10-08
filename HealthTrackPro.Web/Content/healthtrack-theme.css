@@ -1,0 +1,921 @@
+﻿:root {
+    --ht-bg: #080B09;
+    --ht-sidebar: #050705;
+    --ht-surface: #111713;
+    --ht-surface-2: #141C16;
+    --ht-green: #22C55E;
+    --ht-green-hover: #16A34A;
+    --ht-green-light: #4ADE80;
+    --ht-text: #F3F4F6;
+    --ht-muted: #9CA3AF;
+    --ht-border: #1F2A22;
+    --ht-warning: #F59E0B;
+    --ht-danger: #EF4444;
+
+    --ht-sidebar-width: 245px;
+    --ht-topbar-height: 70px;
+    --ht-radius: 12px;
+}
+
+/* -------------------------
+   GLOBAL
+------------------------- */
+
+html,
+body {
+    min-height: 100%;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background: var(--ht-bg);
+    color: var(--ht-text);
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+a {
+    color: var(--ht-green-light);
+}
+
+a:hover,
+a:focus {
+    color: var(--ht-green);
+    text-decoration: none;
+}
+
+hr {
+    border-color: var(--ht-border);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: var(--ht-text);
+    font-weight: 600;
+}
+
+p {
+    color: var(--ht-muted);
+}
+
+/* -------------------------
+   APP SHELL
+------------------------- */
+
+.ht-app-shell {
+    min-height: 100vh;
+}
+
+.ht-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+
+    width: var(--ht-sidebar-width);
+    background: var(--ht-sidebar);
+
+    border-right: 1px solid var(--ht-border);
+
+    padding: 24px 14px;
+
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+.ht-brand {
+    display: block;
+    padding: 4px 14px 18px;
+    margin-bottom: 8px;
+
+    text-decoration: none !important;
+}
+
+.ht-brand-main {
+    display: block;
+
+    color: var(--ht-text);
+
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.ht-brand-accent {
+    color: var(--ht-green);
+}
+
+.ht-role-badge {
+    display: inline-block;
+
+    margin: 0 14px 24px;
+    padding: 5px 10px;
+
+    border-radius: 999px;
+
+    background: var(--ht-green);
+    color: #041207;
+
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+}
+
+.ht-nav-title {
+    margin: 0 14px 8px;
+
+    color: #647067;
+
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.ht-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.ht-nav-item {
+    margin-bottom: 4px;
+}
+
+.ht-nav-link {
+    position: relative;
+
+    display: block;
+
+    padding: 11px 14px;
+
+    border-radius: 8px;
+
+    color: var(--ht-muted);
+
+    font-size: 14px;
+    font-weight: 500;
+
+    transition: 0.2s ease;
+}
+
+.ht-nav-link:hover {
+    background: #0F1912;
+    color: var(--ht-text);
+}
+
+.ht-nav-link.active {
+    background: #112117;
+    color: var(--ht-green-light);
+}
+
+.ht-nav-link.active:before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 7px;
+    bottom: 7px;
+
+    width: 3px;
+
+    border-radius: 3px;
+
+    background: var(--ht-green);
+}
+
+.ht-nav-link.ht-nav-pending {
+    opacity: 0.72;
+}
+
+.ht-main {
+    min-height: 100vh;
+
+    margin-left: var(--ht-sidebar-width);
+
+    background: var(--ht-bg);
+}
+
+.ht-topbar {
+    min-height: var(--ht-topbar-height);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 28px;
+
+    background: #0C100D;
+
+    border-bottom: 1px solid var(--ht-border);
+}
+
+.ht-page-title {
+    margin: 0;
+
+    color: var(--ht-text);
+
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.ht-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.ht-notification-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 38px;
+    height: 38px;
+
+    border: 1px solid var(--ht-border);
+    border-radius: 9px;
+
+    background: var(--ht-surface);
+    color: var(--ht-green-light);
+
+    font-size: 16px;
+}
+
+.ht-page-content {
+    padding: 28px;
+}
+
+/* -------------------------
+   PUBLIC / AUTH LAYOUT
+------------------------- */
+
+.ht-public-shell {
+    min-height: 100vh;
+
+    background:
+        radial-gradient(
+            circle at 15% 10%,
+            rgba(34, 197, 94, 0.10),
+            transparent 28%
+        ),
+        var(--ht-bg);
+}
+
+.ht-public-header {
+    min-height: 70px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 7%;
+
+    border-bottom: 1px solid var(--ht-border);
+
+    background: rgba(5, 7, 5, 0.95);
+}
+
+.ht-public-content {
+    width: 92%;
+    max-width: 1180px;
+
+    margin: 0 auto;
+
+    padding: 40px 0 60px;
+}
+
+/* -------------------------
+   CARDS
+------------------------- */
+
+.ht-card,
+.panel,
+.well {
+    background: var(--ht-surface);
+
+    border: 1px solid var(--ht-border);
+
+    border-radius: var(--ht-radius);
+
+    color: var(--ht-text);
+
+    box-shadow: none;
+}
+
+.ht-card {
+    padding: 20px;
+}
+
+.ht-card-title {
+    margin-top: 0;
+    margin-bottom: 16px;
+
+    color: var(--ht-text);
+
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.ht-stat-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 16px;
+}
+
+.ht-stat-card {
+    padding: 18px;
+
+    background: var(--ht-surface);
+
+    border: 1px solid var(--ht-border);
+    border-radius: var(--ht-radius);
+}
+
+.ht-stat-label {
+    color: var(--ht-muted);
+
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+
+    text-transform: uppercase;
+}
+
+.ht-stat-value {
+    margin-top: 8px;
+
+    color: var(--ht-text);
+
+    font-size: 25px;
+    font-weight: 800;
+}
+
+.ht-stat-positive {
+    margin-top: 5px;
+
+    color: var(--ht-green-light);
+
+    font-size: 12px;
+}
+
+/* -------------------------
+   BUTTONS
+------------------------- */
+
+.btn,
+.ht-btn {
+    border-radius: 8px;
+
+    font-weight: 600;
+
+    transition: 0.2s ease;
+}
+
+.btn-primary,
+.ht-btn-primary {
+    background: var(--ht-green);
+    border-color: var(--ht-green);
+
+    color: #041207;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.ht-btn-primary:hover {
+    background: var(--ht-green-hover);
+    border-color: var(--ht-green-hover);
+
+    color: white;
+}
+
+.btn-default,
+.ht-btn-secondary {
+    background: var(--ht-surface-2);
+    border-color: var(--ht-border);
+
+    color: var(--ht-text);
+}
+
+.btn-default:hover,
+.ht-btn-secondary:hover {
+    background: #1A251D;
+    border-color: #334337;
+
+    color: var(--ht-text);
+}
+
+.btn-danger {
+    background: var(--ht-danger);
+    border-color: var(--ht-danger);
+}
+
+/* -------------------------
+   FORMS
+------------------------- */
+
+.form-control {
+    height: 42px;
+
+    background: #0D120E;
+
+    border: 1px solid var(--ht-border);
+    border-radius: 8px;
+
+    color: var(--ht-text);
+
+    box-shadow: none;
+}
+
+.form-control:focus {
+    border-color: var(--ht-green);
+
+    box-shadow:
+        0 0 0 2px rgba(34, 197, 94, 0.14);
+
+    background: #0D120E;
+    color: var(--ht-text);
+}
+
+.form-control::placeholder {
+    color: #667068;
+}
+
+.control-label,
+label {
+    color: var(--ht-text);
+
+    font-weight: 600;
+}
+
+.text-danger,
+.field-validation-error,
+.validation-summary-errors {
+    color: #F87171 !important;
+}
+
+.input-validation-error {
+    border-color: var(--ht-danger) !important;
+}
+
+/* -------------------------
+   TABLES
+------------------------- */
+
+.table {
+    background: var(--ht-surface);
+    color: var(--ht-text);
+}
+
+.table > thead > tr > th {
+    background: var(--ht-surface-2);
+
+    color: var(--ht-muted);
+
+    border-bottom: 1px solid var(--ht-border);
+
+    font-size: 11px;
+    letter-spacing: 0.5px;
+
+    text-transform: uppercase;
+}
+
+.table > tbody > tr > td {
+    border-top: 1px solid var(--ht-border);
+
+    vertical-align: middle;
+}
+
+.table-hover > tbody > tr:hover {
+    background: #121C15;
+}
+
+/* -------------------------
+   STATUS PILLS
+------------------------- */
+
+.ht-status {
+    display: inline-block;
+
+    padding: 4px 9px;
+
+    border-radius: 999px;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.ht-status-success {
+    color: var(--ht-green-light);
+
+    background: rgba(34, 197, 94, 0.12);
+}
+
+.ht-status-warning {
+    color: #FBBF24;
+
+    background: rgba(245, 158, 11, 0.12);
+}
+
+.ht-status-danger {
+    color: #F87171;
+
+    background: rgba(239, 68, 68, 0.12);
+}
+
+/* -------------------------
+   LOGIN PARTIAL
+------------------------- */
+
+.ht-topbar .navbar-nav,
+.ht-public-header .navbar-nav {
+    margin: 0;
+}
+
+.ht-topbar .navbar-nav > li,
+.ht-public-header .navbar-nav > li {
+    float: left;
+}
+
+.ht-topbar .navbar-nav > li > a,
+.ht-public-header .navbar-nav > li > a {
+    padding: 9px 10px;
+
+    color: var(--ht-muted);
+}
+
+.ht-topbar .navbar-nav > li > a:hover,
+.ht-public-header .navbar-nav > li > a:hover {
+    background: transparent;
+
+    color: var(--ht-green-light);
+}
+
+/* -------------------------
+   RESPONSIVE
+------------------------- */
+
+@media (max-width: 992px) {
+
+    :root {
+        --ht-sidebar-width: 205px;
+    }
+
+    .ht-stat-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+
+    .ht-sidebar {
+        position: relative;
+
+        width: 100%;
+        height: auto;
+        bottom: auto;
+
+        border-right: 0;
+        border-bottom: 1px solid var(--ht-border);
+    }
+
+    .ht-main {
+        margin-left: 0;
+    }
+
+    .ht-topbar {
+        padding: 0 16px;
+    }
+
+    .ht-page-content {
+        padding: 18px;
+    }
+
+    .ht-stat-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ht-public-header {
+        padding: 0 20px;
+    }
+
+    .ht-public-content {
+        width: calc(100% - 32px);
+    }
+
+    .table-responsive {
+        border: 0;
+    }
+}
+
+/* =========================================================
+   HEALTHTRACK AUTH PAGES
+   ========================================================= */
+
+.ht-auth-grid {
+    min-height: calc(100vh - 170px);
+
+    display: grid;
+    grid-template-columns: 1fr 460px;
+
+    align-items: center;
+    gap: 70px;
+
+    padding: 35px 0;
+}
+
+.ht-auth-intro {
+    max-width: 560px;
+}
+
+.ht-auth-eyebrow {
+    margin-bottom: 14px;
+
+    color: var(--ht-green);
+
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.4px;
+
+    text-transform: uppercase;
+}
+
+.ht-auth-intro h1 {
+    margin: 0 0 18px;
+
+    font-size: 46px;
+    line-height: 1.08;
+    font-weight: 800;
+}
+
+.ht-auth-intro h1 span {
+    color: var(--ht-green);
+}
+
+.ht-auth-intro p {
+    max-width: 500px;
+
+    font-size: 16px;
+    line-height: 1.7;
+}
+
+.ht-auth-feature-list {
+    list-style: none;
+
+    margin: 28px 0 0;
+    padding: 0;
+}
+
+.ht-auth-feature-list li {
+    position: relative;
+
+    margin: 13px 0;
+    padding-left: 28px;
+
+    color: #C8D0CA;
+
+    font-size: 14px;
+}
+
+.ht-auth-feature-list li:before {
+    content: "✓";
+
+    position: absolute;
+
+    left: 0;
+    top: -1px;
+
+    color: var(--ht-green-light);
+
+    font-weight: 800;
+}
+
+.ht-auth-card {
+    width: 100%;
+
+    padding: 34px;
+
+    background: var(--ht-surface);
+
+    border: 1px solid var(--ht-border);
+    border-radius: 16px;
+
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.28);
+}
+
+.ht-auth-card h2 {
+    margin: 0 0 8px;
+
+    font-size: 27px;
+    font-weight: 800;
+}
+
+.ht-auth-subtitle {
+    margin-bottom: 28px;
+
+    color: var(--ht-muted);
+
+    font-size: 14px;
+}
+
+.ht-auth-card .form-group {
+    margin-bottom: 19px;
+}
+
+.ht-auth-card .control-label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #DDE3DF;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.ht-auth-card .form-control {
+    width: 100%;
+    height: 46px;
+
+    padding: 10px 13px;
+}
+
+.ht-auth-card .btn-primary {
+    width: 100%;
+    height: 46px;
+
+    margin-top: 5px;
+
+    border-radius: 9px;
+
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.ht-auth-meta {
+    margin-top: 22px;
+
+    text-align: center;
+
+    color: var(--ht-muted);
+
+    font-size: 13px;
+}
+
+.ht-auth-meta a {
+    color: var(--ht-green-light);
+
+    font-weight: 700;
+}
+
+.ht-auth-small-link {
+    display: inline-block;
+
+    margin-top: 8px;
+
+    font-size: 12px;
+}
+
+.ht-checkbox {
+    color: var(--ht-muted);
+}
+
+.ht-checkbox input {
+    margin-right: 6px;
+}
+
+.ht-account-menu {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ht-account-email {
+    color: var(--ht-text);
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.ht-account-link {
+    padding: 7px 10px;
+
+    border: 1px solid var(--ht-border);
+    border-radius: 7px;
+
+    background: var(--ht-surface);
+
+    color: var(--ht-muted) !important;
+
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.ht-account-link:hover {
+    border-color: #304035;
+
+    color: var(--ht-green-light) !important;
+}
+
+.ht-public-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ht-public-actions a {
+    padding: 8px 12px;
+
+    border-radius: 7px;
+
+    color: var(--ht-muted);
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.ht-public-actions a:hover {
+    color: var(--ht-green-light);
+}
+
+.ht-public-actions .ht-register-link {
+    border: 1px solid var(--ht-green);
+
+    color: var(--ht-green-light);
+}
+
+.ht-nav-link {
+    text-decoration: none !important;
+}
+
+.ht-nav-link:hover,
+.ht-nav-link:focus {
+    text-decoration: none !important;
+}
+
+@media (max-width: 900px) {
+
+    .ht-auth-grid {
+        grid-template-columns: 1fr;
+
+        gap: 35px;
+
+        max-width: 520px;
+
+        margin: 0 auto;
+    }
+
+    .ht-auth-intro {
+        text-align: center;
+    }
+
+    .ht-auth-intro p {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .ht-auth-feature-list {
+        display: none;
+    }
+
+    .ht-auth-intro h1 {
+        font-size: 36px;
+    }
+}
+
+@media (max-width: 520px) {
+
+    .ht-auth-card {
+        padding: 24px 20px;
+    }
+
+    .ht-auth-intro h1 {
+        font-size: 31px;
+    }
+
+    .ht-account-email {
+        display: none;
+    }
+}
+
+/* END HEALTHTRACK AUTH PAGES */
+
+
+.ht-public-actions a,
+.ht-public-actions a:hover,
+.ht-public-actions a:focus,
+.ht-auth-meta a,
+.ht-auth-meta a:hover,
+.ht-auth-meta a:focus {
+    text-decoration: none !important;
+}
+
