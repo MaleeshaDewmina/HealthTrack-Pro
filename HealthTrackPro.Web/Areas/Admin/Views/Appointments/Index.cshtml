@@ -1,0 +1,233 @@
+﻿@model HealthTrackPro.Web.Areas.Admin.Models.AdminAppointmentsIndexViewModel
+
+@{
+    ViewBag.Title = "Appointment Oversight";
+}
+
+<div class="ht-card">
+
+    <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:flex-start;
+        gap:20px;
+        margin-bottom:24px;">
+
+        <div>
+            <h2 class="ht-card-title">
+                Appointment Oversight
+            </h2>
+
+            <p>
+                Review appointments between Clients and Trainers.
+            </p>
+        </div>
+
+        <div>
+            <strong>
+                @Model.Appointments.Count
+            </strong>
+
+            @(Model.Appointments.Count == 1
+                ? "appointment"
+                : "appointments")
+        </div>
+
+    </div>
+
+    @using (Html.BeginForm(
+        "Index",
+        "Appointments",
+        new { area = "Admin" },
+        FormMethod.Get,
+        new
+        {
+            style =
+                "display:flex;" +
+                "gap:12px;" +
+                "flex-wrap:wrap;" +
+                "margin-bottom:24px;"
+        }))
+    {
+        <input
+            type="text"
+            name="search"
+            value="@Model.SearchTerm"
+            class="form-control"
+            placeholder="Search Client, Trainer or reason..."
+            style="max-width:320px;" />
+
+        <select
+            name="status"
+            class="form-control"
+            style="max-width:190px;">
+
+            <option value="">
+                All statuses
+            </option>
+
+            @foreach (
+                var statusName
+                in Enum.GetNames(
+                    typeof(
+                        HealthTrackPro.Web.Enums.AppointmentStatus)))
+            {
+                if (
+                    string.Equals(
+                        statusName,
+                        Model.StatusFilter,
+                        StringComparison.OrdinalIgnoreCase))
+                {
+                    <option
+                        value="@statusName"
+                        selected="selected">
+                        @statusName
+                    </option>
+                }
+                else
+                {
+                    <option value="@statusName">
+                        @statusName
+                    </option>
+                }
+            }
+
+        </select>
+
+        <button
+            type="submit"
+            class="btn btn-primary">
+            Filter
+        </button>
+
+        @Html.ActionLink(
+            "Reset",
+            "Index",
+            "Appointments",
+            new { area = "Admin" },
+            new { @class = "btn btn-default" })
+    }
+
+    <div class="table-responsive">
+
+        <table class="table table-hover">
+
+            <thead>
+                <tr>
+                    <th>Client</th>
+                    <th>Trainer</th>
+                    <th>Date & Time</th>
+                    <th>Duration</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+            @if (!Model.Appointments.Any())
+            {
+                <tr>
+                    <td colspan="7">
+                        No matching appointments found.
+                    </td>
+                </tr>
+            }
+            else
+            {
+                foreach (
+                    var appointment
+                    in Model.Appointments)
+                {
+                    <tr>
+
+                        <td>
+                            @appointment.ClientName
+                        </td>
+
+                        <td>
+                            @appointment.TrainerName
+                        </td>
+
+                        <td>
+                            @appointment.AppointmentDateTime
+                                .ToString("dd MMM yyyy, hh:mm tt")
+                        </td>
+
+                        <td>
+                            @appointment.DurationMinutes min
+                        </td>
+
+                        <td>
+                            @(string.IsNullOrWhiteSpace(
+                                appointment.Reason)
+                                ? "-"
+                                : appointment.Reason)
+                        </td>
+
+                        <td>
+                            @{
+                                var statusClass =
+                                    "ht-status-warning";
+
+                                if (
+                                    appointment.Status ==
+                                    HealthTrackPro.Web.Enums
+                                        .AppointmentStatus.Approved ||
+                                    appointment.Status ==
+                                    HealthTrackPro.Web.Enums
+                                        .AppointmentStatus.Completed)
+                                {
+                                    statusClass =
+                                        "ht-status-success";
+                                }
+                                else if (
+                                    appointment.Status ==
+                                    HealthTrackPro.Web.Enums
+                                        .AppointmentStatus.Rejected ||
+                                    appointment.Status ==
+                                    HealthTrackPro.Web.Enums
+                                        .AppointmentStatus.Cancelled)
+                                {
+                                    statusClass =
+                                        "ht-status-danger";
+                                }
+                            }
+
+                            <span class="
+                                ht-status
+                                @statusClass">
+                                @appointment.Status
+                            </span>
+                        </td>
+
+                        <td>
+                            @Html.ActionLink(
+                                "View",
+                                "Details",
+                                "Appointments",
+                                new
+                                {
+                                    area = "Admin",
+                                    id =
+                                        appointment.AppointmentId
+                                },
+                                new
+                                {
+                                    @class =
+                                        "btn btn-default btn-sm"
+                                })
+                        </td>
+
+                    </tr>
+                }
+            }
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
