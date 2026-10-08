@@ -294,6 +294,7 @@
     <Content Include="Areas\Trainer\Views\_ViewStart.cshtml" />
     <Content Include="Areas\Admin\Views\web.config" />
     <Content Include="Areas\Admin\Views\_ViewStart.cshtml" />
+    <Content Include="Content\healthtrack-theme.css" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
