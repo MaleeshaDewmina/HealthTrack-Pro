@@ -231,6 +231,14 @@
     <Compile Include="Services\Implementations\WorkoutService.cs" />
     <Compile Include="Services\Implementations\DietService.cs" />
     <Compile Include="Services\Implementations\ProgressService.cs" />
+    <Compile Include="Areas\Admin\Models\AdminUserViewModels.cs" />
+    <Compile Include="Areas\Admin\Controllers\UsersController.cs" />
+    <Compile Include="Areas\Admin\Models\AssignmentViewModels.cs" />
+    <Compile Include="Areas\Admin\Controllers\AssignmentsController.cs" />
+    <Compile Include="Areas\Admin\Models\AppointmentViewModels.cs" />
+    <Compile Include="Areas\Admin\Controllers\AppointmentsController.cs" />
+    <Compile Include="Areas\Admin\Models\AuditLogViewModels.cs" />
+    <Compile Include="Areas\Admin\Controllers\AuditLogsController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-grid.css" />
@@ -315,6 +323,11 @@
     <Content Include="Content\healthtrack-theme.css" />
     <Content Include="Areas\Admin\Views\Trainers\Index.cshtml" />
     <Content Include="Areas\Admin\Views\Trainers\Create.cshtml" />
+    <Content Include="Areas\Admin\Views\Users\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Assignments\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Appointments\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Appointments\Details.cshtml" />
+    <Content Include="Areas\Admin\Views\AuditLogs\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
