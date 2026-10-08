@@ -56,9 +56,25 @@ namespace HealthTrackPro.Web.Controllers
         //
         // GET: /Account/Login
         [AllowAnonymous]
-        public ActionResult Login(string returnUrl)
+        public async Task<ActionResult> Login(string returnUrl)
         {
+            if (Request.IsAuthenticated)
+            {
+                var currentUser =
+                    await UserManager.FindByIdAsync(
+                        User.Identity.GetUserId()
+                    );
+
+                if (currentUser != null)
+                {
+                    return await RedirectToRoleDashboardAsync(
+                        currentUser
+                    );
+                }
+            }
+
             ViewBag.ReturnUrl = returnUrl;
+
             return View();
         }
 
@@ -599,6 +615,7 @@ namespace HealthTrackPro.Web.Controllers
         #endregion
     }
 }
+
 
 
 
