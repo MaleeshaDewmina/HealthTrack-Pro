@@ -215,6 +215,22 @@
     <Compile Include="Areas\Admin\Controllers\DashboardController.cs" />
     <Compile Include="Areas\Admin\Models\TrainerViewModels.cs" />
     <Compile Include="Areas\Admin\Controllers\TrainersController.cs" />
+    <Compile Include="Services\Interfaces\IClientService.cs" />
+    <Compile Include="Services\Interfaces\ITrainerService.cs" />
+    <Compile Include="Services\Implementations\ClientService.cs" />
+    <Compile Include="Services\Implementations\TrainerService.cs" />
+    <Compile Include="Services\Interfaces\IAppointmentService.cs" />
+    <Compile Include="Services\Interfaces\INotificationService.cs" />
+    <Compile Include="Services\Interfaces\IAuditService.cs" />
+    <Compile Include="Services\Implementations\AppointmentService.cs" />
+    <Compile Include="Services\Implementations\NotificationService.cs" />
+    <Compile Include="Services\Implementations\AuditService.cs" />
+    <Compile Include="Services\Interfaces\IWorkoutService.cs" />
+    <Compile Include="Services\Interfaces\IDietService.cs" />
+    <Compile Include="Services\Interfaces\IProgressService.cs" />
+    <Compile Include="Services\Implementations\WorkoutService.cs" />
+    <Compile Include="Services\Implementations\DietService.cs" />
+    <Compile Include="Services\Implementations\ProgressService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-grid.css" />
