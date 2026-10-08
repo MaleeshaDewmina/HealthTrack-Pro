@@ -1,41 +1,333 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var pageTitle =
+        string.IsNullOrWhiteSpace(ViewBag.Title as string)
+        ? "HealthTrack Pro"
+        : ViewBag.Title as string;
+
+    var controller =
+        Convert.ToString(
+            ViewContext.RouteData.Values["controller"]
+        );
+
+    var isAuthenticated =
+        Request.IsAuthenticated;
+
+    var isClient =
+        isAuthenticated &&
+        User.IsInRole("Client");
+
+    var isTrainer =
+        isAuthenticated &&
+        User.IsInRole("Trainer");
+
+    var isAdministrator =
+        isAuthenticated &&
+        User.IsInRole("Administrator");
+
+    var roleName =
+        isAdministrator ? "ADMINISTRATOR" :
+        isTrainer ? "TRAINER" :
+        isClient ? "CLIENT" :
+        "USER";
+}
+
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0" />
+
+    <title>
+        @pageTitle - HealthTrack Pro
+    </title>
+
     @Styles.Render("~/Content/css")
+
+    <link
+        href="@Url.Content("~/Content/healthtrack-theme.css")"
+        rel="stylesheet"
+        type="text/css" />
+
     @Scripts.Render("~/bundles/modernizr")
-
 </head>
-<body>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
-        <div class="container">
-            @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
-                <ul class="navbar-nav flex-grow-1">
-                    <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("About", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                </ul>
-                 @Html.Partial("_LoginPartial")
-            </div>
-        </div>
-    </nav>
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
-        </footer>
-    </div>
 
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
-    @RenderSection("scripts", required: false)
+<body>
+
+@if (isAuthenticated)
+{
+    <div class="ht-app-shell">
+
+        <aside class="ht-sidebar">
+
+            <a
+                href="@Url.Action(
+                    "Index",
+                    "Home",
+                    new { area = "" })"
+                class="ht-brand">
+
+                <span class="ht-brand-main">
+                    HEALTH<span class="ht-brand-accent">TRACK</span>
+                </span>
+
+            </a>
+
+            <span class="ht-role-badge">
+                @roleName
+            </span>
+
+            <div class="ht-nav-title">
+                NAVIGATION
+            </div>
+
+            <ul class="ht-nav">
+
+                @if (isClient)
+                {
+                    <li class="ht-nav-item">
+                        <a
+                            href="@Url.Action(
+                                "Index",
+                                "Dashboard",
+                                new { area = "Client" })"
+                            class="ht-nav-link @(controller == "Dashboard" ? "active" : "")">
+                            Dashboard
+                        </a>
+                    </li>
+
+                    <li class="ht-nav-item">
+                        <a href="#" class="ht-nav-link ht-nav-pending">
+                            Profile
+                        </a>
+                    </li>
+
+                    <li class="ht-nav-item">
+                        <a href="#" class="ht-nav-link ht-nav-pending">
+                            Goals
+                        </a>
+                    </li>
+
+                    <li class="ht-nav-item">
+                        <a href="#" class="ht-nav-link ht-nav-pending">
+                            Workout
+                        </a>
+                    </li>
+
+                    <li class="ht-nav-item">
+                        <a href="#" class="ht-nav-link ht-nav-pending">
+                            Diet
+                        </a>
+                    </li>
+
+                    <li class="ht-nav-item">
+                        <a href="#" class="ht-nav-link ht-nav-pending">
+                            Progress
+                        </a>
+                    </li>
+
+                    <li class="ht-nav-item">
+                        <a href="#" class="ht-nav-link ht-nav-pending">
+                            Appointments
+                        </a>
+                    </li>
+
+                    <li class="ht-nav-item">
+                        <a href="#" class="ht-nav-link ht-nav-pending">
+                            Notifications
+                        </a>
+                    </li>
+                }
+
+                @if (isTrainer)
+                {
+                    <li class="ht-nav-item">
+                        <a
+                            href="@Url.Action(
+                                "Index",
+                                "Dashboard",
+                                new { area = "Trainer" })"
+                            class="ht-nav-link @(controller == "Dashboard" ? "active" : "")">
+                            Dashboard
+                        </a>
+                    </li>
+
+                    <li class="ht-nav-item">
+                        <a href="#" class="ht-nav-link ht-nav-pending">
+                            Assigned Clients
+                        </a>
+                    </li>
+
+                    <li class="ht-nav-item">
+                        <a href="#" class="ht-nav-link ht-nav-pending">
+                            Workout Plans
+                        </a>
+                    </li>
+
+                    <li class="ht-nav-item">
+                        <a href="#" class="ht-nav-link ht-nav-pending">
+                            Diet Plans
+                        </a>
+                    </li>
+
+                    <li class="ht-nav-item">
+                        <a href="#" class="ht-nav-link ht-nav-pending">
+                            Appointments
+                        </a>
+                    </li>
+
+                    <li class="ht-nav-item">
+                        <a href="#" class="ht-nav-link ht-nav-pending">
+                            Availability
+                        </a>
+                    </li>
+
+                    <li class="ht-nav-item">
+                        <a href="#" class="ht-nav-link ht-nav-pending">
+                            Feedback
+                        </a>
+                    </li>
+
+                    <li class="ht-nav-item">
+                        <a href="#" class="ht-nav-link ht-nav-pending">
+                            Notifications
+                        </a>
+                    </li>
+                }
+
+                @if (isAdministrator)
+                {
+                    <li class="ht-nav-item">
+                        <a
+                            href="@Url.Action(
+                                "Index",
+                                "Dashboard",
+                                new { area = "Admin" })"
+                            class="ht-nav-link @(controller == "Dashboard" ? "active" : "")">
+                            Dashboard
+                        </a>
+                    </li>
+
+                    <li class="ht-nav-item">
+                        <a href="#" class="ht-nav-link ht-nav-pending">
+                            Users
+                        </a>
+                    </li>
+
+                    <li class="ht-nav-item">
+                        <a href="#" class="ht-nav-link ht-nav-pending">
+                            Trainers
+                        </a>
+                    </li>
+
+                    <li class="ht-nav-item">
+                        <a href="#" class="ht-nav-link ht-nav-pending">
+                            Assignments
+                        </a>
+                    </li>
+
+                    <li class="ht-nav-item">
+                        <a href="#" class="ht-nav-link ht-nav-pending">
+                            Appointments
+                        </a>
+                    </li>
+
+                    <li class="ht-nav-item">
+                        <a href="#" class="ht-nav-link ht-nav-pending">
+                            Reports
+                        </a>
+                    </li>
+
+                    <li class="ht-nav-item">
+                        <a href="#" class="ht-nav-link ht-nav-pending">
+                            Audit Logs
+                        </a>
+                    </li>
+
+                    <li class="ht-nav-item">
+                        <a href="#" class="ht-nav-link ht-nav-pending">
+                            Settings
+                        </a>
+                    </li>
+                }
+
+            </ul>
+
+        </aside>
+
+        <main class="ht-main">
+
+            <header class="ht-topbar">
+
+                <h1 class="ht-page-title">
+                    @pageTitle
+                </h1>
+
+                <div class="ht-topbar-right">
+
+                    <span
+                        class="ht-notification-button"
+                        title="Notifications">
+                        &#128276;
+                    </span>
+
+                    @Html.Partial("_LoginPartial")
+
+                </div>
+
+            </header>
+
+            <section class="ht-page-content">
+
+                @RenderBody()
+
+            </section>
+
+        </main>
+
+    </div>
+}
+else
+{
+    <div class="ht-public-shell">
+
+        <header class="ht-public-header">
+
+            <a
+                href="@Url.Action(
+                    "Index",
+                    "Home",
+                    new { area = "" })"
+                class="ht-brand">
+
+                <span class="ht-brand-main">
+                    HEALTH<span class="ht-brand-accent">TRACK</span>
+                </span>
+
+            </a>
+
+            @Html.Partial("_LoginPartial")
+
+        </header>
+
+        <main class="ht-public-content">
+
+            @RenderBody()
+
+        </main>
+
+    </div>
+}
+
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/bootstrap")
+
+@RenderSection(
+    "scripts",
+    required: false
+)
+
 </body>
 </html>

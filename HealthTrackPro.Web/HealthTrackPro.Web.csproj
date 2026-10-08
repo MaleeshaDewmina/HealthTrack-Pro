@@ -174,9 +174,18 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202610071754339_InitialHealthTrackSchema.cs" />
+    <Compile Include="Migrations\202610071754339_InitialHealthTrackSchema.Designer.cs">
+      <DependentUpon>202610071754339_InitialHealthTrackSchema.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\Fitness\FitnessGoal.cs" />
+    <Compile Include="Models\Fitness\HealthMetric.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\Profiles\TrainerClient.cs" />
+    <Compile Include="Models\Profiles\TrainerProfile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
@@ -189,6 +198,21 @@
     <Compile Include="Enums\UserStatus.cs" />
     <Compile Include="Enums\ActivityLevel.cs" />
     <Compile Include="Models\Profiles\ClientProfile.cs" />
+    <Compile Include="Models\Workouts\Exercise.cs" />
+    <Compile Include="Models\Workouts\WorkoutPlan.cs" />
+    <Compile Include="Models\Workouts\WorkoutExercise.cs" />
+    <Compile Include="Models\Workouts\WorkoutLog.cs" />
+    <Compile Include="Models\Diet\DietPlan.cs" />
+    <Compile Include="Models\Diet\Meal.cs" />
+    <Compile Include="Models\Diet\MealLog.cs" />
+    <Compile Include="Models\Scheduling\Appointment.cs" />
+    <Compile Include="Models\Scheduling\TrainerAvailability.cs" />
+    <Compile Include="Models\Communication\Notification.cs" />
+    <Compile Include="Models\Communication\TrainerFeedback.cs" />
+    <Compile Include="Models\Administration\AuditLog.cs" />
+    <Compile Include="Areas\Client\Controllers\DashboardController.cs" />
+    <Compile Include="Areas\Trainer\Controllers\DashboardController.cs" />
+    <Compile Include="Areas\Admin\Controllers\DashboardController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-grid.css" />
@@ -261,6 +285,16 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Areas\Client\Views\Dashboard\Index.cshtml" />
+    <Content Include="Areas\Trainer\Views\Dashboard\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Dashboard\Index.cshtml" />
+    <Content Include="Areas\Client\Views\web.config" />
+    <Content Include="Areas\Client\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Trainer\Views\web.config" />
+    <Content Include="Areas\Trainer\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Admin\Views\web.config" />
+    <Content Include="Areas\Admin\Views\_ViewStart.cshtml" />
+    <Content Include="Content\healthtrack-theme.css" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -291,6 +325,11 @@
     <Content Include="Scripts\bootstrap.bundle.js.map" />
     <Content Include="Scripts\jquery-3.7.0.slim.min.map" />
     <Content Include="Scripts\jquery-3.7.0.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202610071754339_InitialHealthTrackSchema.resx">
+      <DependentUpon>202610071754339_InitialHealthTrackSchema.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

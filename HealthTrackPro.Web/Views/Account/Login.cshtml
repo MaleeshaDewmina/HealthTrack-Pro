@@ -1,64 +1,153 @@
-﻿@using HealthTrackPro.Web.Models
-@model LoginViewModel
+﻿@model HealthTrackPro.Web.Models.LoginViewModel
+
 @{
-    ViewBag.Title = "Log in";
+    ViewBag.Title = "Sign In";
 }
 
-<main aria-labelledby="title">
-    <h2 id="title">@ViewBag.Title.</h2>
-    <div class="row">
-        <div class="col-md-8">
-            <section id="loginForm">
-                @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { role = "form" }))
-                {
-                    @Html.AntiForgeryToken()
-                    <h4>Use a local account to log in.</h4>
-                    <hr />
-                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                    <div class="row">
-                        @Html.LabelFor(m => m.Email, new { @class = "col-md-2 col-form-label" })
-                        <div class="col-md-10">
-                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
-                            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-                    <div class="row">
-                        @Html.LabelFor(m => m.Password, new { @class = "col-md-2 col-form-label" })
-                        <div class="col-md-10">
-                            @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
-                            @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="offset-md-2 col-md-10">
-                            <div class="checkbox">
-                                @Html.CheckBoxFor(m => m.RememberMe)
-                                @Html.LabelFor(m => m.RememberMe)
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="offset-md-2 col-md-10">
-                            <input type="submit" value="Log in" class="btn btn-outline-dark" />
-                        </div>
-                    </div>
-                    <p>
-                        @Html.ActionLink("Register as a new user", "Register")
-                    </p>
-                    @* Enable this once you have account confirmation enabled for password reset functionality
-                        <p>
-                            @Html.ActionLink("Forgot your password?", "ForgotPassword")
-                        </p>*@
-                }
-            </section>
+<div class="ht-auth-grid">
+
+    <section class="ht-auth-intro">
+
+        <div class="ht-auth-eyebrow">
+            HealthTrack Pro
         </div>
-        <div class="col-md-4">
-            <section id="socialLoginForm">
-                @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })
-            </section>
+
+        <h1>
+            Build a healthier
+            <span>you.</span>
+        </h1>
+
+        <p>
+            Track your fitness journey, follow personalised
+            workout and diet plans, monitor progress and stay
+            connected with your trainer.
+        </p>
+
+        <ul class="ht-auth-feature-list">
+            <li>Personalised workout and nutrition plans</li>
+            <li>Weight, BMI and health progress tracking</li>
+            <li>Trainer appointments and professional feedback</li>
+            <li>Goals, reminders and activity history</li>
+        </ul>
+
+    </section>
+
+    <section class="ht-auth-card">
+
+        <h2>Welcome back</h2>
+
+        <div class="ht-auth-subtitle">
+            Sign in to continue to your HealthTrack account.
         </div>
-    </div>
-</main>
+
+        @using (Html.BeginForm(
+            "Login",
+            "Account",
+            new { ReturnUrl = ViewBag.ReturnUrl },
+            FormMethod.Post,
+            new { role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+
+            @Html.ValidationSummary(
+                true,
+                "",
+                new { @class = "text-danger" }
+            )
+
+            <div class="form-group">
+
+                @Html.LabelFor(
+                    m => m.Email,
+                    new { @class = "control-label" }
+                )
+
+                @Html.TextBoxFor(
+                    m => m.Email,
+                    new
+                    {
+                        @class = "form-control",
+                        placeholder = "name@example.com",
+                        autocomplete = "email"
+                    }
+                )
+
+                @Html.ValidationMessageFor(
+                    m => m.Email,
+                    "",
+                    new { @class = "text-danger" }
+                )
+
+            </div>
+
+            <div class="form-group">
+
+                @Html.LabelFor(
+                    m => m.Password,
+                    new { @class = "control-label" }
+                )
+
+                @Html.PasswordFor(
+                    m => m.Password,
+                    new
+                    {
+                        @class = "form-control",
+                        placeholder = "Enter your password",
+                        autocomplete = "current-password"
+                    }
+                )
+
+                @Html.ValidationMessageFor(
+                    m => m.Password,
+                    "",
+                    new { @class = "text-danger" }
+                )
+
+            </div>
+
+            <div class="form-group">
+
+                <label class="ht-checkbox">
+
+                    @Html.CheckBoxFor(
+                        m => m.RememberMe
+                    )
+
+                    Remember me
+
+                </label>
+
+                <div>
+                    @Html.ActionLink(
+                        "Forgot your password?",
+                        "ForgotPassword",
+                        "Account",
+                        null,
+                        new { @class = "ht-auth-small-link" }
+                    )
+                </div>
+
+            </div>
+
+            <button
+                type="submit"
+                class="btn btn-primary">
+                Sign In
+            </button>
+        }
+
+        <div class="ht-auth-meta">
+            New to HealthTrack?
+            @Html.ActionLink(
+                "Create a client account",
+                "Register",
+                "Account"
+            )
+        </div>
+
+    </section>
+
+</div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")

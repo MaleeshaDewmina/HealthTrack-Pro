@@ -1,42 +1,181 @@
 ﻿@model HealthTrackPro.Web.Models.RegisterViewModel
+
 @{
-    ViewBag.Title = "Register";
+    ViewBag.Title = "Create Account";
 }
 
-<main aria-labelledby="title">
-    <h2 id="title">@ViewBag.Title.</h2>
+<div class="ht-auth-grid">
 
-    @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { role = "form" }))
-    {
-        @Html.AntiForgeryToken()
-        <h4>Create a new account.</h4>
-        <hr />
-        @Html.ValidationSummary("", new { @class = "text-danger" })
-        <div class="row">
-            @Html.LabelFor(m => m.Email, new { @class = "col-md-2 col-form-label" })
-            <div class="col-md-10">
-                @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
-            </div>
+    <section class="ht-auth-intro">
+
+        <div class="ht-auth-eyebrow">
+            Start your journey
         </div>
-        <div class="row">
-            @Html.LabelFor(m => m.Password, new { @class = "col-md-2 col-form-label" })
-            <div class="col-md-10">
-                @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
-            </div>
+
+        <h1>
+            Your health.
+            <span>Your progress.</span>
+        </h1>
+
+        <p>
+            Create your Client account and start tracking workouts,
+            nutrition, health measurements, goals and appointments
+            in one place.
+        </p>
+
+        <ul class="ht-auth-feature-list">
+            <li>Monitor weight, BMI and fitness goals</li>
+            <li>Receive workout and diet plans from your trainer</li>
+            <li>Log workouts, meals and daily health activity</li>
+            <li>Track progress with clear health analytics</li>
+        </ul>
+
+    </section>
+
+    <section class="ht-auth-card">
+
+        <h2>Create your account</h2>
+
+        <div class="ht-auth-subtitle">
+            Client registration
         </div>
-        <div class="row">
-            @Html.LabelFor(m => m.ConfirmPassword, new { @class = "col-md-2 col-form-label" })
-            <div class="col-md-10">
-                @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+
+        @using (Html.BeginForm(
+            "Register",
+            "Account",
+            FormMethod.Post,
+            new { role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+
+            @Html.ValidationSummary(
+                true,
+                "",
+                new { @class = "text-danger" }
+            )
+
+            <div class="form-group">
+
+                @Html.LabelFor(
+                    m => m.FullName,
+                    new { @class = "control-label" }
+                )
+
+                @Html.TextBoxFor(
+                    m => m.FullName,
+                    new
+                    {
+                        @class = "form-control",
+                        placeholder = "Your full name",
+                        autocomplete = "name"
+                    }
+                )
+
+                @Html.ValidationMessageFor(
+                    m => m.FullName,
+                    "",
+                    new { @class = "text-danger" }
+                )
+
             </div>
-        </div>
-        <div class="row">
-            <div class="offset-md-2 col-md-10">
-                <input type="submit" value="Register" class="btn btn-outline-dark" />
+
+            <div class="form-group">
+
+                @Html.LabelFor(
+                    m => m.Email,
+                    new { @class = "control-label" }
+                )
+
+                @Html.TextBoxFor(
+                    m => m.Email,
+                    new
+                    {
+                        @class = "form-control",
+                        placeholder = "name@example.com",
+                        autocomplete = "email"
+                    }
+                )
+
+                @Html.ValidationMessageFor(
+                    m => m.Email,
+                    "",
+                    new { @class = "text-danger" }
+                )
+
             </div>
+
+            <div class="form-group">
+
+                @Html.LabelFor(
+                    m => m.Password,
+                    new { @class = "control-label" }
+                )
+
+                @Html.PasswordFor(
+                    m => m.Password,
+                    new
+                    {
+                        @class = "form-control",
+                        placeholder = "Create a password",
+                        autocomplete = "new-password"
+                    }
+                )
+
+                @Html.ValidationMessageFor(
+                    m => m.Password,
+                    "",
+                    new { @class = "text-danger" }
+                )
+
+            </div>
+
+            <div class="form-group">
+
+                @Html.LabelFor(
+                    m => m.ConfirmPassword,
+                    new { @class = "control-label" }
+                )
+
+                @Html.PasswordFor(
+                    m => m.ConfirmPassword,
+                    new
+                    {
+                        @class = "form-control",
+                        placeholder = "Repeat your password",
+                        autocomplete = "new-password"
+                    }
+                )
+
+                @Html.ValidationMessageFor(
+                    m => m.ConfirmPassword,
+                    "",
+                    new { @class = "text-danger" }
+                )
+
+            </div>
+
+            <button
+                type="submit"
+                class="btn btn-primary">
+                Create Client Account
+            </button>
+        }
+
+        <div class="ht-auth-meta">
+
+            Already registered?
+
+            @Html.ActionLink(
+                "Sign in",
+                "Login",
+                "Account"
+            )
+
         </div>
-    }
-</main>
+
+    </section>
+
+</div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
