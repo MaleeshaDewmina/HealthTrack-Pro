@@ -211,10 +211,15 @@
                     </li>
 
                     <li class="ht-nav-item">
-                        <a href="#" class="ht-nav-link ht-nav-pending">
-                            Users
-                        </a>
-                    </li>
+    <a
+        href="@Url.Action(
+            "Index",
+            "Users",
+            new { area = "Admin" })"
+        class="ht-nav-link @(controller == "Users" ? "active" : "")">
+        Users
+    </a>
+</li>
 
                     <li class="ht-nav-item">
     <a
@@ -228,16 +233,26 @@
 </li>
 
                     <li class="ht-nav-item">
-                        <a href="#" class="ht-nav-link ht-nav-pending">
-                            Assignments
-                        </a>
-                    </li>
+    <a
+        href="@Url.Action(
+            "Index",
+            "Assignments",
+            new { area = "Admin" })"
+        class="ht-nav-link @(controller == "Assignments" ? "active" : "")">
+        Assignments
+    </a>
+</li>
 
                     <li class="ht-nav-item">
-                        <a href="#" class="ht-nav-link ht-nav-pending">
-                            Appointments
-                        </a>
-                    </li>
+    <a
+        href="@Url.Action(
+            "Index",
+            "Appointments",
+            new { area = "Admin" })"
+        class="ht-nav-link @(controller == "Appointments" ? "active" : "")">
+        Appointments
+    </a>
+</li>
 
                     <li class="ht-nav-item">
                         <a href="#" class="ht-nav-link ht-nav-pending">
@@ -246,10 +261,15 @@
                     </li>
 
                     <li class="ht-nav-item">
-                        <a href="#" class="ht-nav-link ht-nav-pending">
-                            Audit Logs
-                        </a>
-                    </li>
+    <a
+        href="@Url.Action(
+            "Index",
+            "AuditLogs",
+            new { area = "Admin" })"
+        class="ht-nav-link @(controller == "AuditLogs" ? "active" : "")">
+        Audit Logs
+    </a>
+</li>
 
                     <li class="ht-nav-item">
                         <a href="#" class="ht-nav-link ht-nav-pending">
@@ -336,4 +356,8 @@ else
 
 </body>
 </html>
+
+
+
+
 

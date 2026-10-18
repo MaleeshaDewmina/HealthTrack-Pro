@@ -84,7 +84,7 @@ namespace HealthTrackPro.Web.Services.Implementations
             count = NormalizeCount(count);
 
             return await db.AuditLogs
-                .Include(a => a.User)
+                .AsNoTracking()
                 .OrderByDescending(
                     a => a.CreatedAt)
                 .Take(count)
@@ -138,3 +138,4 @@ namespace HealthTrackPro.Web.Services.Implementations
         }
     }
 }
+
