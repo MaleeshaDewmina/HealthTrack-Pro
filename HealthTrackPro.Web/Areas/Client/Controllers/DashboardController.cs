@@ -1,5 +1,6 @@
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
@@ -22,17 +23,44 @@ namespace HealthTrackPro.Web.Areas.Client.Controllers
             _progressService = new ProgressService();
         }
 
+        [HttpGet]
         public async Task<ActionResult> Index()
         {
-            // Get the currently logged-in Client ID
+            // Get the logged-in client's user ID
             string userId = User.Identity.GetUserId();
 
-            // Retrieve Client information using shared services
+            // Retrieve client profile
             var profile = await _clientService
                 .GetProfileAsync(userId);
 
+            // Retrieve current BMI
             var bmi = await _progressService
                 .GetCurrentBmiAsync(userId);
+
+            // Retrieve fitness goals
+            var goals = await _progressService
+                .GetGoalsAsync(userId);
+
+            // Calculate goal statistics
+            decimal? averageProgress = null;
+            int totalGoals = 0;
+            int completedGoals = 0;
+
+            if (goals != null && goals.Count > 0)
+            {
+                totalGoals = goals.Count;
+
+                completedGoals = goals.Count(g =>
+                    g.IsCompleted);
+
+                // Calculate the average recorded progress.
+                // A manually completed goal retains its
+                // actual measured progress percentage.
+                averageProgress = Math.Round(
+                    goals.Average(g => g.CalculateProgress()),
+                    1
+                );
+            }
 
             // Prepare data for the Dashboard
             var model = new ClientDashboardViewModel
@@ -49,7 +77,13 @@ namespace HealthTrackPro.Web.Areas.Client.Controllers
                     ? profile.HeightCm
                     : null,
 
-                BMI = bmi
+                BMI = bmi,
+
+                GoalProgressPercent = averageProgress,
+
+                TotalGoals = totalGoals,
+
+                CompletedGoals = completedGoals
             };
 
             return View(model);

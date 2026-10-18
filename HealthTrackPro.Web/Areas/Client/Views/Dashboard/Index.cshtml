@@ -113,6 +113,7 @@
 
         </div>
 
+
         <!-- Goal Progress -->
         <div class="ht-stat-card">
 
@@ -120,16 +121,49 @@
                 GOAL PROGRESS
             </div>
 
-            <div class="ht-stat-value">
-                --%
-            </div>
+            @if (Model != null &&
+                 Model.GoalProgressPercent.HasValue)
+            {
+                var progress = Model.GoalProgressPercent.Value;
+
+                <div class="ht-stat-value">
+                    @progress.ToString("0.#")%
+                </div>
+
+                <p>
+                    Average measured progress across
+                    @Model.TotalGoals fitness goal(s).
+                </p>
+
+                <p>
+                    @Model.CompletedGoals of @Model.TotalGoals
+                    goals marked completed.
+                </p>
+
+                <progress value="@progress.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                          max="100"
+                          style="width:100%;height:14px;accent-color:#22c76a;">
+                </progress>
+            }
+            else
+            {
+                <div class="ht-stat-value">
+                    --%
+                </div>
+
+                <p>
+                    No fitness goals recorded yet.
+                </p>
+            }
 
             <p>
-                Fitness goal progress will appear here
-                when connected.
+                <a href="@Url.Action("Index", "Goals", new { area = "Client" })">
+                    View My Fitness Goals
+                </a>
             </p>
 
         </div>
+
 
     </div>
 
