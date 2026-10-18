@@ -1,0 +1,661 @@
+﻿
+@model HealthTrackPro.Web.Areas.Client.Models.ClientGoalsViewModel
+
+@{
+    ViewBag.Title = "Fitness Goals";
+}
+
+<style>
+    .client-goals-page {
+        color: #f5f5f5;
+        padding-bottom: 30px;
+    }
+
+    .client-goals-heading {
+        margin-bottom: 24px;
+    }
+
+        .client-goals-heading h2 {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+        }
+
+    .client-goals-muted {
+        color: #9fb5c8;
+    }
+
+    .client-goals-panel {
+        background: #101814;
+        border: 1px solid #22352a;
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 24px;
+    }
+
+        .client-goals-panel h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin: 0 0 18px 0;
+        }
+
+    .client-goals-page .form-group {
+        margin-bottom: 16px;
+    }
+
+    .client-goals-page label {
+        display: block;
+        margin-bottom: 7px;
+        font-weight: 600;
+    }
+
+    .client-goals-page .form-control {
+        background: #0b100d;
+        color: #ffffff;
+        border: 1px solid #34513d;
+        border-radius: 7px;
+        padding: 10px 12px;
+        width: 100%;
+        min-height: 40px;
+    }
+
+        .client-goals-page .form-control:focus {
+            border-color: #22c76a;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(34,199,106,.15);
+        }
+
+    .client-goals-page textarea.form-control {
+        min-height: 90px;
+        resize: vertical;
+    }
+
+    .client-goals-btn {
+        display: inline-block;
+        background: #22c76a;
+        color: #06140a;
+        border: none;
+        border-radius: 7px;
+        padding: 10px 18px;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+        .client-goals-btn:hover {
+            background: #18a856;
+            color: #ffffff;
+        }
+
+    .client-goals-btn-outline {
+        background: transparent;
+        color: #22c76a;
+        border: 1px solid #22c76a;
+    }
+
+        .client-goals-btn-outline:hover {
+            background: #173923;
+            color: #ffffff;
+        }
+
+    .client-goals-progress {
+        display: block;
+        width: 100%;
+        height: 12px;
+        margin: 12px 0;
+        border: none;
+        border-radius: 20px;
+        background: #26392d;
+        overflow: hidden;
+        appearance: none;
+        -webkit-appearance: none;
+    }
+
+        .client-goals-progress::-webkit-progress-bar {
+            background: #26392d;
+            border-radius: 20px;
+        }
+
+        .client-goals-progress::-webkit-progress-value {
+            background: #22c76a;
+            border-radius: 20px;
+        }
+
+        .client-goals-progress::-moz-progress-bar {
+            background: #22c76a;
+            border-radius: 20px;
+        }
+
+    .client-goals-badge {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 20px;
+        background: #183824;
+        color: #28d877;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .client-goals-badge-completed {
+        background: #21472e;
+        color: #80ffaa;
+    }
+
+    .client-goals-stats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 24px;
+        margin: 14px 0;
+    }
+
+    .client-goals-stat {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+        .client-goals-stat span {
+            font-size: 12px;
+            color: #9fb5c8;
+        }
+
+        .client-goals-stat strong {
+            font-size: 17px;
+        }
+
+    .client-goals-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: flex-end;
+        margin-top: 18px;
+    }
+
+        .client-goals-actions form {
+            margin: 0;
+        }
+
+    .client-goals-empty {
+        text-align: center;
+        padding: 38px 12px;
+        color: #9fb5c8;
+    }
+
+    .client-goals-page .text-danger,
+    .client-goals-page .field-validation-error {
+        color: #ff9090;
+    }
+
+    .client-goals-message {
+        padding: 14px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+    .client-goals-success {
+        background: #173824;
+        color: #80ffaa;
+    }
+
+    .client-goals-error {
+        background: #482121;
+        color: #ffb1b1;
+    }
+
+    .client-goals-card-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+        .client-goals-card-heading h3 {
+            margin: 0;
+        }
+
+    .client-goals-progress-label {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .client-goals-update-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .client-goals-update-input {
+        max-width: 160px;
+    }
+
+    .client-goals-section-title {
+        font-size: 21px;
+        font-weight: 700;
+        margin: 28px 0 18px;
+    }
+</style>
+
+<div class="client-goals-page">
+
+    <!-- PAGE HEADING -->
+
+    <div class="client-goals-heading">
+        <h2>My Fitness Goals</h2>
+
+        <p class="client-goals-muted">
+            Set your targets, monitor your progress,
+            and achieve your fitness goals.
+        </p>
+    </div>
+
+    <!-- SUCCESS MESSAGE -->
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="client-goals-message client-goals-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <!-- ERROR MESSAGE -->
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="client-goals-message client-goals-error">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <!-- CREATE GOAL FORM -->
+
+    <div class="client-goals-panel">
+
+        <h3>Create a New Goal</h3>
+
+        @using (Html.BeginForm(
+            "Create",
+            "Goals",
+            new { area = "Client" },
+            FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            @Html.ValidationSummary(
+                true,
+                "",
+                new { @class = "text-danger" })
+
+            <div class="row">
+
+                <!-- GOAL TYPE -->
+
+                <div class="col-md-6">
+                    <div class="form-group">
+
+                        @Html.LabelFor(
+                            m => m.NewGoal.GoalType)
+
+                        @Html.EnumDropDownListFor(
+                            m => m.NewGoal.GoalType,
+                            "-- Select Goal Type --",
+                            new { @class = "form-control" })
+
+                        @Html.ValidationMessageFor(
+                            m => m.NewGoal.GoalType,
+                            "",
+                            new { @class = "text-danger" })
+
+                    </div>
+                </div>
+
+                <!-- GOAL TITLE -->
+
+                <div class="col-md-6">
+                    <div class="form-group">
+
+                        @Html.LabelFor(
+                            m => m.NewGoal.Title)
+
+                        @Html.TextBoxFor(
+                            m => m.NewGoal.Title,
+                            new
+                            {
+                                @class = "form-control",
+                                placeholder = "e.g. Reach 65 kg",
+                                maxlength = "150"
+                            })
+
+                        @Html.ValidationMessageFor(
+                            m => m.NewGoal.Title,
+                            "",
+                            new { @class = "text-danger" })
+
+                    </div>
+                </div>
+
+                <!-- DESCRIPTION -->
+
+                <div class="col-md-12">
+                    <div class="form-group">
+
+                        @Html.LabelFor(
+                            m => m.NewGoal.Description)
+
+                        @Html.TextAreaFor(
+                            m => m.NewGoal.Description,
+                            3,
+                            40,
+                            new
+                            {
+                                @class = "form-control",
+                                placeholder = "Describe your fitness goal",
+                                maxlength = "500"
+                            })
+
+                        @Html.ValidationMessageFor(
+                            m => m.NewGoal.Description,
+                            "",
+                            new { @class = "text-danger" })
+
+                    </div>
+                </div>
+
+                <!-- STARTING VALUE -->
+
+                <div class="col-md-4">
+                    <div class="form-group">
+
+                        @Html.LabelFor(
+                            m => m.NewGoal.StartValue)
+
+                        @Html.TextBoxFor(
+                            m => m.NewGoal.StartValue,
+                            new
+                            {
+                                @class = "form-control",
+                                type = "number",
+                                step = "any",
+                                placeholder = "e.g. 70"
+                            })
+
+                        @Html.ValidationMessageFor(
+                            m => m.NewGoal.StartValue,
+                            "",
+                            new { @class = "text-danger" })
+
+                    </div>
+                </div>
+
+                <!-- TARGET VALUE -->
+
+                <div class="col-md-4">
+                    <div class="form-group">
+
+                        @Html.LabelFor(
+                            m => m.NewGoal.TargetValue)
+
+                        @Html.TextBoxFor(
+                            m => m.NewGoal.TargetValue,
+                            new
+                            {
+                                @class = "form-control",
+                                type = "number",
+                                step = "any",
+                                placeholder = "e.g. 65"
+                            })
+
+                        @Html.ValidationMessageFor(
+                            m => m.NewGoal.TargetValue,
+                            "",
+                            new { @class = "text-danger" })
+
+                    </div>
+                </div>
+
+                <!-- TARGET DATE -->
+
+                <div class="col-md-4">
+                    <div class="form-group">
+
+                        @Html.LabelFor(
+                            m => m.NewGoal.TargetDate)
+
+                        @Html.TextBoxFor(
+                            m => m.NewGoal.TargetDate,
+                            "{0:yyyy-MM-dd}",
+                            new
+                            {
+                                @class = "form-control",
+                                type = "date"
+                            })
+
+                        @Html.ValidationMessageFor(
+                            m => m.NewGoal.TargetDate,
+                            "",
+                            new { @class = "text-danger" })
+
+                    </div>
+                </div>
+
+            </div>
+
+            <button type="submit"
+                    class="client-goals-btn">
+                + Create Fitness Goal
+            </button>
+        }
+
+    </div>
+
+    <!-- EXISTING GOALS -->
+
+    <h3 class="client-goals-section-title">
+        My Goals (@Model.Goals.Count)
+    </h3>
+
+    @if (Model.Goals.Count == 0)
+    {
+        <div class="client-goals-panel client-goals-empty">
+
+            <h3>No fitness goals yet</h3>
+
+            <p>
+                Create your first fitness goal above
+                to start tracking your progress.
+            </p>
+
+        </div>
+    }
+    else
+    {
+        foreach (var goal in Model.Goals)
+        {
+            var progress = goal.CalculateProgress();
+
+            var progressText = progress.ToString(
+                "0.##",
+                System.Globalization.CultureInfo.InvariantCulture);
+
+            <div class="client-goals-panel">
+
+                <!-- GOAL HEADING -->
+
+                <div class="client-goals-card-heading">
+
+                    <h3>@goal.Title</h3>
+
+                    @if (goal.IsCompleted)
+                    {
+                        <span class="client-goals-badge client-goals-badge-completed">
+                            Completed
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="client-goals-badge">
+                            In Progress
+                        </span>
+                    }
+
+                </div>
+
+                <!-- GOAL TYPE -->
+
+                <p class="client-goals-muted">
+                    @goal.GoalType
+                </p>
+
+                <!-- GOAL DESCRIPTION -->
+
+                @if (!string.IsNullOrWhiteSpace(goal.Description))
+                {
+                    <p>@goal.Description</p>
+                }
+
+                <!-- GOAL STATISTICS -->
+
+                <div class="client-goals-stats">
+
+                    <div class="client-goals-stat">
+
+                        <span>Starting Value</span>
+
+                        <strong>
+                            @(goal.StartValue.HasValue
+                                ? goal.StartValue.Value.ToString("0.##")
+                                : "--")
+                        </strong>
+
+                    </div>
+
+                    <div class="client-goals-stat">
+
+                        <span>Current Value</span>
+
+                        <strong>
+                            @(goal.CurrentValue.HasValue
+                                ? goal.CurrentValue.Value.ToString("0.##")
+                                : "--")
+                        </strong>
+
+                    </div>
+
+                    <div class="client-goals-stat">
+
+                        <span>Target Value</span>
+
+                        <strong>
+                            @(goal.TargetValue.HasValue
+                                ? goal.TargetValue.Value.ToString("0.##")
+                                : "--")
+                        </strong>
+
+                    </div>
+
+                    <div class="client-goals-stat">
+
+                        <span>Target Date</span>
+
+                        <strong>
+                            @(goal.TargetDate.HasValue
+                                ? goal.TargetDate.Value.ToString("dd MMM yyyy")
+                                : "Not set")
+                        </strong>
+
+                    </div>
+
+                </div>
+
+                <!-- PROGRESS PERCENTAGE -->
+
+                <div class="client-goals-progress-label">
+
+                    <span>Goal Progress</span>
+
+                    <strong>
+                        @progressText%
+                    </strong>
+
+                </div>
+
+                <!-- GREEN PROGRESS BAR -->
+
+                <progress class="client-goals-progress"
+                          value="@progressText"
+                          max="100"
+                          aria-label="Fitness goal progress">
+                    @progressText%
+                </progress>
+
+                <!-- GOAL ACTIONS -->
+
+                @if (!goal.IsCompleted)
+                {
+                    <div class="client-goals-actions">
+
+                        <!-- UPDATE PROGRESS -->
+
+                        @using (Html.BeginForm(
+                            "UpdateProgress",
+                            "Goals",
+                            new { area = "Client" },
+                            FormMethod.Post))
+                        {
+                            @Html.AntiForgeryToken()
+
+                            @Html.Hidden(
+                                "FitnessGoalId",
+                                goal.FitnessGoalId)
+
+                            <label for="current-@goal.FitnessGoalId">
+                                Update Current Value
+                            </label>
+
+                            <div class="client-goals-update-row">
+
+                                <input id="current-@goal.FitnessGoalId"
+                                       type="number"
+                                       name="CurrentValue"
+                                       step="any"
+                                       required="required"
+                                       class="form-control client-goals-update-input"
+                                       aria-label="Current goal value" />
+
+                                <button type="submit"
+                                        class="client-goals-btn">
+                                    Update Progress
+                                </button>
+
+                            </div>
+                        }
+
+                        <!-- MARK COMPLETED -->
+
+                        @using (Html.BeginForm(
+                            "MarkCompleted",
+                            "Goals",
+                            new { area = "Client" },
+                            FormMethod.Post))
+                        {
+                            @Html.AntiForgeryToken()
+
+                            @Html.Hidden(
+                                "fitnessGoalId",
+                                goal.FitnessGoalId)
+
+                            <button type="submit"
+                                    class="client-goals-btn client-goals-btn-outline">
+                                Mark Completed
+                            </button>
+                        }
+
+                    </div>
+                }
+
+            </div>
+        }
+    }
+
+</div>
