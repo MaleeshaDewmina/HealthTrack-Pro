@@ -1,8 +1,12 @@
 ﻿
+using System;
+using System.Collections.Generic;
+
 namespace HealthTrackPro.Web.Areas.Client.Models
 {
     public class ClientDashboardViewModel
     {
+        // Client profile information
         public string FullName { get; set; }
 
         public decimal? CurrentWeightKg { get; set; }
@@ -11,13 +15,31 @@ namespace HealthTrackPro.Web.Areas.Client.Models
 
         public decimal? BMI { get; set; }
 
-        // Average measured progress across all saved goals
+        // Fitness goal statistics
         public decimal? GoalProgressPercent { get; set; }
 
-        // Total number of saved fitness goals
         public int TotalGoals { get; set; }
 
-        // Number of goals marked as completed
         public int CompletedGoals { get; set; }
+
+        // Historical measurements for the dashboard chart
+        public List<ClientHealthTrendPointViewModel> HealthTrend
+        { get; set; }
+
+        public ClientDashboardViewModel()
+        {
+            HealthTrend =
+                new List<ClientHealthTrendPointViewModel>();
+        }
+    }
+
+    // One historical measurement on the chart
+    public class ClientHealthTrendPointViewModel
+    {
+        public DateTime RecordedAt { get; set; }
+
+        public decimal? WeightKg { get; set; }
+
+        public decimal? BMI { get; set; }
     }
 }

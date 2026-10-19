@@ -29,7 +29,7 @@ namespace HealthTrackPro.Web.Areas.Client.Controllers
             // Get the logged-in client's user ID
             string userId = User.Identity.GetUserId();
 
-            // Retrieve client profile
+            // Retrieve the client's profile
             var profile = await _clientService
                 .GetProfileAsync(userId);
 
@@ -37,11 +37,15 @@ namespace HealthTrackPro.Web.Areas.Client.Controllers
             var bmi = await _progressService
                 .GetCurrentBmiAsync(userId);
 
-            // Retrieve fitness goals
+            // Retrieve saved fitness goals
             var goals = await _progressService
                 .GetGoalsAsync(userId);
 
-            // Calculate goal statistics
+            // Retrieve historical health measurements
+            var healthMetrics = await _progressService
+                .GetHealthMetricsAsync(userId);
+
+            // Calculate fitness goal statistics
             decimal? averageProgress = null;
             int totalGoals = 0;
             int completedGoals = 0;
@@ -53,16 +57,13 @@ namespace HealthTrackPro.Web.Areas.Client.Controllers
                 completedGoals = goals.Count(g =>
                     g.IsCompleted);
 
-                // Calculate the average recorded progress.
-                // A manually completed goal retains its
-                // actual measured progress percentage.
                 averageProgress = Math.Round(
                     goals.Average(g => g.CalculateProgress()),
                     1
                 );
             }
 
-            // Prepare data for the Dashboard
+            // Prepare the Dashboard ViewModel
             var model = new ClientDashboardViewModel
             {
                 FullName = profile != null
@@ -85,6 +86,30 @@ namespace HealthTrackPro.Web.Areas.Client.Controllers
 
                 CompletedGoals = completedGoals
             };
+
+            // Prepare the latest 10 historical measurements.
+            // The service returns newest records first.
+            // Charts must display oldest to newest.
+            if (healthMetrics != null)
+            {
+                model.HealthTrend = healthMetrics
+                    .Where(m =>
+                        m.WeightKg.HasValue ||
+                        m.CalculateBMI().HasValue)
+                    .OrderByDescending(m => m.RecordedAt)
+                    .ThenByDescending(m => m.HealthMetricId)
+                    .Take(10)
+                    .OrderBy(m => m.RecordedAt)
+                    .ThenBy(m => m.HealthMetricId)
+                    .Select(m =>
+                        new ClientHealthTrendPointViewModel
+                        {
+                            RecordedAt = m.RecordedAt,
+                            WeightKg = m.WeightKg,
+                            BMI = m.CalculateBMI()
+                        })
+                    .ToList();
+            }
 
             return View(model);
         }
