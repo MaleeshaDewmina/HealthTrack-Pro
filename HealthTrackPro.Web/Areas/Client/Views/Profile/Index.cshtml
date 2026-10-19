@@ -1,181 +1,836 @@
-﻿
-@model HealthTrackPro.Web.Areas.Client.Models.ClientProfileViewModel
+﻿@model HealthTrackPro.Web.Areas.Client.Models.ClientProfileViewModel
 
 @{
     ViewBag.Title = "My Profile";
+
+    var dashboardUrl = Url.Action(
+        "Index",
+        "Dashboard",
+        new { area = "Client" });
+
+    var goalsUrl = Url.Action(
+        "Index",
+        "Goals",
+        new { area = "Client" });
 }
 
-<div class="container-fluid">
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
 
-    <h2>My Profile</h2>
-    <p>Manage your personal information and fitness details.</p>
+<style>
+    .cp-page {
+        width: 100%;
+        max-width: 1480px;
+        margin: 0 auto;
+        padding: 18px 0 38px;
+        color: #F3F4F6;
+    }
+
+        .cp-page,
+        .cp-page * {
+            box-sizing: border-box;
+        }
+
+    .cp-header {
+        margin-bottom: 28px;
+    }
+
+    .cp-kicker {
+        display: inline-block;
+        margin-bottom: 12px;
+        color: #36D676;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 1.3px;
+        text-transform: uppercase;
+    }
+
+    .cp-title {
+        margin: 0 0 10px;
+        color: #F8FAFC;
+        font-size: 38px;
+        font-weight: 800;
+        line-height: 1.15;
+        letter-spacing: -0.5px;
+    }
+
+    .cp-subtitle {
+        margin: 0;
+        max-width: 760px;
+        color: #98A2B3;
+        font-size: 14px;
+        line-height: 1.75;
+    }
+
+    .cp-top-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.8fr) minmax(320px, 0.9fr);
+        gap: 22px;
+        margin-bottom: 22px;
+    }
+
+    .cp-card {
+        background: linear-gradient(180deg, #0E1612 0%, #0A100D 100%);
+        border: 1px solid #1D2C24;
+        border-radius: 18px;
+        box-shadow: 0 0 0 1px rgba(255,255,255,0.02) inset;
+    }
+
+    .cp-hero {
+        padding: 28px;
+        display: flex;
+        gap: 18px;
+        align-items: center;
+        min-height: 155px;
+    }
+
+    .cp-hero-icon {
+        width: 64px;
+        height: 64px;
+        min-width: 64px;
+        border-radius: 18px;
+        border: 1px solid #245336;
+        background: radial-gradient(circle at top left, rgba(54,214,118,0.22), transparent 58%), linear-gradient(180deg, #153021 0%, #10261A 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .cp-hero-icon svg {
+            width: 28px;
+            height: 28px;
+            stroke: #49E07F;
+        }
+
+    .cp-hero-title {
+        margin: 0 0 8px;
+        color: #F8FAFC;
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: -0.3px;
+    }
+
+    .cp-hero-text {
+        margin: 0 0 14px;
+        color: #A7B0BE;
+        font-size: 13px;
+        line-height: 1.8;
+        max-width: 620px;
+    }
+
+    .cp-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 12px;
+        border: 1px solid #27573A;
+        border-radius: 999px;
+        background: rgba(35, 83, 56, 0.28);
+        color: #4ADE80;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+    }
+
+    .cp-badge-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: #36D676;
+        box-shadow: 0 0 10px rgba(54,214,118,0.7);
+    }
+
+    .cp-side-card {
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 155px;
+    }
+
+    .cp-side-kicker {
+        color: #6EE7A1;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+        margin-bottom: 10px;
+    }
+
+    .cp-side-title {
+        margin: 0 0 10px;
+        color: #F8FAFC;
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .cp-side-text {
+        margin: 0;
+        color: #98A2B3;
+        font-size: 13px;
+        line-height: 1.8;
+    }
+
+    .cp-form {
+        width: 100%;
+    }
+
+    .cp-section {
+        margin-bottom: 22px;
+        padding: 24px;
+    }
+
+    .cp-section-header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 24px;
+    }
+
+    .cp-section-icon {
+        width: 46px;
+        height: 46px;
+        min-width: 46px;
+        border-radius: 14px;
+        border: 1px solid #244A33;
+        background: radial-gradient(circle at top left, rgba(54,214,118,0.18), transparent 58%), linear-gradient(180deg, #13271C 0%, #102118 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .cp-section-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke: #4ADE80;
+        }
+
+    .cp-section-title {
+        margin: 0 0 4px;
+        color: #F8FAFC;
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+    .cp-section-desc {
+        margin: 0;
+        color: #98A2B3;
+        font-size: 13px;
+        line-height: 1.7;
+    }
+
+    .cp-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 22px 24px;
+    }
+
+    .cp-field {
+        min-width: 0;
+    }
+
+        .cp-field label {
+            display: inline-block;
+            margin-bottom: 10px;
+            color: #E5E7EB;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+    .cp-input-wrap {
+        position: relative;
+    }
+
+    .cp-input,
+    .cp-select {
+        width: 100%;
+        height: 52px;
+        padding: 0 16px;
+        border-radius: 12px;
+        border: 1px solid #2A3C32;
+        background: #050807;
+        color: #F8FAFC;
+        font-size: 14px;
+        outline: none;
+        transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+    }
+
+        .cp-input::placeholder {
+            color: #6B7280;
+        }
+
+        .cp-input:hover,
+        .cp-select:hover {
+            border-color: #355443;
+        }
+
+        .cp-input:focus,
+        .cp-select:focus {
+            border-color: #22C55E;
+            box-shadow: 0 0 0 4px rgba(34,197,94,0.10);
+            background: #07100B;
+        }
+
+    .cp-select {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        padding-right: 48px;
+        background-image: none;
+    }
+
+    .cp-select-arrow {
+        position: absolute;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        pointer-events: none;
+        color: #6EE7A1;
+        font-size: 12px;
+    }
+
+    .cp-date-icon {
+        position: absolute;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        pointer-events: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .cp-date-icon svg {
+            width: 17px;
+            height: 17px;
+            stroke: #6EE7A1;
+        }
+
+    .cp-help {
+        display: block;
+        margin-top: 9px;
+        color: #7B8794;
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    .cp-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        flex-wrap: wrap;
+        padding: 22px 24px;
+    }
+
+    .cp-actions-note {
+        color: #98A2B3;
+        font-size: 13px;
+        line-height: 1.8;
+        margin: 0;
+    }
+
+    .cp-buttons {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .cp-btn {
+        height: 48px;
+        padding: 0 20px;
+        border-radius: 12px;
+        border: 1px solid transparent;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all .2s ease;
+        cursor: pointer;
+    }
+
+    .cp-btn-primary {
+        background: linear-gradient(180deg, #2BE06D 0%, #1DC55B 100%);
+        color: #07120B;
+        border-color: #2BE06D;
+        box-shadow: 0 10px 24px rgba(34,197,94,0.18);
+    }
+
+        .cp-btn-primary:hover,
+        .cp-btn-primary:focus {
+            background: linear-gradient(180deg, #3BE97C 0%, #25D566 100%);
+            color: #07120B;
+            text-decoration: none;
+        }
+
+    .cp-btn-secondary {
+        background: #111913;
+        color: #D1D5DB;
+        border-color: #2E4035;
+    }
+
+        .cp-btn-secondary:hover,
+        .cp-btn-secondary:focus {
+            background: #16221A;
+            color: #F9FAFB;
+            border-color: #496252;
+            text-decoration: none;
+        }
+
+    .cp-footer-tip {
+        padding: 22px 24px;
+        display: flex;
+        gap: 14px;
+        align-items: flex-start;
+    }
+
+    .cp-footer-line {
+        width: 4px;
+        min-width: 4px;
+        align-self: stretch;
+        border-radius: 999px;
+        background: linear-gradient(180deg, #22C55E 0%, #0E5D2D 100%);
+    }
+
+    .cp-footer-title {
+        margin: 0 0 6px;
+        color: #D8FEE5;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .cp-footer-text {
+        margin: 0;
+        color: #AAB4C2;
+        font-size: 13px;
+        line-height: 1.8;
+    }
+
+        .cp-footer-text a {
+            color: #4ADE80;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+            .cp-footer-text a:hover {
+                text-decoration: underline;
+            }
+
+    .cp-alert {
+        margin-bottom: 18px;
+        padding: 14px 16px;
+        border-radius: 12px;
+        font-size: 13px;
+        line-height: 1.7;
+    }
+
+    .cp-alert-success {
+        background: rgba(19, 58, 35, 0.75);
+        border: 1px solid #245938;
+        color: #B7F7CF;
+    }
+
+    .cp-alert-error {
+        background: rgba(75, 22, 25, 0.75);
+        border: 1px solid #7C2D32;
+        color: #FEB2B2;
+    }
+
+        .cp-alert-error ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+    .field-validation-error,
+    .validation-summary-errors,
+    .text-danger {
+        color: #FCA5A5 !important;
+        font-size: 12px;
+    }
+
+    .field-validation-error {
+        display: block;
+        margin-top: 8px;
+    }
+
+    .input-validation-error {
+        border-color: #EF4444 !important;
+        box-shadow: none !important;
+    }
+
+    .flatpickr-calendar {
+        background: #0B120E !important;
+        border: 1px solid #244232 !important;
+        box-shadow: 0 18px 50px rgba(0,0,0,0.45) !important;
+        border-radius: 16px !important;
+        color: #F8FAFC !important;
+    }
+
+    .flatpickr-months .flatpickr-month,
+    .flatpickr-current-month,
+    .flatpickr-weekdays,
+    .flatpickr-weekday,
+    .flatpickr-day {
+        color: #E5E7EB !important;
+    }
+
+        .flatpickr-current-month .flatpickr-monthDropdown-months,
+        .flatpickr-current-month input.cur-year {
+            color: #F8FAFC !important;
+            background: transparent !important;
+        }
+
+    .flatpickr-weekday {
+        color: #6EE7A1 !important;
+        font-weight: 700 !important;
+    }
+
+    .flatpickr-day {
+        border-radius: 10px !important;
+    }
+
+        .flatpickr-day:hover {
+            background: #173021 !important;
+            border-color: #173021 !important;
+        }
+
+        .flatpickr-day.today {
+            border-color: #22C55E !important;
+        }
+
+        .flatpickr-day.selected,
+        .flatpickr-day.startRange,
+        .flatpickr-day.endRange {
+            background: #22C55E !important;
+            border-color: #22C55E !important;
+            color: #06110A !important;
+        }
+
+    .flatpickr-prev-month svg,
+    .flatpickr-next-month svg {
+        fill: #6EE7A1 !important;
+    }
+
+    @@media (max-width: 1100px) {
+        .cp-top-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 860px) {
+        .cp-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .cp-title {
+            font-size: 31px;
+        }
+    }
+
+    @@media (max-width: 640px) {
+        .cp-hero {
+            padding: 20px;
+            align-items: flex-start;
+        }
+
+        .cp-section {
+            padding: 18px;
+        }
+
+        .cp-actions {
+            padding: 18px;
+        }
+
+        .cp-buttons {
+            width: 100%;
+        }
+
+        .cp-btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="cp-page">
+
+    <div class="cp-header">
+        <span class="cp-kicker">Client Account</span>
+        <h1 class="cp-title">My Profile</h1>
+        <p class="cp-subtitle">
+            Manage your personal details, body measurements, and fitness preferences
+            in one clean and professional workspace.
+        </p>
+    </div>
+
+    <div class="cp-top-grid">
+
+        <div class="cp-card cp-hero">
+            <div class="cp-hero-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8">
+                    <path d="M20 21a8 8 0 0 0-16 0"></path>
+                    <circle cx="12" cy="8" r="4"></circle>
+                </svg>
+            </div>
+
+            <div>
+                <h2 class="cp-hero-title">Your Fitness Profile</h2>
+                <p class="cp-hero-text">
+                    Keep your profile updated to improve health tracking, personalize your
+                    dashboard, and support better goal monitoring throughout your journey.
+                </p>
+
+                <span class="cp-badge">
+                    <span class="cp-badge-dot"></span>
+                    Client Profile Active
+                </span>
+            </div>
+        </div>
+
+        <div class="cp-card cp-side-card">
+            <div>
+                <div class="cp-side-kicker">HealthTrack Profile</div>
+                <h3 class="cp-side-title">Profile Completion Area</h3>
+                <p class="cp-side-text">
+                    Save your latest information to keep your dashboard insights accurate,
+                    including BMI and future health trends.
+                </p>
+            </div>
+        </div>
+
+    </div>
 
     @if (TempData["SuccessMessage"] != null)
     {
-        <div class="alert alert-success">
+        <div class="cp-alert cp-alert-success">
             @TempData["SuccessMessage"]
         </div>
     }
 
-    <div class="ht-card">
+    @using (Html.BeginForm(
+        "Index",
+        "Profile",
+        new { area = "Client" },
+        FormMethod.Post,
+        new { @class = "cp-form" }))
+    {
+        @Html.AntiForgeryToken()
 
-        @using (Html.BeginForm(
-            "Index",
-            "Profile",
-            new { area = "Client" },
-            FormMethod.Post,
-            new { @class = "ht-profile-form" }))
+        if (!ViewData.ModelState.IsValid)
         {
-            @Html.AntiForgeryToken()
+            <div class="cp-alert cp-alert-error">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            </div>
+        }
 
-            @Html.ValidationSummary(
-                true, "",
-                new { @class = "text-danger" })
-
-            <h3 class="ht-card-title">Personal Information</h3>
-
-            <div class="row">
-
-                <div class="col-md-6">
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.FullName)
-
-                        @Html.TextBoxFor(m => m.FullName,
-                            new
-                                 {
-                                @class = "form-control",
-                                placeholder = "Enter your full name"
-                            })
-
-                        @Html.ValidationMessageFor(
-                            m => m.FullName, "",
-                            new { @class = "text-danger" })
-                    </div>
+        <div class="cp-card cp-section">
+            <div class="cp-section-header">
+                <div class="cp-section-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8">
+                        <path d="M20 21a8 8 0 0 0-16 0"></path>
+                        <circle cx="12" cy="8" r="4"></circle>
+                    </svg>
                 </div>
 
-                <div class="col-md-6">
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.DateOfBirth)
+                <div>
+                    <h2 class="cp-section-title">Personal Information</h2>
+                    <p class="cp-section-desc">
+                        Update your personal identity details shown throughout the client portal.
+                    </p>
+                </div>
+            </div>
 
+            <div class="cp-grid">
+                <div class="cp-field">
+                    @Html.LabelFor(m => m.FullName)
+                    <div class="cp-input-wrap">
+                        @Html.TextBoxFor(
+                            m => m.FullName,
+                            new
+                            {
+                                @class = "cp-input",
+                                placeholder = "Enter your full name",
+                                autocomplete = "name"
+                            })
+                    </div>
+                    @Html.ValidationMessageFor(m => m.FullName, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="cp-field">
+                    @Html.LabelFor(m => m.DateOfBirth)
+                    <div class="cp-input-wrap">
                         @Html.TextBoxFor(
                             m => m.DateOfBirth,
                             "{0:yyyy-MM-dd}",
                             new
-                                 {
-                                @class = "form-control",
-                                type = "date",
-                                max = DateTime.Today.ToString("yyyy-MM-dd")
+                            {
+                                @class = "cp-input js-date-picker",
+                                placeholder = "Select your date of birth",
+                                autocomplete = "bday"
                             })
 
-                        @Html.ValidationMessageFor(
-                            m => m.DateOfBirth, "",
-                            new { @class = "text-danger" })
+                        <span class="cp-date-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8">
+                                <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+                                <path d="M16 3v4M8 3v4M3 10h18"></path>
+                            </svg>
+                        </span>
                     </div>
+                    @Html.ValidationMessageFor(m => m.DateOfBirth, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="cp-card cp-section">
+            <div class="cp-section-header">
+                <div class="cp-section-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8">
+                        <path d="M12 21s-7-4.35-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 11c0 5.65-7 10-7 10z"></path>
+                    </svg>
                 </div>
 
+                <div>
+                    <h2 class="cp-section-title">Health Information</h2>
+                    <p class="cp-section-desc">
+                        Maintain your body measurements for BMI calculations and progress tracking.
+                    </p>
+                </div>
             </div>
 
-            <h3 class="ht-card-title">Health Information</h3>
-
-            <div class="row">
-
-                <div class="col-md-6">
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.HeightCm)
-
-                        @Html.TextBoxFor(m => m.HeightCm,
+            <div class="cp-grid">
+                <div class="cp-field">
+                    @Html.LabelFor(m => m.HeightCm)
+                    <div class="cp-input-wrap">
+                        @Html.TextBoxFor(
+                            m => m.HeightCm,
                             new
-                                 {
-                                @class = "form-control",
+                            {
+                                @class = "cp-input",
                                 type = "number",
                                 step = "0.1",
                                 min = "50",
                                 max = "250",
                                 placeholder = "Enter height in cm"
                             })
-
-                        @Html.ValidationMessageFor(
-                            m => m.HeightCm, "",
-                            new { @class = "text-danger" })
                     </div>
+                    @Html.ValidationMessageFor(m => m.HeightCm, "", new { @class = "text-danger" })
+                    <small class="cp-help">Use centimeters for better BMI accuracy.</small>
                 </div>
 
-                <div class="col-md-6">
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.CurrentWeightKg)
-
+                <div class="cp-field">
+                    @Html.LabelFor(m => m.CurrentWeightKg)
+                    <div class="cp-input-wrap">
                         @Html.TextBoxFor(
                             m => m.CurrentWeightKg,
                             new
-                                 {
-                                @class = "form-control",
+                            {
+                                @class = "cp-input",
                                 type = "number",
                                 step = "0.1",
                                 min = "20",
                                 max = "500",
                                 placeholder = "Enter weight in kg"
                             })
-
-                        @Html.ValidationMessageFor(
-                            m => m.CurrentWeightKg, "",
-                            new { @class = "text-danger" })
                     </div>
+                    @Html.ValidationMessageFor(m => m.CurrentWeightKg, "", new { @class = "text-danger" })
+                    <small class="cp-help">Use kilograms to keep your progress records consistent.</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="cp-card cp-section">
+            <div class="cp-section-header">
+                <div class="cp-section-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8">
+                        <path d="M12 3l2.7 5.47L21 9.27l-4.5 4.39L17.54 20 12 17.1 6.46 20 7.5 13.66 3 9.27l6.3-.8L12 3z"></path>
+                    </svg>
                 </div>
 
+                <div>
+                    <h2 class="cp-section-title">Fitness Preferences</h2>
+                    <p class="cp-section-desc">
+                        Set your activity level and primary goal to support tailored recommendations.
+                    </p>
+                </div>
             </div>
 
-            <h3 class="ht-card-title">Fitness Preferences</h3>
-
-            <div class="row">
-
-                <div class="col-md-6">
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.ActivityLevel)
-
+            <div class="cp-grid">
+                <div class="cp-field">
+                    @Html.LabelFor(m => m.ActivityLevel)
+                    <div class="cp-input-wrap">
                         @Html.EnumDropDownListFor(
                             m => m.ActivityLevel,
                             "Select activity level",
-                            new { @class = "form-control" })
-
-                        @Html.ValidationMessageFor(
-                            m => m.ActivityLevel, "",
-                            new { @class = "text-danger" })
+                            new { @class = "cp-select" })
+                        <span class="cp-select-arrow">&#9662;</span>
                     </div>
+                    @Html.ValidationMessageFor(m => m.ActivityLevel, "", new { @class = "text-danger" })
+                    <small class="cp-help">Choose the option that best fits your daily routine.</small>
                 </div>
 
-                <div class="col-md-6">
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.PrimaryGoal)
-
+                <div class="cp-field">
+                    @Html.LabelFor(m => m.PrimaryGoal)
+                    <div class="cp-input-wrap">
                         @Html.EnumDropDownListFor(
                             m => m.PrimaryGoal,
                             "Select fitness goal",
-                            new { @class = "form-control" })
-
-                        @Html.ValidationMessageFor(
-                            m => m.PrimaryGoal, "",
-                            new { @class = "text-danger" })
+                            new { @class = "cp-select" })
+                        <span class="cp-select-arrow">&#9662;</span>
                     </div>
+                    @Html.ValidationMessageFor(m => m.PrimaryGoal, "", new { @class = "text-danger" })
+                    <small class="cp-help">Your main goal helps guide your health journey.</small>
                 </div>
-
             </div>
+        </div>
 
-            <hr />
+        <div class="cp-card cp-actions">
+            <p class="cp-actions-note">
+                Save your latest information to keep your client dashboard updated and aligned
+                with your current health profile.
+            </p>
 
-            <div class="form-group">
-
-                <button type="submit" class="btn btn-primary">
-                    Save Changes
-                </button>
-
-                <a href="@Url.Action("Index", "Dashboard", new { area = "Client" })"
-                   class="btn btn-default">
+            <div class="cp-buttons">
+                <a href="@dashboardUrl" class="cp-btn cp-btn-secondary">
                     Back to Dashboard
                 </a>
 
+                <button type="submit" class="cp-btn cp-btn-primary">
+                    Save Changes
+                </button>
             </div>
-        }
+        </div>
+    }
 
+    <div class="cp-card cp-footer-tip">
+        <div class="cp-footer-line"></div>
+        <div>
+            <p class="cp-footer-title">Next step</p>
+            <p class="cp-footer-text">
+                After updating your profile, you can continue to
+                <a href="@goalsUrl">manage your fitness goals</a>
+                and keep your dashboard insights more meaningful.
+            </p>
+        </div>
     </div>
 
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var dateInputs = document.querySelectorAll(".js-date-picker");
+
+        for (var i = 0; i < dateInputs.length; i++) {
+            flatpickr(dateInputs[i], {
+                dateFormat: "Y-m-d",
+                altInput: true,
+                altFormat: "F j, Y",
+                maxDate: "today",
+                disableMobile: true
+            });
+        }
+    });
+</script>

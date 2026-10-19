@@ -1,238 +1,1367 @@
 
 @model HealthTrackPro.Web.Areas.Client.Models.ClientDashboardViewModel
+@using System
+@using System.Linq
+@using System.Collections.Generic
+@using System.Globalization
 
 @{
     ViewBag.Title = "Client Dashboard";
 
-    // Display information belonging to the logged-in Client
-    var clientName = Model != null &&
+    // ===========================================
+    // CLIENT PROFILE
+    // ===========================================
+
+    var clientName =
+        Model != null &&
         !string.IsNullOrWhiteSpace(Model.FullName)
-        ? Model.FullName
-        : "Client";
+            ? Model.FullName
+            : "Client";
 
-    var weightText = Model != null &&
-        Model.CurrentWeightKg.HasValue
-        ? Model.CurrentWeightKg.Value.ToString("0.0") + " kg"
-        : "-- kg";
+    var hasWeight =
+        Model != null &&
+        Model.CurrentWeightKg.HasValue;
 
-    var bmiText = Model != null &&
-        Model.BMI.HasValue
+    var hasBmi =
+        Model != null &&
+        Model.BMI.HasValue;
+
+    var weightText = hasWeight
+        ? Model.CurrentWeightKg.Value.ToString("0.0")
+        : "--";
+
+    var bmiText = hasBmi
         ? Model.BMI.Value.ToString("0.0")
         : "--";
 
-    var hasWeight = Model != null &&
-        Model.CurrentWeightKg.HasValue;
+    // ===========================================
+    // FITNESS GOALS
+    // ===========================================
 
-    var hasBMI = Model != null &&
-        Model.BMI.HasValue;
+    var hasGoals =
+        Model != null &&
+        Model.GoalProgressPercent.HasValue;
+
+    var goalProgress = hasGoals
+        ? Math.Max(
+            0m,
+            Math.Min(
+                100m,
+                Model.GoalProgressPercent.Value))
+        : 0m;
+
+    var goalText = hasGoals
+        ? goalProgress.ToString("0.#") + "%"
+        : "--%";
+
+    var goalValue = goalProgress.ToString(
+        "0.##",
+        CultureInfo.InvariantCulture);
+
+    var totalGoals =
+        Model != null ? Model.TotalGoals : 0;
+
+    var completedGoals =
+        Model != null ? Model.CompletedGoals : 0;
+
+    // ===========================================
+    // HISTORICAL HEALTH DATA
+    // ===========================================
+
+    var healthTrend =
+        Model != null && Model.HealthTrend != null
+            ? Model.HealthTrend
+            : new List<
+                HealthTrackPro.Web.Areas.Client.Models.ClientHealthTrendPointViewModel>();
+
+    // Only real saved weight measurements.
+    var weightPoints = healthTrend
+        .Where(x => x.WeightKg.HasValue)
+        .OrderBy(x => x.RecordedAt)
+        .Select(x => new
+        {
+            date = x.RecordedAt.ToString(
+                "dd MMM HH:mm",
+                CultureInfo.InvariantCulture),
+
+            value = x.WeightKg.Value
+        })
+        .ToList();
+
+    // Only real saved BMI measurements.
+    var bmiPoints = healthTrend
+        .Where(x => x.BMI.HasValue)
+        .OrderBy(x => x.RecordedAt)
+        .Select(x => new
+        {
+            date = x.RecordedAt.ToString(
+                "dd MMM HH:mm",
+                CultureInfo.InvariantCulture),
+
+            value = x.BMI.Value
+        })
+        .ToList();
+
+    // Serialize safely for HTML data attributes.
+    // JavaScript will read these attributes later.
+    var weightJson =
+        Newtonsoft.Json.JsonConvert.SerializeObject(
+            weightPoints);
+
+    var bmiJson =
+        Newtonsoft.Json.JsonConvert.SerializeObject(
+            bmiPoints);
+
+    // ===========================================
+    // NAVIGATION
+    // ===========================================
+
+    var profileUrl = Url.Action(
+        "Index",
+        "Profile",
+        new { area = "Client" });
+
+    var goalsUrl = Url.Action(
+        "Index",
+        "Goals",
+        new { area = "Client" });
 }
 
-<div class="container-fluid">
+<style>
 
-    <!-- Dashboard Heading -->
-    <div class="row">
-        <div class="col-md-12">
+    /* ==========================================
+       CLIENT DASHBOARD - BLACK & GREEN THEME
+       ========================================== */
 
-            <h2>Client Dashboard</h2>
+    .htd-dashboard {
+        width: 100%;
+        max-width: 1450px;
+        margin: 0 auto;
+        padding: 10px 0 35px;
+        color: #F3F4F6;
+    }
 
-            <p>
-                Welcome back,
-                <strong>@clientName</strong>!
-            </p>
+        .htd-dashboard,
+        .htd-dashboard * {
+            box-sizing: border-box;
+        }
 
-            <p>
-                Track your fitness journey and monitor
-                your health progress.
-            </p>
+    /* ==========================================
+       DASHBOARD HEADER
+       ========================================== */
 
-        </div>
-    </div>
+    .htd-header {
+        margin-bottom: 26px;
+    }
 
-    <!-- Health Statistics -->
-    <div class="ht-stat-grid">
+    .htd-eyebrow {
+        display: block;
+        margin-bottom: 9px;
+        color: #4ADE80;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 1.1px;
+    }
 
-        <!-- Current Weight -->
-        <div class="ht-stat-card">
+    .htd-title {
+        margin: 0 0 9px;
+        color: #F3F4F6;
+        font-size: 28px;
+        font-weight: 700;
+        line-height: 1.35;
+    }
 
-            <div class="ht-stat-label">
-                CURRENT WEIGHT
+    .htd-subtitle {
+        margin: 0;
+        color: #9CA3AF;
+        font-size: 13px;
+        line-height: 1.7;
+    }
+
+    /* ==========================================
+       STAT CARDS
+       ========================================== */
+
+    .htd-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 19px;
+    }
+
+    .htd-stat-card {
+        position: relative;
+        min-width: 0;
+        min-height: 158px;
+        padding: 21px;
+        background: #111713;
+        border: 1px solid #1F2A22;
+        border-radius: 11px;
+        transition: border-color 0.2s ease;
+    }
+
+        .htd-stat-card:hover {
+            border-color: #36543E;
+        }
+
+    .htd-stat-dot {
+        position: absolute;
+        top: 22px;
+        right: 21px;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #22C55E;
+    }
+
+    .htd-stat-dot-muted {
+        background: #6B7280;
+    }
+
+    .htd-stat-label {
+        margin-bottom: 15px;
+        padding-right: 15px;
+        color: #9CA3AF;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.8px;
+    }
+
+    .htd-stat-value {
+        color: #F3F4F6;
+        font-size: 29px;
+        font-weight: 700;
+        line-height: 1.2;
+    }
+
+    .htd-stat-unit {
+        margin-left: 3px;
+        color: #9CA3AF;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .htd-stat-description {
+        margin: 12px 0 0;
+        color: #9CA3AF;
+        font-size: 12px;
+        line-height: 1.65;
+    }
+
+    .htd-stat-description-green {
+        color: #4ADE80;
+    }
+
+    /* ==========================================
+       GOAL PROGRESS BAR
+       ========================================== */
+
+    .htd-goal-progress {
+        display: block;
+        width: 100%;
+        height: 8px;
+        margin-top: 14px;
+        border: none;
+        border-radius: 10px;
+        overflow: hidden;
+        appearance: none;
+        -webkit-appearance: none;
+        background: #27342B;
+        accent-color: #22C55E;
+    }
+
+        .htd-goal-progress::-webkit-progress-bar {
+            background: #27342B;
+            border-radius: 10px;
+        }
+
+        .htd-goal-progress::-webkit-progress-value {
+            background: #22C55E;
+            border-radius: 10px;
+        }
+
+        .htd-goal-progress::-moz-progress-bar {
+            background: #22C55E;
+            border-radius: 10px;
+        }
+
+    /* ==========================================
+       DASHBOARD MAIN GRID
+       ========================================== */
+
+    .htd-main-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.7fr) minmax(280px, 1fr);
+        gap: 18px;
+        margin-bottom: 18px;
+    }
+
+    .htd-panel {
+        min-width: 0;
+        padding: 23px;
+        background: #111713;
+        border: 1px solid #1F2A22;
+        border-radius: 11px;
+    }
+
+    .htd-panel-title {
+        margin: 0;
+        color: #F3F4F6;
+        font-size: 15px;
+        font-weight: 700;
+    }
+
+    .htd-panel-subtitle {
+        margin: 8px 0 0;
+        color: #9CA3AF;
+        font-size: 12px;
+        line-height: 1.65;
+    }
+
+    /* ==========================================
+       WEIGHT & BMI TREND CHART
+       ========================================== */
+
+    .htd-trend-panel {
+        display: flex;
+        flex-direction: column;
+        min-height: 350px;
+    }
+
+    .htd-chart-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+        margin-top: 20px;
+    }
+
+    .htd-chart-tab {
+        padding: 9px 15px;
+        background: #151F18;
+        color: #9CA3AF;
+        border: 1px solid #304535;
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+
+        .htd-chart-tab:hover {
+            color: #F3F4F6;
+            border-color: #22C55E;
+        }
+
+        .htd-chart-tab.active {
+            color: #4ADE80;
+            background: #1A3A25;
+            border-color: #22C55E;
+        }
+
+        .htd-chart-tab:focus-visible {
+            outline: 2px solid #4ADE80;
+            outline-offset: 3px;
+        }
+
+    .htd-chart-area {
+        position: relative;
+        width: 100%;
+        height: 220px;
+        margin-top: 20px;
+    }
+
+    .htd-chart-canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+
+        .htd-chart-canvas[hidden] {
+            display: none !important;
+        }
+
+    /* ==========================================
+       CHART EMPTY STATE
+       ========================================== */
+
+    .htd-chart-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        padding: 15px;
+        text-align: center;
+    }
+
+        .htd-chart-empty[hidden] {
+            display: none !important;
+        }
+
+    .htd-chart-empty-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 46px;
+        height: 46px;
+        margin-bottom: 14px;
+        background: #173221;
+        color: #4ADE80;
+        border: 1px solid #2A4A33;
+        border-radius: 12px;
+        font-size: 24px;
+    }
+
+    .htd-chart-empty-title {
+        margin: 0;
+        color: #E5E7EB;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .htd-chart-empty-text {
+        max-width: 360px;
+        margin: 9px 0 14px;
+        color: #9CA3AF;
+        font-size: 12px;
+        line-height: 1.7;
+    }
+
+    /* ==========================================
+       CHART SUMMARY
+       ========================================== */
+
+    .htd-trend-summary {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .htd-trend-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 12px;
+        background: #18261C;
+        color: #C8E7D1;
+        border: 1px solid #28432F;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    /* ==========================================
+       TODAY'S WORKOUT
+       ========================================== */
+
+    .htd-workout-panel {
+        display: flex;
+        flex-direction: column;
+        min-height: 350px;
+    }
+
+    .htd-section-label {
+        display: block;
+        margin-bottom: 17px;
+        color: #9CA3AF;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.8px;
+    }
+
+    .htd-workout-title {
+        margin: 0 0 11px;
+        color: #F3F4F6;
+        font-size: 21px;
+        font-weight: 700;
+        line-height: 1.4;
+    }
+
+    .htd-workout-description {
+        margin: 0;
+        color: #9CA3AF;
+        font-size: 12px;
+        line-height: 1.8;
+    }
+
+    .htd-workout-spacer {
+        flex: 1;
+        min-height: 25px;
+    }
+
+    /* ==========================================
+       BUTTON / LINKS
+       ========================================== */
+
+    .htd-action-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        align-self: flex-start;
+        padding: 11px 16px;
+        background: #15251A;
+        color: #4ADE80;
+        border: 1px solid #2D4834;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+
+        .htd-action-link:hover,
+        .htd-action-link:focus {
+            background: #1B3523;
+            border-color: #22C55E;
+            color: #F3F4F6;
+            text-decoration: none;
+        }
+
+    /* ==========================================
+       APPOINTMENTS
+       ========================================== */
+
+    .htd-appointment-panel {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+    }
+
+    .htd-appointment-title {
+        margin: 0 0 8px;
+        color: #F3F4F6;
+        font-size: 15px;
+        font-weight: 600;
+    }
+
+    .htd-appointment-description {
+        margin: 0;
+        color: #9CA3AF;
+        font-size: 12px;
+        line-height: 1.7;
+    }
+
+    .htd-status-label {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 13px;
+        color: #D1D5DB;
+        background: #1B2420;
+        border: 1px solid #334039;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    /* ==========================================
+       RESPONSIVE DESIGN
+       Double @@ is required in Razor CSS.
+       ========================================== */
+
+    @@media (max-width: 1100px) {
+
+        .htd-stats-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .htd-main-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .htd-workout-panel {
+            min-height: 220px;
+        }
+    }
+
+    @@media (max-width: 600px) {
+
+        .htd-title {
+            font-size: 23px;
+        }
+
+        .htd-stats-grid {
+            gap: 10px;
+        }
+
+        .htd-stat-card {
+            min-height: 145px;
+            padding: 15px;
+        }
+
+        .htd-stat-value {
+            font-size: 23px;
+        }
+
+        .htd-stat-label {
+            font-size: 10px;
+        }
+
+        .htd-stat-description {
+            font-size: 11px;
+        }
+
+        .htd-panel {
+            padding: 17px;
+        }
+
+        .htd-main-grid {
+            gap: 12px;
+        }
+
+        .htd-chart-area {
+            height: 195px;
+        }
+
+        .htd-appointment-panel {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
+
+
+<div class="htd-dashboard">
+
+    <!-- =======================================
+         DASHBOARD HEADER
+         ======================================= -->
+
+    <section class="htd-header">
+
+        <span class="htd-eyebrow">
+            YOUR FITNESS OVERVIEW
+        </span>
+
+        <h1 class="htd-title">
+            Welcome back, @clientName
+        </h1>
+
+        <p class="htd-subtitle">
+            Monitor your health metrics,
+            fitness goals, and daily activity
+            in one place.
+        </p>
+
+    </section>
+
+
+    <!-- =======================================
+         HEALTH STATISTICS
+         ======================================= -->
+
+    <section class="htd-stats-grid"
+             aria-label="Health statistics">
+
+        <!-- CURRENT WEIGHT -->
+
+        <div class="htd-stat-card">
+
+            <span class="htd-stat-dot"></span>
+
+            <div class="htd-stat-label">
+                WEIGHT
             </div>
 
-            <div class="ht-stat-value">
+            <div class="htd-stat-value">
                 @weightText
+                <span class="htd-stat-unit">KG</span>
             </div>
 
-            @if (hasWeight)
-            {
-                <p>Your current recorded weight</p>
-            }
-            else
-            {
-                <p>No weight recorded yet</p>
-            }
+            <p class="htd-stat-description">
+                @(hasWeight
+                    ? "Current recorded weight"
+                    : "Add your weight to your profile")
+            </p>
 
         </div>
+
 
         <!-- BMI -->
-        <div class="ht-stat-card">
 
-            <div class="ht-stat-label">
+        <div class="htd-stat-card">
+
+            <span class="htd-stat-dot"></span>
+
+            <div class="htd-stat-label">
                 BMI
             </div>
 
-            <div class="ht-stat-value">
+            <div class="htd-stat-value">
                 @bmiText
             </div>
 
-            @if (hasBMI)
-            {
-                <p>Calculated from your height and weight</p>
-            }
-            else
-            {
-                <p>Add your height and weight to calculate BMI</p>
-            }
-
-        </div>
-
-        <!-- Calories Burned -->
-        <div class="ht-stat-card">
-
-            <div class="ht-stat-label">
-                CALORIES BURNED
-            </div>
-
-            <div class="ht-stat-value">
-                -- kcal
-            </div>
-
-            <p>
-                Workout statistics will appear here
-                when connected.
+            <p class="htd-stat-description">
+                @(hasBmi
+                    ? "Based on your measurements"
+                    : "Height and weight required")
             </p>
 
         </div>
 
-        <!-- Goal Progress -->
-        <div class="ht-stat-card">
 
-            <div class="ht-stat-label">
-                GOAL PROGRESS
+        <!-- CALORIES -->
+
+        <div class="htd-stat-card">
+
+            <span class="htd-stat-dot htd-stat-dot-muted"></span>
+
+            <div class="htd-stat-label">
+                CALORIES
             </div>
 
-            <div class="ht-stat-value">
-                --%
+            <div class="htd-stat-value">
+                --
+                <span class="htd-stat-unit">
+                    KCAL
+                </span>
             </div>
 
-            <p>
-                Fitness goal progress will appear here
-                when connected.
+            <p class="htd-stat-description">
+                Calorie tracking not connected yet
             </p>
 
         </div>
 
-    </div>
 
-    <!-- Workout and Diet Section -->
-    <div class="row">
+        <!-- FITNESS GOAL -->
 
-        <!-- Today's Workout -->
-        <div class="col-md-6">
+        <div class="htd-stat-card">
 
-            <div class="ht-card">
+            <span class="htd-stat-dot"></span>
 
-                <h3 class="ht-card-title">
-                    Today's Workout
-                </h3>
+            <div class="htd-stat-label">
+                GOAL
+            </div>
 
-                <p>
-                    Your assigned workout information
-                    will appear here.
-                </p>
+            <div class="htd-stat-value">
+                @goalText
+            </div>
 
-                <p>
-                    View exercises, sets, repetitions,
-                    and workout schedules.
-                </p>
+            <p class="htd-stat-description htd-stat-description-green">
+
+                @if (totalGoals > 0)
+                {
+                    <span>
+                        @completedGoals of @totalGoals goals completed
+                    </span>
+                }
+                else
+                {
+                    <span>
+                        Create your first fitness goal
+                    </span>
+                }
+
+            </p>
+
+            @if (hasGoals)
+            {
+                <progress class="htd-goal-progress"
+                          value="@goalValue"
+                          max="100"
+                          aria-label="Average fitness goal progress">
+                </progress>
+            }
+
+        </div>
+
+    </section>
+
+
+    <!-- =======================================
+         CHART & WORKOUT
+         ======================================= -->
+
+    <section class="htd-main-grid">
+
+        <!-- WEIGHT & BMI TREND -->
+
+        <div class="htd-panel htd-trend-panel">
+
+            <h2 class="htd-panel-title">
+                Weight &amp; BMI Trend
+            </h2>
+
+            <p class="htd-panel-subtitle">
+                Your recorded health measurements over time
+            </p>
+
+
+            <!-- CHART OPTIONS -->
+
+            <div class="htd-chart-tabs"
+                 role="group"
+                 aria-label="Health measurement chart options">
+
+                <button type="button"
+                        id="htdWeightTab"
+                        class="htd-chart-tab active"
+                        aria-pressed="true">
+                    Weight (kg)
+                </button>
+
+                <button type="button"
+                        id="htdBmiTab"
+                        class="htd-chart-tab"
+                        aria-pressed="false">
+                    BMI
+                </button>
+
+            </div>
+
+
+            <!-- CHART CONTAINER -->
+
+            <div class="htd-chart-area">
+
+                <!--
+                    Important:
+                    Razor safely HTML-encodes the JSON
+                    into data attributes.
+
+                    JavaScript reads the attributes
+                    instead of containing Razor expressions.
+                -->
+
+                <canvas id="htdHealthChart"
+                        class="htd-chart-canvas"
+                        role="img"
+                        aria-label="Historical health measurement chart"
+                        data-weight-chart="@weightJson"
+                        data-bmi-chart="@bmiJson">
+                </canvas>
+
+
+                <!-- EMPTY STATE -->
+
+                <div id="htdChartEmpty"
+                     class="htd-chart-empty"
+                     aria-live="polite"
+                     hidden>
+
+                    <div class="htd-chart-empty-icon">
+                        &#8599;
+                    </div>
+
+                    <p id="htdChartEmptyTitle"
+                       class="htd-chart-empty-title">
+                        No measurements yet
+                    </p>
+
+                    <p id="htdChartEmptyText"
+                       class="htd-chart-empty-text">
+                        Update your profile to record
+                        your health measurements.
+                    </p>
+
+                    <a href="@profileUrl"
+                       class="htd-action-link">
+                        UPDATE PROFILE &rarr;
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- HEALTH SUMMARY -->
+
+            <div class="htd-trend-summary">
+
+                <span class="htd-trend-pill">
+                    Weight: @weightText KG
+                </span>
+
+                <span class="htd-trend-pill">
+                    BMI: @bmiText
+                </span>
 
             </div>
 
         </div>
 
-        <!-- Diet Plan -->
-        <div class="col-md-6">
 
-            <div class="ht-card">
+        <!-- TODAY'S WORKOUT -->
 
-                <h3 class="ht-card-title">
-                    My Diet Plan
-                </h3>
+        <div class="htd-panel htd-workout-panel">
 
-                <p>
-                    Your personalized diet plan
-                    will appear here.
-                </p>
+            <span class="htd-section-label">
+                TODAY'S WORKOUT
+            </span>
 
-                <p>
-                    Monitor calories, protein,
-                    carbohydrates, and fats.
-                </p>
+            <h2 class="htd-workout-title">
+                No workout loaded
+            </h2>
 
-            </div>
+            <p class="htd-workout-description">
+                Your trainer-assigned workout will
+                appear here when workout plan
+                information is connected.
+            </p>
 
-        </div>
+            <div class="htd-workout-spacer"></div>
 
-    </div>
-
-    <!-- Progress and Appointments -->
-    <div class="row">
-
-        <!-- Health Progress -->
-        <div class="col-md-6">
-
-            <div class="ht-card">
-
-                <h3 class="ht-card-title">
-                    Health Progress
-                </h3>
-
-                <p>
-                    Your health progress charts
-                    will appear here.
-                </p>
-
-                <p>
-                    Track weight changes, BMI trends,
-                    and fitness achievements.
-                </p>
-
-            </div>
+            <a href="@goalsUrl"
+               class="htd-action-link">
+                VIEW FITNESS GOALS &rarr;
+            </a>
 
         </div>
 
-        <!-- Upcoming Appointments -->
-        <div class="col-md-6">
+    </section>
 
-            <div class="ht-card">
 
-                <h3 class="ht-card-title">
-                    Upcoming Appointment
-                </h3>
+    <!-- =======================================
+         UPCOMING APPOINTMENT
+         ======================================= -->
 
-                <p>
-                    Your upcoming trainer appointments
-                    will appear here.
-                </p>
+    <section class="htd-panel htd-appointment-panel">
 
-                <p>
-                    View scheduled consultations
-                    and appointment updates.
-                </p>
+        <div>
 
-            </div>
+            <span class="htd-section-label">
+                UPCOMING APPOINTMENT
+            </span>
+
+            <h2 class="htd-appointment-title">
+                No appointment loaded
+            </h2>
+
+            <p class="htd-appointment-description">
+                Upcoming trainer consultations will
+                appear here when appointment information
+                is connected.
+            </p>
 
         </div>
 
-    </div>
+        <span class="htd-status-label">
+            Not available yet
+        </span>
+
+    </section>
 
 </div>
+
+
+<!-- ==========================================
+     CHART.JS
+     ========================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+
+<script>
+    (function () {
+
+        "use strict";
+
+        // =====================================
+        // GET HTML ELEMENTS
+        // =====================================
+
+        var canvas = document.getElementById(
+            "htdHealthChart"
+        );
+
+        var emptyPanel = document.getElementById(
+            "htdChartEmpty"
+        );
+
+        var emptyTitle = document.getElementById(
+            "htdChartEmptyTitle"
+        );
+
+        var emptyText = document.getElementById(
+            "htdChartEmptyText"
+        );
+
+        var weightTab = document.getElementById(
+            "htdWeightTab"
+        );
+
+        var bmiTab = document.getElementById(
+            "htdBmiTab"
+        );
+
+        if (
+            !canvas ||
+            !emptyPanel ||
+            !weightTab ||
+            !bmiTab
+        ) {
+            return;
+        }
+
+
+        // =====================================
+        // READ ACTUAL DATABASE MEASUREMENTS
+        // =====================================
+
+        // No Razor expressions are used
+        // directly inside JavaScript.
+
+        var weightData = [];
+        var bmiData = [];
+
+        try {
+
+            weightData = JSON.parse(
+                canvas.getAttribute(
+                    "data-weight-chart"
+                ) || "[]"
+            );
+
+            bmiData = JSON.parse(
+                canvas.getAttribute(
+                    "data-bmi-chart"
+                ) || "[]"
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Unable to read health chart data.",
+                error
+            );
+
+            weightData = [];
+            bmiData = [];
+        }
+
+
+        // =====================================
+        // CHART INSTANCE
+        // =====================================
+
+        var healthChart = null;
+
+
+        // =====================================
+        // SET ACTIVE TAB
+        // =====================================
+
+        function setActiveTab(isWeight) {
+
+            weightTab.classList.toggle(
+                "active",
+                isWeight
+            );
+
+            bmiTab.classList.toggle(
+                "active",
+                !isWeight
+            );
+
+            weightTab.setAttribute(
+                "aria-pressed",
+                isWeight ? "true" : "false"
+            );
+
+            bmiTab.setAttribute(
+                "aria-pressed",
+                isWeight ? "false" : "true"
+            );
+        }
+
+
+        // =====================================
+        // SHOW EMPTY MESSAGE
+        // =====================================
+
+        function showEmptyState(
+            title,
+            description
+        ) {
+
+            canvas.hidden = true;
+            emptyPanel.hidden = false;
+
+            if (emptyTitle) {
+                emptyTitle.textContent = title;
+            }
+
+            if (emptyText) {
+                emptyText.textContent = description;
+            }
+        }
+
+
+        // =====================================
+        // DISPLAY CHART
+        // =====================================
+
+        function showChart(type) {
+
+            var isWeight = type === "weight";
+
+            var selectedData = isWeight
+                ? weightData
+                : bmiData;
+
+            setActiveTab(isWeight);
+
+
+            // Destroy old chart when switching tabs.
+
+            if (healthChart !== null) {
+
+                healthChart.destroy();
+
+                healthChart = null;
+            }
+
+
+            // No saved measurements.
+
+            if (
+                !selectedData ||
+                selectedData.length === 0
+            ) {
+
+                showEmptyState(
+                    "No measurements yet",
+                    "Update your profile to record " +
+                    "measurements for this chart."
+                );
+
+                return;
+            }
+
+
+            // Check whether Chart.js loaded.
+
+            if (typeof Chart === "undefined") {
+
+                showEmptyState(
+                    "Chart temporarily unavailable",
+                    "The chart library could not load. " +
+                    "Check your internet connection " +
+                    "and refresh the page."
+                );
+
+                return;
+            }
+
+
+            // Show canvas and hide empty message.
+
+            canvas.hidden = false;
+            emptyPanel.hidden = true;
+
+
+            // Extract labels and values.
+
+            var labels = selectedData.map(
+                function (item) {
+                    return item.date;
+                }
+            );
+
+            var values = selectedData.map(
+                function (item) {
+                    return item.value;
+                }
+            );
+
+
+            // =====================================
+            // CREATE GREEN LINE CHART
+            // =====================================
+
+            healthChart = new Chart(canvas, {
+
+                type: "line",
+
+                data: {
+
+                    labels: labels,
+
+                    datasets: [
+
+                        {
+
+                            label: isWeight
+                                ? "Weight (kg)"
+                                : "Body Mass Index",
+
+                            data: values,
+
+                            borderColor: "#22C55E",
+
+                            backgroundColor:
+                                "rgba(34, 197, 94, 0.10)",
+
+                            pointBackgroundColor:
+                                "#4ADE80",
+
+                            pointBorderColor:
+                                "#22C55E",
+
+                            pointBorderWidth: 2,
+
+                            pointRadius: 5,
+
+                            pointHoverRadius: 7,
+
+                            borderWidth: 3,
+
+                            tension: 0.3,
+
+                            fill: true,
+
+                            spanGaps: false
+
+                        }
+
+                    ]
+                },
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+                    interaction: {
+
+                        mode: "nearest",
+
+                        intersect: false
+
+                    },
+
+                    plugins: {
+
+                        legend: {
+
+                            display: false
+
+                        },
+
+                        tooltip: {
+
+                            backgroundColor:
+                                "#111713",
+
+                            titleColor:
+                                "#F3F4F6",
+
+                            bodyColor:
+                                "#4ADE80",
+
+                            borderColor:
+                                "#35533D",
+
+                            borderWidth: 1,
+
+                            padding: 12,
+
+                            displayColors: false
+
+                        }
+
+                    },
+
+                    scales: {
+
+                        x: {
+
+                            ticks: {
+
+                                color: "#9CA3AF",
+
+                                maxRotation: 35,
+
+                                autoSkip: true,
+
+                                maxTicksLimit: 6
+
+                            },
+
+                            grid: {
+
+                                color: "#1F2A22"
+
+                            },
+
+                            border: {
+
+                                color: "#344638"
+
+                            }
+
+                        },
+
+                        y: {
+
+                            beginAtZero: false,
+
+                            ticks: {
+
+                                color: "#9CA3AF"
+
+                            },
+
+                            grid: {
+
+                                color: "#26342A"
+
+                            },
+
+                            border: {
+
+                                color: "#344638"
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            });
+
+        }
+
+
+        // =====================================
+        // WEIGHT TAB
+        // =====================================
+
+        weightTab.addEventListener(
+            "click",
+            function () {
+
+                showChart("weight");
+
+            }
+        );
+
+
+        // =====================================
+        // BMI TAB
+        // =====================================
+
+        bmiTab.addEventListener(
+            "click",
+            function () {
+
+                showChart("bmi");
+
+            }
+        );
+
+
+        // =====================================
+        // INITIAL CHART
+        // =====================================
+
+        showChart("weight");
+
+    })();
+</script>
