@@ -50,11 +50,10 @@
                                 <span class="ht-status ht-status-success">@client.AssignmentStatus</span>
                             </td>
                             <td>
-                                @* Client details is the next step; the button is shown but not yet active. *@
-                                <button type="button" class="btn btn-default" disabled
-                                        title="Client details - coming in the next step">
+                                <a class="btn btn-default"
+                                   href="@Url.Action("Details", "Clients", new { area = "Trainer", id = client.ClientUserId })">
                                     View Client
-                                </button>
+                                </a>
                             </td>
                         </tr>
                     }

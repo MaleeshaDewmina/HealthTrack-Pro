@@ -99,19 +99,19 @@
                     </li>
 
                     <li class="ht-nav-item">
-                        <a href="@Url.Action("Index", "Profile", new { area = "Client" })" class="ht-nav-link @(controller == "Profile" ? "active" : "")">
+                        <a href="#" class="ht-nav-link ht-nav-pending">
                             Profile
                         </a>
                     </li>
 
                     <li class="ht-nav-item">
-                        <a href="@Url.Action("Index", "Goals", new { area = "Client" })" class="ht-nav-link @(controller == "Goals" ? "active" : "")">
+                        <a href="#" class="ht-nav-link ht-nav-pending">
                             Goals
                         </a>
                     </li>
 
                     <li class="ht-nav-item">
-                        <a href="@Url.Action("Index", "Workout", new { area = "Client" })" class="ht-nav-link @(controller == "Workout" ? "active" : "")">
+                        <a href="#" class="ht-nav-link ht-nav-pending">
                             Workout
                         </a>
                     </li>
@@ -155,7 +155,12 @@
                     </li>
 
                     <li class="ht-nav-item">
-                        <a href="#" class="ht-nav-link ht-nav-pending">
+                        <a
+                            href="@Url.Action(
+                                "Index",
+                                "Clients",
+                                new { area = "Trainer" })"
+                            class="ht-nav-link @(controller == "Clients" ? "active" : "")">
                             Assigned Clients
                         </a>
                     </li>
