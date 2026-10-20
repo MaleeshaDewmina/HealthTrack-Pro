@@ -171,12 +171,14 @@
     <Compile Include="Areas\Client\Controllers\DietController.cs" />
     <Compile Include="Areas\Client\Controllers\GoalsController.cs" />
     <Compile Include="Areas\Client\Controllers\AiChatController.cs" />
+    <Compile Include="Areas\Client\Controllers\MealLogController.cs" />
     <Compile Include="Areas\Client\Controllers\ProfileController.cs" />
     <Compile Include="Areas\Client\Controllers\WorkoutController.cs" />
     <Compile Include="Areas\Client\Models\ClientDashboardViewModel.cs" />
     <Compile Include="Areas\Client\Models\ClientAiChatViewModel.cs" />
     <Compile Include="Areas\Client\Models\ClientDietViewModel.cs" />
     <Compile Include="Areas\Client\Models\ClientGoalsViewModel.cs" />
+    <Compile Include="Areas\Client\Models\ClientMealLogInputViewModel.cs" />
     <Compile Include="Areas\Client\Models\ClientProfileViewModel.cs" />
     <Compile Include="Areas\Client\Models\ClientWorkoutViewModel.cs" />
     <Compile Include="Controllers\AccountController.cs" />
@@ -281,8 +283,9 @@
     <Content Include="Areas\Client\Views\Goals\Index.cshtml" />
     <Content Include="Areas\Client\Views\AiChat\Index.cshtml" />
     <Content Include="Areas\Client\Views\Workout\Index.cshtml" />
-	<Content Include="Areas\Client\Views\Diet\Index.cshtml" />
+    <Content Include="Areas\Client\Views\Diet\Index.cshtml" />
     <Content Include="Areas\Client\Views\Workout\History.cshtml" />
+    <Content Include="Areas\Client\Views\MealLog\Index.cshtml" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />

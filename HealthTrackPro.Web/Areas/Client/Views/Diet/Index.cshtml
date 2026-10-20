@@ -39,6 +39,12 @@
         "Index",
         "Dashboard",
         new { area = "Client" });
+
+    // NEW: Meal Logging navigation URL
+    var mealLogUrl = Url.Action(
+        "Index",
+        "MealLog",
+        new { area = "Client" });
 }
 
 <style>
@@ -93,6 +99,37 @@
         font-size: 13px;
         line-height: 1.8;
     }
+
+    /* NEW: HEADER BUTTON GROUP */
+
+    .cd-header-actions {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .cd-meal-log-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 11px 19px;
+        border: 1px solid #22C55E;
+        border-radius: 10px;
+        background: #22C55E;
+        color: #061008;
+        font-size: 12px;
+        font-weight: 800;
+        text-decoration: none;
+        transition: background 0.2s;
+    }
+
+        .cd-meal-log-link:hover,
+        .cd-meal-log-link:focus {
+            background: #4ADE80;
+            color: #061008;
+            text-decoration: none;
+        }
 
     .cd-back-link {
         display: inline-flex;
@@ -549,6 +586,10 @@
         .cd-plan-name {
             font-size: 21px;
         }
+
+        .cd-header-actions {
+            width: 100%;
+        }
     }
 </style>
 
@@ -574,16 +615,29 @@
             </p>
         </div>
 
-        <a href="@dashboardUrl"
-           class="cd-back-link">
-            Back to Dashboard
-        </a>
+        <!-- NEW: DIET AND MEAL LOGGING NAVIGATION -->
+
+        <div class="cd-header-actions">
+
+            <a href="@mealLogUrl"
+               class="cd-meal-log-link">
+                Log Meals
+            </a>
+
+            <a href="@dashboardUrl"
+               class="cd-back-link">
+                Back to Dashboard
+            </a>
+
+        </div>
 
     </header>
 
     <!-- NUTRITION OVERVIEW -->
 
     <div class="cd-stats">
+
+        <!-- DAILY CALORIE TARGET -->
 
         <div class="cd-stat">
 
@@ -613,6 +667,8 @@
 
         </div>
 
+        <!-- PLANNED MEAL CALORIES -->
+
         <div class="cd-stat">
 
             <span class="cd-stat-label">
@@ -640,6 +696,8 @@
 
         </div>
 
+        <!-- MEALS IN ACTIVE PLAN -->
+
         <div class="cd-stat">
 
             <span class="cd-stat-label">
@@ -655,6 +713,8 @@
             </span>
 
         </div>
+
+        <!-- ASSIGNED DIET PLANS -->
 
         <div class="cd-stat">
 
@@ -758,12 +818,14 @@
             <div class="cd-empty">
 
                 <div class="cd-empty-icon">
+
                     <svg viewBox="0 0 24 24"
                          aria-hidden="true">
                         <path d="M4 3v7a3 3 0 0 0 6 0V3" />
                         <path d="M7 3v18" />
                         <path d="M17 21V3c-3 2-4 5-4 9h4" />
                     </svg>
+
                 </div>
 
                 <h3 class="cd-empty-title">
@@ -782,7 +844,7 @@
 
     </section>
 
-    <!-- MACRONUTRIENT TARGETS -->
+    <!-- DAILY MACRONUTRIENT TARGETS -->
 
     <section class="cd-card">
 
@@ -796,6 +858,8 @@
         </p>
 
         <div class="cd-macro-grid">
+
+            <!-- PROTEIN -->
 
             <div class="cd-macro">
 
@@ -823,6 +887,8 @@
 
             </div>
 
+            <!-- CARBOHYDRATES -->
+
             <div class="cd-macro">
 
                 <span class="cd-macro-label">
@@ -848,6 +914,8 @@
                 </span>
 
             </div>
+
+            <!-- FAT -->
 
             <div class="cd-macro">
 
@@ -886,6 +954,7 @@
         <div class="cd-card-heading">
 
             <div>
+
                 <h2 class="cd-section-title">
                     Your Meal Schedule
                 </h2>
@@ -895,6 +964,7 @@
                     Meals recommended in your active
                     trainer-assigned diet plan.
                 </p>
+
             </div>
 
             @if (totalMeals > 0)
@@ -941,6 +1011,8 @@
 
                         <div class="cd-meal-macros">
 
+                            <!-- PROTEIN -->
+
                             <div class="cd-meal-macro">
 
                                 <span class="cd-meal-macro-label">
@@ -956,6 +1028,8 @@
 
                             </div>
 
+                            <!-- CARBOHYDRATES -->
+
                             <div class="cd-meal-macro">
 
                                 <span class="cd-meal-macro-label">
@@ -970,6 +1044,8 @@
                                 </span>
 
                             </div>
+
+                            <!-- FAT -->
 
                             <div class="cd-meal-macro">
 
@@ -998,6 +1074,7 @@
             <div class="cd-empty">
 
                 <div class="cd-empty-icon">
+
                     <svg viewBox="0 0 24 24"
                          aria-hidden="true">
                         <rect x="3"
@@ -1008,6 +1085,7 @@
                         <path d="M8 2v4M16 2v4M3 10h18" />
                         <path d="M8 15h3M8 18h6" />
                     </svg>
+
                 </div>
 
                 <h3 class="cd-empty-title">
