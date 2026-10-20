@@ -171,10 +171,12 @@
     <Compile Include="Areas\Client\Controllers\GoalsController.cs" />
     <Compile Include="Areas\Client\Controllers\AiChatController.cs" />
     <Compile Include="Areas\Client\Controllers\ProfileController.cs" />
+    <Compile Include="Areas\Client\Controllers\WorkoutController.cs" />
     <Compile Include="Areas\Client\Models\ClientDashboardViewModel.cs" />
     <Compile Include="Areas\Client\Models\ClientAiChatViewModel.cs" />
     <Compile Include="Areas\Client\Models\ClientGoalsViewModel.cs" />
     <Compile Include="Areas\Client\Models\ClientProfileViewModel.cs" />
+    <Compile Include="Areas\Client\Models\ClientWorkoutViewModel.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -279,6 +281,7 @@
     <Content Include="Areas\Client\Views\Profile\Index.cshtml" />
     <Content Include="Areas\Client\Views\Goals\Index.cshtml" />
     <Content Include="Areas\Client\Views\AiChat\Index.cshtml" />
+    <Content Include="Areas\Client\Views\Workout\Index.cshtml" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />
