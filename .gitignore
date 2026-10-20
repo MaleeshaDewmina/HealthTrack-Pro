@@ -37,3 +37,6 @@ _ReSharper*/
 *.tmp
 *.temp
 ~$*
+
+# Locally uploaded client profile photos
+/HealthTrackPro.Web/App_Data/ClientProfilePhotos/
