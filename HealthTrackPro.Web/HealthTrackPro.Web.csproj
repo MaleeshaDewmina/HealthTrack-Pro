@@ -229,6 +229,8 @@
     <Compile Include="Models\Administration\AuditLog.cs" />
     <Compile Include="Areas\Client\Controllers\DashboardController.cs" />
     <Compile Include="Areas\Trainer\Controllers\DashboardController.cs" />
+    <Compile Include="Areas\Trainer\Controllers\ClientsController.cs" />
+    <Compile Include="Areas\Trainer\Models\TrainerClientViewModels.cs" />
     <Compile Include="Areas\Admin\Controllers\DashboardController.cs" />
     <Compile Include="Areas\Admin\Models\TrainerViewModels.cs" />
     <Compile Include="Areas\Admin\Controllers\TrainersController.cs" />
@@ -342,6 +344,7 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Areas\Client\Views\Dashboard\Index.cshtml" />
     <Content Include="Areas\Trainer\Views\Dashboard\Index.cshtml" />
+    <Content Include="Areas\Trainer\Views\Clients\Index.cshtml" />
     <Content Include="Areas\Admin\Views\Dashboard\Index.cshtml" />
     <Content Include="Areas\Client\Views\web.config" />
     <Content Include="Areas\Client\Views\_ViewStart.cshtml" />
