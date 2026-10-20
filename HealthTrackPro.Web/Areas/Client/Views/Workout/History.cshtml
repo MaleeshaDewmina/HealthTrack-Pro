@@ -1,0 +1,687 @@
+﻿
+@model List<HealthTrackPro.Web.Models.Workouts.WorkoutLog>
+@using System
+@using System.Linq
+@using HealthTrackPro.Web.Models.Workouts
+
+@{
+    ViewBag.Title = "Workout History";
+
+    var history = Model ?? new List<WorkoutLog>();
+
+    var activePlan =
+        ViewBag.ActivePlan as WorkoutPlan;
+
+    var ongoing =
+        history.FirstOrDefault(w => !w.IsCompleted);
+
+    var completed = history
+        .Where(w => w.IsCompleted)
+        .OrderByDescending(w => w.StartedAt)
+        .ToList();
+
+    int completedCount = completed.Count;
+
+    int totalMinutes = completed
+        .Where(w => w.DurationMinutes.HasValue)
+        .Sum(w => w.DurationMinutes.Value);
+
+    int totalCalories = completed
+        .Where(w => w.CaloriesBurned.HasValue)
+        .Sum(w => w.CaloriesBurned.Value);
+
+    var planUrl = Url.Action(
+        "Index", "Workout", new { area = "Client" });
+}
+
+<style>
+    .wh-page,
+    .wh-page * {
+        box-sizing: border-box;
+    }
+
+    .wh-page {
+        max-width: 1450px;
+        margin: 0 auto;
+        padding: 18px 0 50px;
+        color: #F3F4F6;
+    }
+
+    .wh-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 18px;
+        flex-wrap: wrap;
+        margin-bottom: 28px;
+    }
+
+    .wh-kicker {
+        display: block;
+        margin-bottom: 10px;
+        color: #4ADE80;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+    }
+
+    .wh-title {
+        margin: 0 0 9px;
+        font-size: 34px;
+        font-weight: 800;
+        color: #F8FAFC;
+    }
+
+    .wh-subtitle {
+        margin: 0;
+        color: #9CA3AF;
+        font-size: 13px;
+        line-height: 1.8;
+    }
+
+    .wh-btn {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        min-height: 44px;
+        padding: 10px 18px;
+        border: 1px solid #365340;
+        border-radius: 10px;
+        background: #17251B;
+        color: #E5F7E9;
+        font-size: 12px;
+        font-weight: 750;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+        .wh-btn:hover,
+        .wh-btn:focus {
+            color: #FFFFFF;
+            background: #213A28;
+            text-decoration: none;
+        }
+
+    .wh-btn-primary {
+        background: #22C55E;
+        border-color: #22C55E;
+        color: #06130A;
+    }
+
+        .wh-btn-primary:hover,
+        .wh-btn-primary:focus {
+            background: #4ADE80;
+            color: #06130A;
+        }
+
+    .wh-btn:disabled {
+        opacity: .55;
+        cursor: not-allowed;
+    }
+
+    .wh-card {
+        padding: 25px;
+        margin-bottom: 22px;
+        border: 1px solid #26392C;
+        border-radius: 16px;
+        background: #111713;
+    }
+
+    .wh-stats {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 23px;
+    }
+
+    .wh-stat {
+        padding: 22px;
+        border: 1px solid #26392C;
+        border-radius: 14px;
+        background: #111713;
+    }
+
+    .wh-stat-label {
+        display: block;
+        margin-bottom: 13px;
+        color: #9CA3AF;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .wh-stat-value {
+        color: #F3F4F6;
+        font-size: 30px;
+        font-weight: 800;
+    }
+
+    .wh-stat-unit {
+        color: #9CA3AF;
+        font-size: 12px;
+    }
+
+    .wh-section-title {
+        margin: 0 0 9px;
+        color: #F3F4F6;
+        font-size: 20px;
+        font-weight: 750;
+    }
+
+    .wh-section-desc {
+        margin: 0 0 22px;
+        color: #9CA3AF;
+        font-size: 12px;
+        line-height: 1.7;
+    }
+
+    .wh-active {
+        padding: 22px;
+        border: 1px solid #317346;
+        border-radius: 13px;
+        background: linear-gradient( 135deg, #173522, #0C1710 );
+    }
+
+    .wh-active-label {
+        display: inline-block;
+        margin-bottom: 12px;
+        color: #4ADE80;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .wh-active-name {
+        margin: 0 0 9px;
+        color: #F8FAFC;
+        font-size: 23px;
+        font-weight: 800;
+    }
+
+    .wh-muted {
+        color: #9CA3AF;
+        font-size: 12px;
+        line-height: 1.7;
+    }
+
+    .wh-form {
+        margin-top: 18px;
+    }
+
+    .wh-label {
+        display: block;
+        margin-bottom: 9px;
+        color: #D1E5D6;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .wh-page .wh-input,
+    .wh-page .wh-textarea {
+        display: block;
+        width: 100%;
+        max-width: none !important;
+        padding: 12px 14px;
+        border: 1px solid #304838;
+        border-radius: 10px;
+        background: #090F0B;
+        color: #F3F4F6;
+        font-size: 13px;
+        outline: none;
+    }
+
+        .wh-page .wh-input:focus,
+        .wh-page .wh-textarea:focus {
+            border-color: #22C55E;
+            box-shadow: 0 0 0 3px rgba(34,197,94,.12);
+        }
+
+    .wh-textarea {
+        min-height: 85px;
+        resize: vertical;
+    }
+
+    .wh-form-actions {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-top: 17px;
+    }
+
+    .wh-alert {
+        padding: 14px 16px;
+        margin-bottom: 20px;
+        border-radius: 11px;
+        font-size: 13px;
+    }
+
+    .wh-alert-success {
+        background: #12371F;
+        border: 1px solid #2B7440;
+        color: #BDF7CD;
+    }
+
+    .wh-alert-error {
+        background: #381A1D;
+        border: 1px solid #7C3039;
+        color: #FECACA;
+    }
+
+    .wh-history-list {
+        display: flex;
+        flex-direction: column;
+        gap: 13px;
+    }
+
+    .wh-history-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 18px;
+        flex-wrap: wrap;
+        padding: 20px;
+        border: 1px solid #293C2E;
+        border-radius: 12px;
+        background: #0B120D;
+    }
+
+    .wh-history-name {
+        margin: 0 0 8px;
+        color: #F3F4F6;
+        font-size: 16px;
+        font-weight: 750;
+    }
+
+    .wh-history-meta {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+    }
+
+    .wh-history-chip {
+        display: inline-flex;
+        padding: 7px 11px;
+        border: 1px solid #31513A;
+        border-radius: 8px;
+        background: #17271B;
+        color: #B9D8C2;
+        font-size: 11px;
+    }
+
+    .wh-badge {
+        padding: 7px 12px;
+        border-radius: 999px;
+        background: #1B4629;
+        border: 1px solid #357D49;
+        color: #86EFAC;
+        font-size: 11px;
+        font-weight: 750;
+    }
+
+    .wh-empty {
+        padding: 35px 20px;
+        border: 1px dashed #34503B;
+        border-radius: 12px;
+        text-align: center;
+        background: #0C140E;
+    }
+
+    .wh-empty-title {
+        margin: 0 0 9px;
+        color: #E5F7E9;
+        font-size: 17px;
+        font-weight: 750;
+    }
+
+    @@media (max-width: 750px) {
+        .wh-stats {
+            grid-template-columns: 1fr;
+        }
+
+        .wh-card {
+            padding: 18px;
+        }
+
+        .wh-title {
+            font-size: 28px;
+        }
+    }
+</style>
+
+<div class="wh-page">
+
+    <header class="wh-header">
+        <div>
+            <span class="wh-kicker">
+                Client / Workout Tracking
+            </span>
+
+            <h1 class="wh-title">
+                Workout History
+            </h1>
+
+            <p class="wh-subtitle">
+                Start your assigned workouts, complete
+                sessions and review your training history.
+            </p>
+        </div>
+
+        <a href="@planUrl" class="wh-btn">
+            View Workout Plan
+        </a>
+    </header>
+
+    @if (TempData["WorkoutSuccess"] != null)
+    {
+        <div class="wh-alert wh-alert-success" role="status">
+            @TempData["WorkoutSuccess"]
+        </div>
+    }
+
+    @if (TempData["WorkoutError"] != null)
+    {
+        <div class="wh-alert wh-alert-error" role="alert">
+            @TempData["WorkoutError"]
+        </div>
+    }
+
+    <!-- REAL WORKOUT STATISTICS -->
+
+    <div class="wh-stats">
+
+        <div class="wh-stat">
+            <span class="wh-stat-label">
+                COMPLETED WORKOUTS
+            </span>
+
+            <span class="wh-stat-value">
+                @completedCount
+            </span>
+        </div>
+
+        <div class="wh-stat">
+            <span class="wh-stat-label">
+                TOTAL WORKOUT TIME
+            </span>
+
+            <span class="wh-stat-value">
+                @totalMinutes
+            </span>
+
+            <span class="wh-stat-unit">
+                minutes
+            </span>
+        </div>
+
+        <div class="wh-stat">
+            <span class="wh-stat-label">
+                RECORDED CALORIES BURNED
+            </span>
+
+            <span class="wh-stat-value">
+                @totalCalories
+            </span>
+
+            <span class="wh-stat-unit">
+                kcal
+            </span>
+        </div>
+
+    </div>
+
+    <!-- CURRENT WORKOUT -->
+
+    <section class="wh-card">
+
+        <h2 class="wh-section-title">
+            Current Workout
+        </h2>
+
+        <p class="wh-section-desc">
+            Workouts are based on your trainer-assigned
+            active plan.
+        </p>
+
+        @if (ongoing != null)
+        {
+            <div class="wh-active">
+
+                <span class="wh-active-label">
+                    Session in Progress
+                </span>
+
+                <h3 class="wh-active-name">
+                    @(ongoing.WorkoutPlan != null
+                        ? ongoing.WorkoutPlan.Name
+                        : "Workout Session")
+                </h3>
+
+                <p class="wh-muted">
+                    Started:
+                    @ongoing.StartedAt.ToString(
+                        "dd MMM yyyy, hh:mm tt")
+                </p>
+
+                @if (!string.IsNullOrWhiteSpace(ongoing.Notes))
+                {
+                    <p class="wh-muted">
+                        Notes: @ongoing.Notes
+                    </p>
+                }
+
+                @using (Html.BeginForm(
+                    "Complete",
+                    "Workout",
+                    new { area = "Client" },
+                    FormMethod.Post,
+                    new { @class = "wh-form" }))
+                {
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden"
+                           name="workoutLogId"
+                           value="@ongoing.WorkoutLogId" />
+
+                    <label class="wh-label"
+                           for="caloriesBurned">
+                        Calories Burned (optional)
+                    </label>
+
+                    <input type="number"
+                           id="caloriesBurned"
+                           name="caloriesBurned"
+                           class="wh-input"
+                           min="0"
+                           max="5000"
+                           step="1"
+                           placeholder="Enter calories if known" />
+
+                    <p class="wh-muted"
+                       style="margin-top:9px">
+                        Leave blank if you did not
+                        measure calories burned.
+                    </p>
+
+                    <div class="wh-form-actions">
+                        <button type="submit"
+                                class="wh-btn wh-btn-primary">
+                            Complete Workout
+                        </button>
+                    </div>
+                }
+
+            </div>
+        }
+        else if (activePlan != null)
+        {
+            <div class="wh-active">
+
+                <span class="wh-active-label">
+                    Ready to Train
+                </span>
+
+                <h3 class="wh-active-name">
+                    @activePlan.Name
+                </h3>
+
+                @if (!string.IsNullOrWhiteSpace(
+                    activePlan.Description))
+                {
+                    <p class="wh-muted">
+                        @activePlan.Description
+                    </p>
+                }
+
+                @using (Html.BeginForm(
+                    "Start",
+                    "Workout",
+                    new { area = "Client" },
+                    FormMethod.Post,
+                    new { @class = "wh-form" }))
+                {
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden"
+                           name="workoutPlanId"
+                           value="@activePlan.WorkoutPlanId" />
+
+                    <label class="wh-label"
+                           for="workoutNotes">
+                        Workout Notes (optional)
+                    </label>
+
+                    <textarea id="workoutNotes"
+                              name="notes"
+                              class="wh-textarea"
+                              maxlength="500"
+                              placeholder="Any notes before starting?"></textarea>
+
+                    <div class="wh-form-actions">
+                        <button type="submit"
+                                class="wh-btn wh-btn-primary">
+                            Start Workout
+                        </button>
+                    </div>
+                }
+
+            </div>
+        }
+        else
+        {
+            <div class="wh-empty">
+
+                <h3 class="wh-empty-title">
+                    No Active Workout Plan
+                </h3>
+
+                <p class="wh-muted">
+                    Your trainer has not assigned
+                    an active workout plan yet.
+                    Once one is available, you can
+                    start tracking your sessions here.
+                </p>
+
+                <a href="@planUrl" class="wh-btn">
+                    View My Workout Plans
+                </a>
+
+            </div>
+        }
+
+    </section>
+
+    <!-- WORKOUT HISTORY -->
+
+    <section class="wh-card">
+
+        <h2 class="wh-section-title">
+            Completed Sessions
+        </h2>
+
+        <p class="wh-section-desc">
+            Your completed workouts are saved
+            in your account history.
+        </p>
+
+        @if (completed.Any())
+        {
+            <div class="wh-history-list">
+
+                @foreach (var workout in completed)
+                {
+                    <article class="wh-history-item">
+
+                        <div>
+
+                            <h3 class="wh-history-name">
+                                @(workout.WorkoutPlan != null
+                                    ? workout.WorkoutPlan.Name
+                                    : "Workout Session")
+                            </h3>
+
+                            <p class="wh-muted">
+                                @workout.StartedAt.ToString(
+                                    "dd MMM yyyy, hh:mm tt")
+                            </p>
+
+                            <div class="wh-history-meta">
+
+                                <span class="wh-history-chip">
+                                    Duration:
+                                    @(workout.DurationMinutes.HasValue
+                                        ? workout.DurationMinutes.Value.ToString() + " min"
+                                        : "Not recorded")
+                                </span>
+
+                                <span class="wh-history-chip">
+                                    Calories:
+                                    @(workout.CaloriesBurned.HasValue
+                                        ? workout.CaloriesBurned.Value.ToString() + " kcal"
+                                        : "Not recorded")
+                                </span>
+
+                            </div>
+
+                            @if (!string.IsNullOrWhiteSpace(
+                                workout.Notes))
+                            {
+                                <p class="wh-muted"
+                                   style="margin-top:12px">
+                                    Notes: @workout.Notes
+                                </p>
+                            }
+
+                        </div>
+
+                        <span class="wh-badge">
+                            Completed
+                        </span>
+
+                    </article>
+                }
+
+            </div>
+        }
+        else
+        {
+            <div class="wh-empty">
+
+                <h3 class="wh-empty-title">
+                    No Completed Workouts Yet
+                </h3>
+
+                <p class="wh-muted">
+                    Once you complete your first workout,
+                    it will appear here automatically.
+                </p>
+
+            </div>
+        }
+
+    </section>
+
+</div>
