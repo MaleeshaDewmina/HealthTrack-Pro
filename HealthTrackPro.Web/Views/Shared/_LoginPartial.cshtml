@@ -1,4 +1,45 @@
 ﻿@using Microsoft.AspNet.Identity
+@using System.Linq
+@using HealthTrackPro.Web.Models
+
+@{
+    var displayName = "";
+
+    if (Request.IsAuthenticated)
+    {
+        if (User.IsInRole("Administrator"))
+        {
+            displayName = "Administrator";
+        }
+        else
+        {
+            var userId = User.Identity.GetUserId();
+
+            using (var db = new ApplicationDbContext())
+            {
+                if (User.IsInRole("Client"))
+                {
+                    displayName = db.ClientProfiles
+                        .Where(c => c.UserId == userId)
+                        .Select(c => c.FullName)
+                        .FirstOrDefault();
+                }
+                else if (User.IsInRole("Trainer"))
+                {
+                    displayName = db.TrainerProfiles
+                        .Where(t => t.UserId == userId)
+                        .Select(t => t.FullName)
+                        .FirstOrDefault();
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(displayName))
+            {
+                displayName = User.Identity.GetUserName();
+            }
+        }
+    }
+}
 
 @if (Request.IsAuthenticated)
 {
@@ -18,7 +59,7 @@
         <div class="ht-account-menu">
 
             <span class="ht-account-email">
-                @User.Identity.GetUserName()
+                @displayName
             </span>
 
             <a
