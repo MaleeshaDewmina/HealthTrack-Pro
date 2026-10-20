@@ -59,3 +59,55 @@ namespace HealthTrackPro.Web.Areas.Trainer.Models
         }
     }
 }
+
+namespace HealthTrackPro.Web.Areas.Trainer.Models
+{
+    /// <summary>Client Details page: profile, goals, measurements and plans, all for one assigned client.</summary>
+    public class ClientDetailsViewModel
+    {
+        public ClientDetailsViewModel()
+        {
+            Goals = new List<ClientGoalRowViewModel>();
+            Measurements = new List<ClientMeasurementRowViewModel>();
+            WorkoutPlans = new List<ClientPlanRowViewModel>();
+            DietPlans = new List<ClientPlanRowViewModel>();
+        }
+
+        public string ClientUserId { get; set; }
+        public string FullName { get; set; }
+        public string PrimaryGoal { get; set; }
+        public decimal? CurrentWeightKg { get; set; }
+        public decimal? HeightCm { get; set; }
+        public decimal? Bmi { get; set; }
+
+        public List<ClientGoalRowViewModel> Goals { get; set; }
+        public List<ClientMeasurementRowViewModel> Measurements { get; set; }
+        public List<ClientPlanRowViewModel> WorkoutPlans { get; set; }
+        public List<ClientPlanRowViewModel> DietPlans { get; set; }
+    }
+
+    public class ClientGoalRowViewModel
+    {
+        public string Title { get; set; }
+        public string GoalType { get; set; }
+        public decimal? CurrentValue { get; set; }
+        public decimal? TargetValue { get; set; }
+        public decimal ProgressPercent { get; set; }
+        public bool IsCompleted { get; set; }
+    }
+
+    public class ClientMeasurementRowViewModel
+    {
+        public DateTime RecordedAt { get; set; }
+        public decimal? WeightKg { get; set; }
+        public decimal? Bmi { get; set; }
+        public int? Steps { get; set; }
+    }
+
+    public class ClientPlanRowViewModel
+    {
+        public string Name { get; set; }
+        public string Detail { get; set; }
+        public bool IsActive { get; set; }
+    }
+}

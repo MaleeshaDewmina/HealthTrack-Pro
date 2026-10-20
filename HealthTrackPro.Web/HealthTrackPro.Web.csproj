@@ -345,6 +345,7 @@
     <Content Include="Areas\Client\Views\Dashboard\Index.cshtml" />
     <Content Include="Areas\Trainer\Views\Dashboard\Index.cshtml" />
     <Content Include="Areas\Trainer\Views\Clients\Index.cshtml" />
+    <Content Include="Areas\Trainer\Views\Clients\Details.cshtml" />
     <Content Include="Areas\Admin\Views\Dashboard\Index.cshtml" />
     <Content Include="Areas\Client\Views\web.config" />
     <Content Include="Areas\Client\Views\_ViewStart.cshtml" />
