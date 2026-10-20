@@ -1,33 +1,610 @@
 ﻿@{
-    ViewBag.Title = "Home Page";
+    ViewBag.Title = "HealthTrack";
 }
 
-<main>
-    <section class="row" aria-labelledby="aspnetTitle">
-        <h1 id="title">ASP.NET</h1>
-        <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-        <p><a href="https://asp.net" class="btn btn-primary btn-md">Learn more &raquo;</a></p>
+<style>
+    .ht-home {
+        padding: 28px 0 20px;
+    }
+
+    .ht-home-hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr);
+        gap: 42px;
+        align-items: center;
+        min-height: 470px;
+        padding: 48px 0 56px;
+    }
+
+    .ht-home-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 18px;
+        padding: 7px 12px;
+        border: 1px solid rgba(34, 197, 94, 0.28);
+        border-radius: 999px;
+        background: rgba(34, 197, 94, 0.08);
+        color: var(--ht-green-light);
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .ht-home-eyebrow-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--ht-green);
+        box-shadow: 0 0 14px rgba(34, 197, 94, 0.7);
+    }
+
+    .ht-home-title {
+        max-width: 760px;
+        margin: 0 0 20px;
+        color: var(--ht-text);
+        font-size: clamp(44px, 6vw, 72px);
+        font-weight: 850;
+        line-height: 0.98;
+        letter-spacing: -2.5px;
+    }
+
+    .ht-home-title span {
+        color: var(--ht-green);
+    }
+
+    .ht-home-description {
+        max-width: 650px;
+        margin: 0 0 30px;
+        color: var(--ht-muted);
+        font-size: 17px;
+        line-height: 1.75;
+    }
+
+    .ht-home-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 34px;
+    }
+
+    .ht-home-actions .btn {
+        min-width: 145px;
+        padding: 12px 20px;
+        border-radius: 9px;
+        font-size: 14px;
+    }
+
+    .ht-home-trust {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 24px;
+        color: var(--ht-muted);
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .ht-home-trust span::before {
+        content: "✓";
+        margin-right: 7px;
+        color: var(--ht-green-light);
+        font-weight: 800;
+    }
+
+    .ht-home-preview {
+        position: relative;
+        padding: 26px;
+        overflow: hidden;
+        border: 1px solid var(--ht-border);
+        border-radius: 20px;
+        background:
+            linear-gradient(
+                145deg,
+                rgba(34, 197, 94, 0.09),
+                transparent 40%
+            ),
+            var(--ht-surface);
+    }
+
+    .ht-home-preview::after {
+        content: "";
+        position: absolute;
+        width: 190px;
+        height: 190px;
+        right: -70px;
+        top: -70px;
+        border-radius: 50%;
+        background: rgba(34, 197, 94, 0.08);
+        filter: blur(4px);
+    }
+
+    .ht-home-preview-label {
+        position: relative;
+        z-index: 1;
+        margin-bottom: 20px;
+        color: var(--ht-muted);
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .ht-home-preview-heading {
+        position: relative;
+        z-index: 1;
+        margin: 0 0 26px;
+        font-size: 24px;
+        font-weight: 750;
+    }
+
+    .ht-home-preview-heading span {
+        color: var(--ht-green-light);
+    }
+
+    .ht-home-mini-grid {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .ht-home-mini-card {
+        padding: 18px;
+        border: 1px solid var(--ht-border);
+        border-radius: 12px;
+        background: rgba(8, 11, 9, 0.72);
+    }
+
+    .ht-home-mini-label {
+        color: var(--ht-muted);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.7px;
+        text-transform: uppercase;
+    }
+
+    .ht-home-mini-value {
+        margin-top: 8px;
+        color: var(--ht-text);
+        font-size: 23px;
+        font-weight: 800;
+    }
+
+    .ht-home-mini-value span {
+        color: var(--ht-green-light);
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .ht-home-section {
+        padding: 64px 0 20px;
+    }
+
+    .ht-home-section-header {
+        max-width: 700px;
+        margin-bottom: 28px;
+    }
+
+    .ht-home-section-kicker {
+        margin-bottom: 8px;
+        color: var(--ht-green);
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+    }
+
+    .ht-home-section-title {
+        margin: 0 0 10px;
+        font-size: 30px;
+        font-weight: 780;
+    }
+
+    .ht-home-section-copy {
+        margin: 0;
+        line-height: 1.7;
+    }
+
+    .ht-home-feature-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .ht-home-feature {
+        min-height: 210px;
+        padding: 24px;
+        border: 1px solid var(--ht-border);
+        border-radius: 14px;
+        background: var(--ht-surface);
+        transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .ht-home-feature:hover {
+        transform: translateY(-3px);
+        border-color: rgba(34, 197, 94, 0.4);
+    }
+
+    .ht-home-feature-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 42px;
+        height: 42px;
+        margin-bottom: 18px;
+        border: 1px solid rgba(34, 197, 94, 0.25);
+        border-radius: 10px;
+        background: rgba(34, 197, 94, 0.09);
+        color: var(--ht-green-light);
+        font-size: 18px;
+        font-weight: 800;
+    }
+
+    .ht-home-feature h3 {
+        margin: 0 0 10px;
+        font-size: 17px;
+    }
+
+    .ht-home-feature p {
+        margin: 0;
+        font-size: 13px;
+        line-height: 1.7;
+    }
+
+    .ht-home-roles {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .ht-home-role {
+        padding: 26px;
+        border: 1px solid var(--ht-border);
+        border-radius: 14px;
+        background: #0D120E;
+    }
+
+    .ht-home-role-badge {
+        display: inline-block;
+        margin-bottom: 16px;
+        padding: 5px 9px;
+        border-radius: 999px;
+        background: rgba(34, 197, 94, 0.11);
+        color: var(--ht-green-light);
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+    }
+
+    .ht-home-role h3 {
+        margin: 0 0 9px;
+        font-size: 18px;
+    }
+
+    .ht-home-role p {
+        margin: 0;
+        font-size: 13px;
+        line-height: 1.7;
+    }
+
+    .ht-home-cta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        margin-top: 66px;
+        padding: 34px;
+        border: 1px solid rgba(34, 197, 94, 0.25);
+        border-radius: 16px;
+        background:
+            linear-gradient(
+                100deg,
+                rgba(34, 197, 94, 0.10),
+                transparent 55%
+            ),
+            var(--ht-surface);
+    }
+
+    .ht-home-cta h2 {
+        margin: 0 0 8px;
+        font-size: 24px;
+    }
+
+    .ht-home-cta p {
+        margin: 0;
+    }
+
+    .ht-home-cta .btn {
+        flex-shrink: 0;
+        padding: 11px 20px;
+    }
+
+    @@media (max-width: 900px) {
+        .ht-home-hero {
+            grid-template-columns: 1fr;
+            min-height: auto;
+        }
+
+        .ht-home-preview {
+            max-width: 620px;
+        }
+
+        .ht-home-feature-grid,
+        .ht-home-roles {
+            grid-template-columns: 1fr;
+        }
+
+        .ht-home-cta {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+    }
+
+    @@media (max-width: 520px) {
+        .ht-home {
+            padding-top: 0;
+        }
+
+        .ht-home-hero {
+            padding-top: 34px;
+        }
+
+        .ht-home-title {
+            font-size: 42px;
+        }
+
+        .ht-home-mini-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .ht-home-actions .btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="ht-home">
+
+    <section class="ht-home-hero">
+
+        <div>
+            <div class="ht-home-eyebrow">
+                <span class="ht-home-eyebrow-dot"></span>
+                Personal health and fitness management
+            </div>
+
+            <h1 class="ht-home-title">
+                Build better habits.<br />
+                <span>Track real progress.</span>
+            </h1>
+
+            <p class="ht-home-description">
+                HealthTrack brings your goals, health measurements,
+                workouts, nutrition and trainer support together in one
+                secure platform designed around measurable progress.
+            </p>
+
+            <div class="ht-home-actions">
+                <a
+                    href="@Url.Action("Register", "Account", new { area = "" })"
+                    class="btn btn-primary">
+                    Create Account
+                </a>
+
+                <a
+                    href="@Url.Action("Login", "Account", new { area = "" })"
+                    class="btn btn-default">
+                    Sign In
+                </a>
+            </div>
+
+            <div class="ht-home-trust">
+                <span>Role-based access</span>
+                <span>Personal progress tracking</span>
+                <span>Trainer collaboration</span>
+            </div>
+        </div>
+
+        <div class="ht-home-preview">
+            <div class="ht-home-preview-label">
+                Your health at a glance
+            </div>
+
+            <h2 class="ht-home-preview-heading">
+                One place for your
+                <span>daily progress.</span>
+            </h2>
+
+            <div class="ht-home-mini-grid">
+                <div class="ht-home-mini-card">
+                    <div class="ht-home-mini-label">
+                        Goals
+                    </div>
+                    <div class="ht-home-mini-value">
+                        Track
+                        <span>progress</span>
+                    </div>
+                </div>
+
+                <div class="ht-home-mini-card">
+                    <div class="ht-home-mini-label">
+                        Workouts
+                    </div>
+                    <div class="ht-home-mini-value">
+                        Train
+                        <span>smarter</span>
+                    </div>
+                </div>
+
+                <div class="ht-home-mini-card">
+                    <div class="ht-home-mini-label">
+                        Nutrition
+                    </div>
+                    <div class="ht-home-mini-value">
+                        Plan
+                        <span>better</span>
+                    </div>
+                </div>
+
+                <div class="ht-home-mini-card">
+                    <div class="ht-home-mini-label">
+                        Health
+                    </div>
+                    <div class="ht-home-mini-value">
+                        Measure
+                        <span>change</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </section>
 
-    <div class="row">
-        <section class="col-md-4" aria-labelledby="gettingStartedTitle">
-            <h2 id="gettingStartedTitle">Getting started</h2>
-            <p>
-                ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-                enables a clean separation of concerns and gives you full control over markup
-                for enjoyable, agile development.
+
+    <section class="ht-home-section">
+
+        <div class="ht-home-section-header">
+            <div class="ht-home-section-kicker">
+                Everything connected
+            </div>
+
+            <h2 class="ht-home-section-title">
+                Your fitness journey, organised.
+            </h2>
+
+            <p class="ht-home-section-copy">
+                HealthTrack keeps the information that matters together
+                so clients and trainers can make better decisions from
+                consistent, up-to-date progress data.
             </p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="librariesTitle">
-            <h2 id="librariesTitle">Get more libraries</h2>
-            <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="hostingTitle">
-            <h2 id="hostingTitle">Web Hosting</h2>
-            <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-        </section>
-    </div>
-</main>
+        </div>
+
+        <div class="ht-home-feature-grid">
+
+            <article class="ht-home-feature">
+                <div class="ht-home-feature-icon">01</div>
+                <h3>Goals &amp; Progress</h3>
+                <p>
+                    Create measurable fitness goals, update progress and
+                    monitor health measurements over time.
+                </p>
+            </article>
+
+            <article class="ht-home-feature">
+                <div class="ht-home-feature-icon">02</div>
+                <h3>Workout Planning</h3>
+                <p>
+                    Follow structured workout plans and exercises assigned
+                    by your trainer for a focused training experience.
+                </p>
+            </article>
+
+            <article class="ht-home-feature">
+                <div class="ht-home-feature-icon">03</div>
+                <h3>Diet &amp; Nutrition</h3>
+                <p>
+                    Keep nutrition plans and meal information alongside
+                    the rest of your fitness activity.
+                </p>
+            </article>
+
+            <article class="ht-home-feature">
+                <div class="ht-home-feature-icon">04</div>
+                <h3>Health Metrics</h3>
+                <p>
+                    Record key measurements such as weight and BMI and
+                    view meaningful changes across your journey.
+                </p>
+            </article>
+
+            <article class="ht-home-feature">
+                <div class="ht-home-feature-icon">05</div>
+                <h3>Appointments</h3>
+                <p>
+                    Coordinate trainer appointments through a structured
+                    request and management workflow.
+                </p>
+            </article>
+
+            <article class="ht-home-feature">
+                <div class="ht-home-feature-icon">06</div>
+                <h3>Secure Accounts</h3>
+                <p>
+                    Role-based access separates client, trainer and
+                    administration responsibilities throughout the system.
+                </p>
+            </article>
+
+        </div>
+
+    </section>
+
+
+    <section class="ht-home-section">
+
+        <div class="ht-home-section-header">
+            <div class="ht-home-section-kicker">
+                Built for every role
+            </div>
+
+            <h2 class="ht-home-section-title">
+                One platform. Three focused experiences.
+            </h2>
+        </div>
+
+        <div class="ht-home-roles">
+
+            <article class="ht-home-role">
+                <span class="ht-home-role-badge">Client</span>
+                <h3>Own your progress</h3>
+                <p>
+                    Manage your profile, goals, health data and assigned
+                    fitness plans from a personal dashboard.
+                </p>
+            </article>
+
+            <article class="ht-home-role">
+                <span class="ht-home-role-badge">Trainer</span>
+                <h3>Guide with context</h3>
+                <p>
+                    Work with assigned clients, create plans and manage
+                    appointments using the client's fitness context.
+                </p>
+            </article>
+
+            <article class="ht-home-role">
+                <span class="ht-home-role-badge">Administrator</span>
+                <h3>Keep the platform organised</h3>
+                <p>
+                    Manage users, trainer assignments, operational records
+                    and system-level reporting through controlled access.
+                </p>
+            </article>
+
+        </div>
+
+    </section>
+
+
+    <section class="ht-home-cta">
+
+        <div>
+            <h2>Ready to start tracking?</h2>
+            <p>
+                Create your HealthTrack account and build a clearer view
+                of your health and fitness progress.
+            </p>
+        </div>
+
+        <a
+            href="@Url.Action("Register", "Account", new { area = "" })"
+            class="btn btn-primary">
+            Get Started
+        </a>
+
+    </section>
+
+</div>
