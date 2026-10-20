@@ -279,6 +279,8 @@
     <Content Include="Areas\Client\Views\Goals\Index.cshtml" />
     <Content Include="Areas\Client\Views\AiChat\Index.cshtml" />
     <Content Include="Areas\Client\Views\Workout\Index.cshtml" />
+	<Content Include="Areas\Client\Views\Workout\History.cshtml" />
+    <Content Include="Areas\Client\Views\Workout\History.cshtml" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />
