@@ -1,0 +1,952 @@
+﻿
+@model HealthTrackPro.Web.Areas.Client.Models.ClientProgressViewModel
+
+@using System
+@using System.Linq
+@using System.Collections.Generic
+@using System.Web.Helpers
+@using HealthTrackPro.Web.Models.Fitness
+
+@{
+    ViewBag.Title = "Progress & Analytics";
+
+    var metrics = Model != null && Model.Metrics != null
+        ? Model.Metrics.OrderByDescending(m => m.RecordedAt).ToList()
+        : new List<HealthMetric>();
+
+    var goals = Model != null && Model.Goals != null
+        ? Model.Goals
+        : new List<FitnessGoal>();
+
+    var latestWeight = metrics.FirstOrDefault(m => m.WeightKg.HasValue);
+    var latestBmi = metrics.FirstOrDefault(m => m.CalculateBMI().HasValue);
+    var latestSteps = metrics.FirstOrDefault(m => m.Steps.HasValue);
+    var latestCalories = metrics.FirstOrDefault(m => m.CaloriesBurned.HasValue);
+    var latestSleep = metrics.FirstOrDefault(m => m.SleepHours.HasValue);
+    var latestWater = metrics.FirstOrDefault(m => m.WaterLitres.HasValue);
+
+    var weightHistory = metrics
+        .Where(m => m.WeightKg.HasValue)
+        .OrderBy(m => m.RecordedAt)
+        .ToList();
+
+    var bmiHistory = metrics
+        .Where(m => m.CalculateBMI().HasValue)
+        .OrderBy(m => m.RecordedAt)
+        .ToList();
+
+    var activeGoals = goals.Where(g => !g.IsCompleted).ToList();
+    var completedGoals = goals.Count(g => g.IsCompleted);
+
+    var weightLabels = weightHistory
+        .Select(m => m.RecordedAt.ToString("dd MMM"))
+        .ToList();
+
+    var weightValues = weightHistory
+        .Select(m => m.WeightKg.Value)
+        .ToList();
+
+    var bmiLabels = bmiHistory
+        .Select(m => m.RecordedAt.ToString("dd MMM"))
+        .ToList();
+
+    var bmiValues = bmiHistory
+        .Select(m => m.CalculateBMI().Value)
+        .ToList();
+
+    var chartData = new
+    {
+        weightLabels = weightLabels,
+        weightValues = weightValues,
+        bmiLabels = bmiLabels,
+        bmiValues = bmiValues
+    };
+
+    var chartJson = Json.Encode(chartData);
+
+    var dashboardUrl = Url.Action(
+        "Index", "Dashboard", new { area = "Client" });
+
+    var goalsUrl = Url.Action(
+        "Index", "Goals", new { area = "Client" });
+}
+
+<style>
+    #ht-progress,
+    #ht-progress * {
+        box-sizing: border-box;
+    }
+
+    #ht-progress {
+        color: #F3F4F6;
+        padding: 18px 4px 55px;
+    }
+
+        #ht-progress .hp-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 18px;
+            margin-bottom: 26px;
+        }
+
+        #ht-progress .hp-eyebrow {
+            display: block;
+            color: #4ADE80;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            margin-bottom: 9px;
+            text-transform: uppercase;
+        }
+
+        #ht-progress h1 {
+            color: #F3F4F6;
+            font-size: 32px;
+            font-weight: 800;
+            margin: 0 0 9px;
+        }
+
+        #ht-progress .hp-subtitle {
+            color: #9CA3AF;
+            font-size: 13px;
+            line-height: 1.8;
+            margin: 0;
+        }
+
+        #ht-progress .hp-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 11px 16px;
+            border: 1px solid #304435;
+            background: #111713;
+            color: #D1D5DB;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 750;
+        }
+
+            #ht-progress .hp-link:hover {
+                color: #4ADE80;
+                border-color: #22C55E;
+                text-decoration: none;
+            }
+
+        #ht-progress .hp-stats {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 15px;
+            margin-bottom: 22px;
+        }
+
+        #ht-progress .hp-card,
+        #ht-progress .hp-panel {
+            background: #111713;
+            border: 1px solid #1F2A22;
+            border-radius: 16px;
+            min-width: 0;
+        }
+
+        #ht-progress .hp-card {
+            padding: 22px;
+        }
+
+        #ht-progress .hp-stat-label {
+            color: #9CA3AF;
+            font-size: 12px;
+            font-weight: 650;
+            display: block;
+            margin-bottom: 19px;
+        }
+
+        #ht-progress .hp-stat-value {
+            color: #F3F4F6;
+            font-size: 27px;
+            font-weight: 800;
+        }
+
+        #ht-progress .hp-unit {
+            color: #9CA3AF;
+            font-size: 12px;
+            font-weight: 500;
+            margin-left: 4px;
+        }
+
+        #ht-progress .hp-stat-note {
+            display: block;
+            color: #718577;
+            font-size: 11px;
+            margin-top: 10px;
+        }
+
+        #ht-progress .hp-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr);
+            gap: 20px;
+            align-items: start;
+            margin-bottom: 22px;
+        }
+
+        #ht-progress .hp-panel {
+            padding: 25px;
+            margin-bottom: 22px;
+        }
+
+        #ht-progress .hp-panel-title {
+            color: #F3F4F6;
+            font-size: 19px;
+            font-weight: 800;
+            margin: 0 0 7px;
+        }
+
+        #ht-progress .hp-panel-desc {
+            color: #9CA3AF;
+            font-size: 12px;
+            line-height: 1.7;
+            margin: 0 0 22px;
+        }
+
+        #ht-progress .hp-chart-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        #ht-progress .hp-chart-tab {
+            background: #0C120E;
+            color: #A5B4A9;
+            border: 1px solid #2A3D30;
+            border-radius: 9px;
+            padding: 10px 16px;
+            font-size: 12px;
+            font-weight: 750;
+            cursor: pointer;
+        }
+
+            #ht-progress .hp-chart-tab.active {
+                background: #193A23;
+                border-color: #22C55E;
+                color: #86EFAC;
+            }
+
+        #ht-progress .hp-chart-area {
+            height: 285px;
+            position: relative;
+        }
+
+        #ht-progress .hp-empty {
+            padding: 35px 20px;
+            border: 1px dashed #31503A;
+            border-radius: 12px;
+            background: #0C150F;
+            text-align: center;
+            color: #9CA3AF;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        #ht-progress .hp-field {
+            margin-bottom: 17px;
+        }
+
+        #ht-progress .hp-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #D1D5DB;
+            font-size: 12px;
+            font-weight: 750;
+        }
+
+        #ht-progress .hp-input {
+            display: block;
+            width: 100% !important;
+            max-width: none !important;
+            padding: 12px 13px;
+            background: #0B100D;
+            border: 1px solid #2C3D30;
+            border-radius: 10px;
+            color: #F3F4F6;
+            font-size: 13px;
+            outline: none;
+        }
+
+            #ht-progress .hp-input:focus {
+                border-color: #22C55E;
+            }
+
+        #ht-progress .hp-form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0 13px;
+        }
+
+        #ht-progress .hp-button {
+            width: 100%;
+            background: #22C55E;
+            border: none;
+            border-radius: 10px;
+            padding: 14px;
+            color: #071209;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+            #ht-progress .hp-button:hover {
+                background: #4ADE80;
+            }
+
+        #ht-progress .hp-validation {
+            color: #FCA5A5;
+            font-size: 12px;
+            margin: 8px 0;
+        }
+
+        #ht-progress .hp-success {
+            background: #10321B;
+            border: 1px solid #205D32;
+            color: #86EFAC;
+            padding: 13px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 12px;
+        }
+
+        #ht-progress .hp-goal {
+            padding: 18px 0;
+            border-top: 1px solid #243329;
+        }
+
+            #ht-progress .hp-goal:first-child {
+                border-top: none;
+                padding-top: 0;
+            }
+
+        #ht-progress .hp-goal-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: center;
+        }
+
+        #ht-progress .hp-goal-title {
+            color: #F3F4F6;
+            font-size: 13px;
+            font-weight: 750;
+            overflow-wrap: anywhere;
+        }
+
+        #ht-progress .hp-goal-percent {
+            color: #4ADE80;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        #ht-progress .hp-goal-track {
+            height: 7px;
+            border-radius: 10px;
+            background: #29372D;
+            margin-top: 13px;
+            overflow: hidden;
+        }
+
+        #ht-progress .hp-goal-fill {
+            height: 100%;
+            background: #22C55E;
+            border-radius: 10px;
+        }
+
+        #ht-progress .hp-goal-note {
+            margin-top: 9px;
+            color: #839488;
+            font-size: 11px;
+        }
+
+        #ht-progress .hp-history {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+            #ht-progress .hp-history th {
+                padding: 13px 10px;
+                text-align: left;
+                color: #8FA194;
+                font-size: 11px;
+                font-weight: 800;
+                border-bottom: 1px solid #2A3D30;
+            }
+
+            #ht-progress .hp-history td {
+                padding: 15px 10px;
+                color: #D1D5DB;
+                font-size: 12px;
+                border-bottom: 1px solid #223026;
+            }
+
+        #ht-progress .hp-history-wrap {
+            overflow-x: auto;
+        }
+
+        #ht-progress .hp-history td:first-child {
+            white-space: nowrap;
+        }
+
+    @@media (max-width: 1100px) {
+        #ht-progress .hp-stats {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        #ht-progress .hp-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 600px) {
+        #ht-progress h1 {
+            font-size: 26px;
+        }
+
+        #ht-progress .hp-stats {
+            gap: 10px;
+        }
+
+        #ht-progress .hp-card,
+        #ht-progress .hp-panel {
+            padding: 17px;
+        }
+
+        #ht-progress .hp-stat-value {
+            font-size: 22px;
+        }
+
+        #ht-progress .hp-form-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div id="ht-progress"
+     data-chart="@chartJson">
+
+    <div class="hp-header">
+        <div>
+            <span class="hp-eyebrow">CLIENT / HEALTH TRACKING</span>
+            <h1>Progress &amp; Analytics</h1>
+            <p class="hp-subtitle">
+                Monitor your health measurements, fitness goals,
+                and changes over time.
+            </p>
+        </div>
+
+        <a href="@dashboardUrl" class="hp-link">
+            Back to Dashboard
+        </a>
+    </div>
+
+    @if (TempData["ProgressSuccess"] != null)
+    {
+        <div class="hp-success" role="status">
+            @TempData["ProgressSuccess"]
+        </div>
+    }
+
+    <div class="hp-stats">
+        <div class="hp-card">
+            <span class="hp-stat-label">Latest Weight</span>
+            <div class="hp-stat-value">
+                @(latestWeight != null
+                    ? latestWeight.WeightKg.Value.ToString("0.#")
+                    : "—")
+                @if (latestWeight != null)
+                {
+                    <span class="hp-unit">kg</span>
+                }
+            </div>
+            <span class="hp-stat-note">Most recent weight entry</span>
+        </div>
+
+        <div class="hp-card">
+            <span class="hp-stat-label">Latest BMI</span>
+            <div class="hp-stat-value">
+                @(latestBmi != null
+                    ? latestBmi.CalculateBMI().Value.ToString("0.0")
+                    : "—")
+            </div>
+            <span class="hp-stat-note">Based on a complete measurement</span>
+        </div>
+
+        <div class="hp-card">
+            <span class="hp-stat-label">Latest Steps</span>
+            <div class="hp-stat-value">
+                @(latestSteps != null
+                    ? latestSteps.Steps.Value.ToString("N0")
+                    : "—")
+            </div>
+            <span class="hp-stat-note">Most recent steps entry</span>
+        </div>
+
+        <div class="hp-card">
+            <span class="hp-stat-label">Calories Burned</span>
+            <div class="hp-stat-value">
+                @(latestCalories != null
+                    ? latestCalories.CaloriesBurned.Value.ToString("N0")
+                    : "—")
+                @if (latestCalories != null)
+                {
+                    <span class="hp-unit">kcal</span>
+                }
+            </div>
+            <span class="hp-stat-note">Most recent activity entry</span>
+        </div>
+    </div>
+
+    <div class="hp-grid">
+
+        <section class="hp-panel">
+            <h2 class="hp-panel-title">Health Trends</h2>
+            <p class="hp-panel-desc">
+                Historical measurements recorded in your account.
+            </p>
+
+            <div class="hp-chart-tabs">
+                <button type="button"
+                        class="hp-chart-tab active"
+                        data-chart-type="weight">
+                    Weight
+                </button>
+                <button type="button"
+                        class="hp-chart-tab"
+                        data-chart-type="bmi">
+                    BMI
+                </button>
+            </div>
+
+            <div id="hp-chart-container">
+                <div class="hp-chart-area">
+                    <canvas id="hp-chart"></canvas>
+                </div>
+            </div>
+
+            <div id="hp-chart-empty"
+                 class="hp-empty"
+                 style="display:none">
+                No measurements available for this chart yet.
+                Record your health data to start tracking trends.
+            </div>
+        </section>
+
+        <section class="hp-panel">
+            <h2 class="hp-panel-title">Record Measurements</h2>
+            <p class="hp-panel-desc">
+                Enter any measurements you want to track.
+                At least one field is required.
+            </p>
+
+            @using (Html.BeginForm(
+                "Create", "Progress",
+                new { area = "Client" },
+                FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="hp-validation">
+                    @Html.ValidationSummary(false, "", new
+                    {
+                        @class = "hp-validation"
+                    })
+                </div>
+
+                <div class="hp-form-grid">
+
+                    <div class="hp-field">
+                        <label class="hp-label" for="WeightKg">
+                            Weight (kg)
+                        </label>
+                        @Html.TextBoxFor(
+                            m => m.NewMetric.WeightKg,
+                            new
+                                 {
+                                @class = "hp-input",
+                                type = "number",
+                                step = "any",
+                                min = "20",
+                                max = "500",
+                                placeholder = "e.g. 70"
+                            })
+                    </div>
+
+                    <div class="hp-field">
+                        <label class="hp-label" for="HeightCm">
+                            Height (cm)
+                        </label>
+                        @Html.TextBoxFor(
+                            m => m.NewMetric.HeightCm,
+                            new
+                                 {
+                                @class = "hp-input",
+                                type = "number",
+                                step = "any",
+                                min = "50",
+                                max = "250",
+                                placeholder = "e.g. 170"
+                            })
+                    </div>
+
+                    <div class="hp-field">
+                        <label class="hp-label">
+                            Calories Burned
+                        </label>
+                        @Html.TextBoxFor(
+                            m => m.NewMetric.CaloriesBurned,
+                            new
+                                 {
+                                @class = "hp-input",
+                                type = "number",
+                                min = "0",
+                                max = "10000",
+                                placeholder = "e.g. 350"
+                            })
+                    </div>
+
+                    <div class="hp-field">
+                        <label class="hp-label">Steps</label>
+                        @Html.TextBoxFor(
+                            m => m.NewMetric.Steps,
+                            new
+                                 {
+                                @class = "hp-input",
+                                type = "number",
+                                min = "0",
+                                max = "100000",
+                                placeholder = "e.g. 8500"
+                            })
+                    </div>
+
+                    <div class="hp-field">
+                        <label class="hp-label">Sleep (hours)</label>
+                        @Html.TextBoxFor(
+                            m => m.NewMetric.SleepHours,
+                            new
+                                 {
+                                @class = "hp-input",
+                                type = "number",
+                                step = "any",
+                                min = "0",
+                                max = "24",
+                                placeholder = "e.g. 7.5"
+                            })
+                    </div>
+
+                    <div class="hp-field">
+                        <label class="hp-label">Water (litres)</label>
+                        @Html.TextBoxFor(
+                            m => m.NewMetric.WaterLitres,
+                            new
+                                 {
+                                @class = "hp-input",
+                                type = "number",
+                                step = "any",
+                                min = "0",
+                                max = "10",
+                                placeholder = "e.g. 2.5"
+                            })
+                    </div>
+
+                </div>
+
+                <button type="submit" class="hp-button">
+                    Save Measurements
+                </button>
+            }
+
+            <p class="hp-panel-desc" style="margin-top:18px;margin-bottom:0">
+                BMI is calculated when weight and height are
+                recorded together.
+            </p>
+        </section>
+
+    </div>
+
+    <div class="hp-grid">
+
+        <section class="hp-panel">
+            <div class="hp-header" style="margin-bottom:18px">
+                <div>
+                    <h2 class="hp-panel-title">Fitness Goals</h2>
+                    <p class="hp-panel-desc" style="margin-bottom:0">
+                        @activeGoals.Count active goals ·
+                        @completedGoals completed
+                    </p>
+                </div>
+
+                <a href="@goalsUrl" class="hp-link">Manage Goals</a>
+            </div>
+
+            @if (activeGoals.Any())
+            {
+                foreach (var goal in activeGoals)
+                {
+                    decimal percent = Math.Max(
+                        0m, Math.Min(100m, goal.CalculateProgress()));
+
+                    <div class="hp-goal">
+                        <div class="hp-goal-head">
+                            <span class="hp-goal-title">
+                                @goal.Title
+                            </span>
+                            <span class="hp-goal-percent">
+                                @percent.ToString("0")%
+                            </span>
+                        </div>
+
+                        <div class="hp-goal-track">
+                            <div class="hp-goal-fill"
+                                 data-progress="@percent.ToString(System.Globalization.CultureInfo.InvariantCulture)">
+                            </div>
+                        </div>
+
+                        <div class="hp-goal-note">
+                            @goal.GoalType
+                            @if (goal.TargetDate.HasValue)
+                            {
+                                <span>
+                                    · Target:
+                                    @goal.TargetDate.Value.ToString("dd MMM yyyy")
+                                </span>
+                            }
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="hp-empty">
+                    No active fitness goals yet.
+                    Create a goal to start tracking your progress.
+                </div>
+            }
+        </section>
+
+        <section class="hp-panel">
+            <h2 class="hp-panel-title">Latest Wellness Entries</h2>
+            <p class="hp-panel-desc">
+                Most recent sleep and water measurements.
+            </p>
+
+            <div class="hp-stats"
+                 style="grid-template-columns:repeat(2,minmax(0,1fr));margin:0">
+                <div class="hp-card">
+                    <span class="hp-stat-label">Sleep</span>
+                    <div class="hp-stat-value">
+                        @(latestSleep != null
+                            ? latestSleep.SleepHours.Value.ToString("0.#")
+                            : "—")
+                        <span class="hp-unit">hrs</span>
+                    </div>
+                </div>
+
+                <div class="hp-card">
+                    <span class="hp-stat-label">Water</span>
+                    <div class="hp-stat-value">
+                        @(latestWater != null
+                            ? latestWater.WaterLitres.Value.ToString("0.#")
+                            : "—")
+                        <span class="hp-unit">L</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <section class="hp-panel">
+        <h2 class="hp-panel-title">Measurement History</h2>
+        <p class="hp-panel-desc">
+            Your recorded health metrics, newest first.
+        </p>
+
+        @if (metrics.Any())
+        {
+            <div class="hp-history-wrap">
+                <table class="hp-history">
+                    <thead>
+                        <tr>
+                            <th>Date (UTC)</th>
+                            <th>Weight</th>
+                            <th>Height</th>
+                            <th>BMI</th>
+                            <th>Steps</th>
+                            <th>Calories</th>
+                            <th>Sleep</th>
+                            <th>Water</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var metric in metrics.Take(30))
+                        {
+                            var bmi = metric.CalculateBMI();
+
+                            <tr>
+                                <td>
+                                    @metric.RecordedAt.ToString(
+                                        "dd MMM yyyy HH:mm")
+                                </td>
+                                <td>
+                                    @(metric.WeightKg.HasValue
+                                        ? metric.WeightKg.Value.ToString("0.#") + " kg"
+                                        : "—")
+                                </td>
+                                <td>
+                                    @(metric.HeightCm.HasValue
+                                        ? metric.HeightCm.Value.ToString("0.#") + " cm"
+                                        : "—")
+                                </td>
+                                <td>
+                                    @(bmi.HasValue
+                                        ? bmi.Value.ToString("0.0")
+                                        : "—")
+                                </td>
+                                <td>
+                                    @(metric.Steps.HasValue
+                                        ? metric.Steps.Value.ToString("N0")
+                                        : "—")
+                                </td>
+                                <td>
+                                    @(metric.CaloriesBurned.HasValue
+                                        ? metric.CaloriesBurned.Value.ToString("N0")
+                                        : "—")
+                                </td>
+                                <td>
+                                    @(metric.SleepHours.HasValue
+                                        ? metric.SleepHours.Value.ToString("0.#") + " h"
+                                        : "—")
+                                </td>
+                                <td>
+                                    @(metric.WaterLitres.HasValue
+                                        ? metric.WaterLitres.Value.ToString("0.#") + " L"
+                                        : "—")
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="hp-empty">
+                No health measurements have been recorded yet.
+                Use the form above to create your first entry.
+            </div>
+        }
+    </section>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+
+<script>
+    (function () {
+        "use strict";
+
+        var root = document.getElementById("ht-progress");
+        if (!root) return;
+
+        var chartData = {};
+        try {
+            chartData = JSON.parse(root.getAttribute("data-chart") || "{}");
+        } catch (e) {
+            chartData = {};
+        }
+
+        var chartInstance = null;
+        var canvas = document.getElementById("hp-chart");
+        var chartContainer = document.getElementById("hp-chart-container");
+        var emptyMessage = document.getElementById("hp-chart-empty");
+        var tabs = root.querySelectorAll(".hp-chart-tab");
+
+        function renderChart(type) {
+            var isWeight = type === "weight";
+            var labels = isWeight
+                ? (chartData.weightLabels || [])
+                : (chartData.bmiLabels || []);
+
+            var values = isWeight
+                ? (chartData.weightValues || [])
+                : (chartData.bmiValues || []);
+
+            if (chartInstance) {
+                chartInstance.destroy();
+                chartInstance = null;
+            }
+
+            if (!labels.length || !values.length || typeof Chart === "undefined") {
+                chartContainer.style.display = "none";
+                emptyMessage.style.display = "block";
+                return;
+            }
+
+            chartContainer.style.display = "block";
+            emptyMessage.style.display = "none";
+
+            chartInstance = new Chart(canvas, {
+                type: "line",
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: isWeight ? "Weight (kg)" : "BMI",
+                        data: values,
+                        borderColor: "#22C55E",
+                        backgroundColor: "rgba(34,197,94,0.10)",
+                        borderWidth: 2.5,
+                        pointRadius: 4,
+                        pointBackgroundColor: "#4ADE80",
+                        tension: 0.35,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: "#9CA3AF" },
+                            grid: { color: "#1F2A22" }
+                        },
+                        y: {
+                            ticks: { color: "#9CA3AF" },
+                            grid: { color: "#1F2A22" }
+                        }
+                    }
+                }
+            });
+        }
+
+        Array.prototype.forEach.call(tabs, function (tab) {
+            tab.addEventListener("click", function () {
+                Array.prototype.forEach.call(tabs, function (item) {
+                    item.classList.remove("active");
+                });
+
+                tab.classList.add("active");
+                renderChart(tab.getAttribute("data-chart-type"));
+            });
+        });
+
+        var progressBars = root.querySelectorAll(".hp-goal-fill");
+        Array.prototype.forEach.call(progressBars, function (bar) {
+            var value = parseFloat(bar.getAttribute("data-progress"));
+            if (isNaN(value)) value = 0;
+            value = Math.max(0, Math.min(100, value));
+            bar.style.width = value + "%";
+        });
+
+        renderChart("weight");
+    })();
+</script>
