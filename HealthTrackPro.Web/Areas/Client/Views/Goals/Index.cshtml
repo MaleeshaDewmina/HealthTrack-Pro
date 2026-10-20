@@ -1,284 +1,1286 @@
 ﻿
 @model HealthTrackPro.Web.Areas.Client.Models.ClientGoalsViewModel
+@using System
+@using System.Linq
+@using System.Globalization
+@using System.Collections.Generic
 
 @{
     ViewBag.Title = "Fitness Goals";
+
+    // Get real goals from the ViewModel.
+    var goals = Model != null && Model.Goals != null
+        ? Model.Goals
+        : new List<HealthTrackPro.Web.Models.Fitness.FitnessGoal>();
+
+    var totalGoals = goals.Count;
+    var activeGoals = goals.Count(g => !g.IsCompleted);
+    var completedGoals = goals.Count(g => g.IsCompleted);
+
+    // Measured progress is independent of
+    // manually completed goal status.
+    var averageProgress = totalGoals > 0
+        ? Math.Round(
+            goals.Average(g => g.CalculateProgress()), 1)
+        : 0m;
+
+    var dashboardUrl = Url.Action(
+        "Index",
+        "Dashboard",
+        new { area = "Client" });
 }
 
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css" />
+
 <style>
-    .client-goals-page {
-        color: #f5f5f5;
-        padding-bottom: 30px;
+    /* ========================================
+       HEALTHTRACK PRO - CLIENT GOALS
+       ======================================== */
+
+    .cg-page {
+        width: 100%;
+        max-width: 1450px;
+        margin: 0 auto;
+        padding: 14px 0 45px;
+        color: #F3F4F6;
     }
 
-    .client-goals-heading {
-        margin-bottom: 24px;
-    }
-
-        .client-goals-heading h2 {
-            font-size: 28px;
-            font-weight: 700;
-            margin: 0 0 8px 0;
+        .cg-page,
+        .cg-page * {
+            box-sizing: border-box;
         }
 
-    .client-goals-muted {
-        color: #9fb5c8;
+    /* ========================================
+       PAGE HEADER
+       ======================================== */
+
+    .cg-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-bottom: 28px;
     }
 
-    .client-goals-panel {
-        background: #101814;
-        border: 1px solid #22352a;
-        border-radius: 12px;
-        padding: 24px;
-        margin-bottom: 24px;
-    }
-
-        .client-goals-panel h3 {
-            font-size: 20px;
-            font-weight: 700;
-            margin: 0 0 18px 0;
-        }
-
-    .client-goals-page .form-group {
-        margin-bottom: 16px;
-    }
-
-    .client-goals-page label {
+    .cg-eyebrow {
         display: block;
-        margin-bottom: 7px;
+        margin-bottom: 10px;
+        color: #4ADE80;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 1.3px;
+        text-transform: uppercase;
+    }
+
+    .cg-page-title {
+        margin: 0 0 10px;
+        color: #F3F4F6;
+        font-size: 32px;
+        font-weight: 800;
+        line-height: 1.25;
+        letter-spacing: -0.5px;
+    }
+
+    .cg-subtitle {
+        margin: 0;
+        color: #9CA3AF;
+        font-size: 13px;
+        line-height: 1.8;
+    }
+
+    .cg-back-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        padding: 11px 15px;
+        background: #121C16;
+        border: 1px solid #2B4233;
+        border-radius: 10px;
+        color: #D1D5DB;
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+
+        .cg-back-link:hover,
+        .cg-back-link:focus {
+            color: #4ADE80;
+            background: #182A1E;
+            border-color: #22C55E;
+            text-decoration: none;
+        }
+
+        .cg-back-link svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+        }
+
+    /* ========================================
+       SUMMARY CARDS
+       ======================================== */
+
+    .cg-summary-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .cg-summary-card {
+        min-width: 0;
+        min-height: 145px;
+        padding: 22px;
+        background: #111713;
+        border: 1px solid #1F2A22;
+        border-radius: 14px;
+        transition: border-color 0.2s ease;
+    }
+
+        .cg-summary-card:hover {
+            border-color: #345A40;
+        }
+
+    .cg-summary-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 17px;
+    }
+
+    .cg-summary-label {
+        color: #9CA3AF;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.8px;
+    }
+
+    .cg-summary-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 34px;
+        width: 34px;
+        height: 34px;
+        background: #183121;
+        border: 1px solid #284A33;
+        border-radius: 10px;
+        color: #4ADE80;
+    }
+
+        .cg-summary-icon svg {
+            width: 17px;
+            height: 17px;
+            stroke: currentColor;
+        }
+
+    .cg-summary-value {
+        margin: 0;
+        color: #F3F4F6;
+        font-size: 30px;
+        font-weight: 800;
+        line-height: 1.2;
+    }
+
+    .cg-summary-description {
+        margin: 9px 0 0;
+        color: #8E9D94;
+        font-size: 11px;
+        line-height: 1.6;
+    }
+
+    /* ========================================
+       GENERAL PANELS
+       ======================================== */
+
+    .cg-panel {
+        margin-bottom: 22px;
+        background: #111713;
+        border: 1px solid #1F2A22;
+        border-radius: 15px;
+    }
+
+    .cg-panel-header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 25px 26px 20px;
+    }
+
+    .cg-panel-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 43px;
+        width: 43px;
+        height: 43px;
+        background: #193423;
+        border: 1px solid #2B5237;
+        border-radius: 12px;
+        color: #4ADE80;
+    }
+
+        .cg-panel-icon svg {
+            width: 21px;
+            height: 21px;
+            stroke: currentColor;
+        }
+
+    .cg-panel-title {
+        margin: 0 0 5px;
+        color: #F3F4F6;
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .cg-panel-subtitle {
+        margin: 0;
+        color: #9CA3AF;
+        font-size: 12px;
+        line-height: 1.65;
+    }
+
+    /* ========================================
+       CREATE GOAL FORM
+       ======================================== */
+
+    .cg-create-form {
+        width: 100%;
+        padding: 5px 26px 26px;
+    }
+
+    .cg-form-grid {
+        display: grid;
+        width: 100%;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: 22px;
+        row-gap: 20px;
+    }
+
+    .cg-form-field {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .cg-form-field-full {
+        grid-column: 1 / -1;
+    }
+
+    .cg-form-field label {
+        display: block;
+        margin-bottom: 9px;
+        color: #D1D5DB;
+        font-size: 12px;
         font-weight: 600;
     }
 
-    .client-goals-page .form-control {
-        background: #0b100d;
-        color: #ffffff;
-        border: 1px solid #34513d;
-        border-radius: 7px;
-        padding: 10px 12px;
+    .cg-input-wrap {
+        position: relative;
         width: 100%;
-        min-height: 40px;
+        min-width: 0;
     }
 
-        .client-goals-page .form-control:focus {
-            border-color: #22c76a;
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(34,199,106,.15);
-        }
+    /* ========================================
+       FIX DEFAULT MVC INPUT WIDTH RESTRICTION
+       ======================================== */
 
-    .client-goals-page textarea.form-control {
-        min-height: 90px;
-        resize: vertical;
+    .cg-page input.cg-input,
+    .cg-page select.cg-select,
+    .cg-page textarea.cg-textarea,
+    .cg-page input.flatpickr-input,
+    .cg-page input.flatpickr-alt-input {
+        display: block;
+        width: 100% !important;
+        max-width: none !important;
+        min-width: 0;
     }
 
-    .client-goals-btn {
-        display: inline-block;
-        background: #22c76a;
-        color: #06140a;
-        border: none;
-        border-radius: 7px;
-        padding: 10px 18px;
-        font-weight: 700;
-        cursor: pointer;
-        text-decoration: none;
-    }
-
-        .client-goals-btn:hover {
-            background: #18a856;
-            color: #ffffff;
-        }
-
-    .client-goals-btn-outline {
-        background: transparent;
-        color: #22c76a;
-        border: 1px solid #22c76a;
-    }
-
-        .client-goals-btn-outline:hover {
-            background: #173923;
-            color: #ffffff;
-        }
-
-    .client-goals-progress {
+    .cg-page .flatpickr-wrapper {
         display: block;
         width: 100%;
-        height: 12px;
-        margin: 12px 0;
-        border: none;
-        border-radius: 20px;
-        background: #26392d;
-        overflow: hidden;
-        appearance: none;
-        -webkit-appearance: none;
+        max-width: 100%;
     }
 
-        .client-goals-progress::-webkit-progress-bar {
-            background: #26392d;
-            border-radius: 20px;
+    /* ========================================
+       INPUT DESIGN
+       ======================================== */
+
+    .cg-page .cg-input,
+    .cg-page .cg-select,
+    .cg-page .cg-textarea {
+        padding: 12px 15px;
+        background: #080D0A;
+        color: #F3F4F6;
+        border: 1px solid #304035;
+        border-radius: 9px;
+        font-family: inherit;
+        font-size: 13px;
+        line-height: 1.5;
+        outline: none;
+        box-shadow: none;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .cg-page .cg-input,
+    .cg-page .cg-select {
+        min-height: 47px;
+    }
+
+    .cg-page .cg-textarea {
+        min-height: 110px;
+        resize: vertical;
+        line-height: 1.7;
+    }
+
+        .cg-page .cg-input::placeholder,
+        .cg-page .cg-textarea::placeholder {
+            color: #69786F;
+            opacity: 1;
         }
 
-        .client-goals-progress::-webkit-progress-value {
-            background: #22c76a;
-            border-radius: 20px;
+        .cg-page .cg-input:hover,
+        .cg-page .cg-select:hover,
+        .cg-page .cg-textarea:hover {
+            border-color: #486653;
         }
 
-        .client-goals-progress::-moz-progress-bar {
-            background: #22c76a;
-            border-radius: 20px;
+        .cg-page .cg-input:focus,
+        .cg-page .cg-select:focus,
+        .cg-page .cg-textarea:focus {
+            border-color: #22C55E;
+            background: #080D0A;
+            color: #F3F4F6;
+            box-shadow: 0 0 0 3px rgba(34,197,94,0.12);
         }
 
-    .client-goals-badge {
-        display: inline-block;
-        padding: 5px 12px;
-        border-radius: 20px;
-        background: #183824;
-        color: #28d877;
+    .cg-page .cg-select {
+        appearance: none;
+        -webkit-appearance: none;
+        padding-right: 45px;
+        cursor: pointer;
+    }
+
+        .cg-page .cg-select option {
+            background: #111713;
+            color: #F3F4F6;
+        }
+
+    .cg-field-icon {
+        position: absolute;
+        top: 50%;
+        right: 14px;
+        transform: translateY(-50%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 18px;
+        height: 18px;
+        color: #4ADE80;
+        pointer-events: none;
+    }
+
+        .cg-field-icon svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+        }
+
+    .cg-field-help {
+        display: block;
+        margin-top: 8px;
+        color: #839388;
+        font-size: 11px;
+        line-height: 1.65;
+    }
+
+    .cg-form-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 18px;
+        margin-top: 25px;
+        padding-top: 22px;
+        border-top: 1px solid #253329;
+    }
+
+    .cg-form-note {
+        margin: 0;
+        color: #89978D;
         font-size: 12px;
+        line-height: 1.7;
+    }
+
+    /* ========================================
+       BUTTONS
+       ======================================== */
+
+    .cg-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        min-height: 43px;
+        padding: 11px 17px;
+        border-radius: 9px;
+        font-family: inherit;
+        font-size: 12px;
+        line-height: 1.4;
+        font-weight: 700;
+        text-decoration: none;
+        cursor: pointer;
+        transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+
+        .cg-btn svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+        }
+
+    .cg-btn-primary {
+        color: #061109;
+        background: #22C55E;
+        border: 1px solid #22C55E;
+    }
+
+        .cg-btn-primary:hover,
+        .cg-btn-primary:focus {
+            color: #061109;
+            background: #16A34A;
+            border-color: #16A34A;
+        }
+
+    .cg-btn-outline {
+        color: #4ADE80;
+        background: transparent;
+        border: 1px solid #326746;
+    }
+
+        .cg-btn-outline:hover,
+        .cg-btn-outline:focus {
+            color: #F3F4F6;
+            background: #1B3624;
+            border-color: #22C55E;
+        }
+
+    .cg-btn:focus-visible {
+        outline: 2px solid #4ADE80;
+        outline-offset: 3px;
+    }
+
+    /* ========================================
+       SUCCESS / ERROR MESSAGES
+       ======================================== */
+
+    .cg-alert {
+        margin-bottom: 20px;
+        padding: 15px 18px;
+        border-radius: 10px;
+        font-size: 13px;
+        line-height: 1.7;
+    }
+
+    .cg-alert-success {
+        color: #BBF7D0;
+        background: #14301D;
+        border: 1px solid #2C7043;
+    }
+
+    .cg-alert-error {
+        color: #FECACA;
+        background: #351A1D;
+        border: 1px solid #824047;
+    }
+
+    .cg-page .text-danger,
+    .cg-page .field-validation-error,
+    .cg-page .validation-summary-errors {
+        color: #FCA5A5;
+        font-size: 12px;
+    }
+
+    .cg-page .field-validation-error {
+        display: block;
+        margin-top: 7px;
+    }
+
+    .cg-page .input-validation-error {
+        border-color: #EF4444;
+    }
+
+    .cg-page .validation-summary-errors ul {
+        margin: 0;
+        padding-left: 20px;
+    }
+
+    /* ========================================
+       EXISTING GOALS
+       ======================================== */
+
+    .cg-goals-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin: 32px 0 19px;
+    }
+
+    .cg-goals-heading {
+        margin: 0;
+        color: #F3F4F6;
+        font-size: 21px;
         font-weight: 700;
     }
 
-    .client-goals-badge-completed {
-        background: #21472e;
-        color: #80ffaa;
-    }
-
-    .client-goals-stats {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 24px;
-        margin: 14px 0;
-    }
-
-    .client-goals-stat {
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
-    }
-
-        .client-goals-stat span {
-            font-size: 12px;
-            color: #9fb5c8;
-        }
-
-        .client-goals-stat strong {
-            font-size: 17px;
-        }
-
-    .client-goals-actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        align-items: flex-end;
-        margin-top: 18px;
-    }
-
-        .client-goals-actions form {
-            margin: 0;
-        }
-
-    .client-goals-empty {
-        text-align: center;
-        padding: 38px 12px;
-        color: #9fb5c8;
-    }
-
-    .client-goals-page .text-danger,
-    .client-goals-page .field-validation-error {
-        color: #ff9090;
-    }
-
-    .client-goals-message {
-        padding: 14px;
+    .cg-count {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 29px;
+        min-height: 26px;
+        margin-left: 8px;
+        padding: 3px 8px;
+        color: #4ADE80;
+        background: #193523;
+        border: 1px solid #2A5338;
         border-radius: 8px;
+        font-size: 12px;
+        vertical-align: middle;
+    }
+
+    .cg-goals-caption {
+        color: #9CA3AF;
+        font-size: 12px;
+    }
+
+    .cg-goal-card {
+        margin-bottom: 17px;
+        padding: 25px;
+        background: #111713;
+        border: 1px solid #24382B;
+        border-radius: 14px;
+        transition: border-color 0.2s ease;
+    }
+
+        .cg-goal-card:hover {
+            border-color: #3B6748;
+        }
+
+    .cg-goal-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 16px;
         margin-bottom: 20px;
     }
 
-    .client-goals-success {
-        background: #173824;
-        color: #80ffaa;
+    .cg-goal-title {
+        margin: 0 0 7px;
+        color: #F3F4F6;
+        font-size: 18px;
+        font-weight: 700;
     }
 
-    .client-goals-error {
-        background: #482121;
-        color: #ffb1b1;
+    .cg-goal-type {
+        display: inline-block;
+        color: #4ADE80;
+        font-size: 11px;
+        font-weight: 700;
     }
 
-    .client-goals-card-heading {
-        display: flex;
-        justify-content: space-between;
+    .cg-goal-description {
+        margin: 0 0 22px;
+        color: #A6B2AA;
+        font-size: 13px;
+        line-height: 1.8;
+        overflow-wrap: anywhere;
+    }
+
+    /* ========================================
+       GOAL STATUS BADGES
+       ======================================== */
+
+    .cg-status {
+        display: inline-flex;
         align-items: center;
-        gap: 12px;
-        flex-wrap: wrap;
+        gap: 7px;
+        padding: 7px 12px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        white-space: nowrap;
     }
 
-        .client-goals-card-heading h3 {
-            margin: 0;
+        .cg-status::before {
+            content: "";
+            width: 7px;
+            height: 7px;
+            background: currentColor;
+            border-radius: 50%;
         }
 
-    .client-goals-progress-label {
+    .cg-status-active {
+        color: #4ADE80;
+        background: #193523;
+        border: 1px solid #2C6540;
+    }
+
+    .cg-status-completed {
+        color: #BBF7D0;
+        background: #20452B;
+        border: 1px solid #377C4A;
+    }
+
+    /* ========================================
+       GOAL METRIC CARDS
+       ======================================== */
+
+    .cg-metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 24px;
+    }
+
+    .cg-metric {
+        min-width: 0;
+        padding: 15px;
+        background: #0B120D;
+        border: 1px solid #26392B;
+        border-radius: 10px;
+    }
+
+    .cg-metric-label {
+        display: block;
+        margin-bottom: 10px;
+        color: #899A8E;
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.4px;
+    }
+
+    .cg-metric-value {
+        display: block;
+        color: #F3F4F6;
+        font-size: 18px;
+        font-weight: 700;
+        overflow-wrap: anywhere;
+    }
+
+    .cg-metric-value-small {
+        font-size: 14px;
+    }
+
+    /* ========================================
+       PROGRESS BAR
+       ======================================== */
+
+    .cg-progress-header {
         display: flex;
+        align-items: center;
         justify-content: space-between;
         gap: 12px;
+        margin-bottom: 12px;
     }
 
-    .client-goals-update-row {
+    .cg-progress-label {
+        color: #CBD5CD;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .cg-progress-percent {
+        color: #4ADE80;
+        font-size: 15px;
+        font-weight: 800;
+    }
+
+    .cg-progress {
+        display: block;
+        width: 100%;
+        height: 10px;
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
+        border: none;
+        border-radius: 20px;
+        background: #25372B;
+        appearance: none;
+        -webkit-appearance: none;
+        accent-color: #22C55E;
+    }
+
+        .cg-progress::-webkit-progress-bar {
+            background: #25372B;
+            border-radius: 20px;
+        }
+
+        .cg-progress::-webkit-progress-value {
+            background: #22C55E;
+            border-radius: 20px;
+        }
+
+        .cg-progress::-moz-progress-bar {
+            background: #22C55E;
+            border-radius: 20px;
+        }
+
+    .cg-progress-note {
+        display: block;
+        margin-top: 10px;
+        color: #899A8E;
+        font-size: 11px;
+        line-height: 1.7;
+    }
+
+    /* ========================================
+       UPDATE PROGRESS CONTROLS
+       ======================================== */
+
+    .cg-goal-actions {
         display: flex;
+        align-items: flex-end;
         flex-wrap: wrap;
-        gap: 10px;
+        gap: 16px;
+        margin-top: 24px;
+        padding-top: 22px;
+        border-top: 1px solid #27392C;
     }
 
-    .client-goals-update-input {
-        max-width: 160px;
+    .cg-update-form {
+        display: flex;
+        align-items: flex-end;
+        flex-wrap: wrap;
+        gap: 11px;
+        margin: 0;
     }
 
-    .client-goals-section-title {
-        font-size: 21px;
+    .cg-update-field {
+        width: 160px;
+        max-width: 100%;
+    }
+
+        .cg-update-field label {
+            display: block;
+            margin-bottom: 9px;
+            color: #CBD5CD;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+    .cg-complete-form {
+        margin: 0;
+    }
+
+    /* ========================================
+       EMPTY STATE
+       ======================================== */
+
+    .cg-empty {
+        padding: 54px 22px;
+        background: #111713;
+        border: 1px dashed #355540;
+        border-radius: 14px;
+        text-align: center;
+    }
+
+    .cg-empty-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 58px;
+        height: 58px;
+        margin: 0 auto 18px;
+        background: #193523;
+        border: 1px solid #2A5639;
+        border-radius: 17px;
+        color: #4ADE80;
+    }
+
+        .cg-empty-icon svg {
+            width: 25px;
+            height: 25px;
+            stroke: currentColor;
+        }
+
+    .cg-empty-title {
+        margin: 0 0 9px;
+        color: #F3F4F6;
+        font-size: 18px;
         font-weight: 700;
-        margin: 28px 0 18px;
+    }
+
+    .cg-empty-text {
+        margin: 0;
+        color: #9CA3AF;
+        font-size: 12px;
+        line-height: 1.8;
+    }
+
+    /* ========================================
+       DARK GREEN FLATPICKR CALENDAR
+       ======================================== */
+
+    .flatpickr-calendar {
+        z-index: 9999 !important;
+        background: #0F1712 !important;
+        border: 1px solid #31513B !important;
+        border-radius: 13px !important;
+        box-shadow: 0 18px 45px rgba(0,0,0,0.55) !important;
+        color: #F3F4F6 !important;
+    }
+
+    .flatpickr-months,
+    .flatpickr-months .flatpickr-month,
+    .flatpickr-weekdays,
+    .flatpickr-weekday {
+        background: #0F1712 !important;
+        color: #4ADE80 !important;
+    }
+
+    .flatpickr-current-month,
+    .flatpickr-current-month input.cur-year,
+    .flatpickr-current-month .flatpickr-monthDropdown-months {
+        background: #0F1712 !important;
+        color: #F3F4F6 !important;
+    }
+
+        .flatpickr-current-month .flatpickr-monthDropdown-months option {
+            background: #0F1712;
+            color: #F3F4F6;
+        }
+
+    .flatpickr-months .flatpickr-prev-month svg,
+    .flatpickr-months .flatpickr-next-month svg {
+        fill: #4ADE80 !important;
+    }
+
+    .flatpickr-day {
+        color: #D1D5DB !important;
+        border-radius: 8px !important;
+    }
+
+        .flatpickr-day:hover,
+        .flatpickr-day:focus {
+            background: #21432B !important;
+            border-color: #21432B !important;
+            color: #F3F4F6 !important;
+        }
+
+        .flatpickr-day.selected,
+        .flatpickr-day.selected:hover,
+        .flatpickr-day.selected:focus {
+            background: #22C55E !important;
+            border-color: #22C55E !important;
+            color: #061109 !important;
+        }
+
+        .flatpickr-day.today {
+            border-color: #22C55E !important;
+        }
+
+        .flatpickr-day.prevMonthDay,
+        .flatpickr-day.nextMonthDay,
+        .flatpickr-day.flatpickr-disabled {
+            color: #516256 !important;
+        }
+
+    /* ========================================
+       RESPONSIVE DESIGN
+       ======================================== */
+
+    @@media (max-width: 1100px) {
+        .cg-summary-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .cg-metrics-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @@media (max-width: 700px) {
+        .cg-page-title {
+            font-size: 26px;
+        }
+
+        .cg-form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .cg-form-field-full {
+            grid-column: auto;
+        }
+
+        .cg-panel-header {
+            padding: 20px 18px;
+        }
+
+        .cg-create-form {
+            padding: 0 18px 20px;
+        }
+
+        .cg-goal-card {
+            padding: 19px;
+        }
+
+        .cg-update-field {
+            width: 100%;
+        }
+
+        .cg-update-form {
+            width: 100%;
+        }
+    }
+
+    @@media (max-width: 440px) {
+        .cg-summary-grid {
+            gap: 10px;
+        }
+
+        .cg-summary-card {
+            min-height: 130px;
+            padding: 15px;
+        }
+
+        .cg-summary-value {
+            font-size: 25px;
+        }
+
+        .cg-summary-icon {
+            width: 29px;
+            height: 29px;
+            flex-basis: 29px;
+        }
+
+        .cg-summary-label {
+            font-size: 9px;
+        }
+
+        .cg-metrics-grid {
+            gap: 9px;
+        }
+
+        .cg-metric {
+            padding: 12px;
+        }
+
+        .cg-goal-actions .cg-btn {
+            width: 100%;
+        }
+
+        .cg-update-form,
+        .cg-complete-form {
+            width: 100%;
+        }
+
+        .cg-form-footer .cg-btn {
+            width: 100%;
+        }
     }
 </style>
 
-<div class="client-goals-page">
 
-    <!-- PAGE HEADING -->
+<div class="cg-page">
 
-    <div class="client-goals-heading">
-        <h2>My Fitness Goals</h2>
+    <!-- =====================================
+         PAGE HEADER
+         ===================================== -->
 
-        <p class="client-goals-muted">
-            Set your targets, monitor your progress,
-            and achieve your fitness goals.
-        </p>
-    </div>
+    <header class="cg-header">
 
-    <!-- SUCCESS MESSAGE -->
+        <div>
+
+            <span class="cg-eyebrow">
+                HEALTHTRACK PRO / CLIENT
+            </span>
+
+            <h1 class="cg-page-title">
+                Your Fitness Goals
+            </h1>
+
+            <p class="cg-subtitle">
+                Set meaningful targets, track your
+                performance, and celebrate every milestone.
+            </p>
+
+        </div>
+
+        <a href="@dashboardUrl"
+           class="cg-back-link">
+
+            <svg viewBox="0 0 24 24"
+                 fill="none"
+                 stroke-width="1.8"
+                 stroke-linecap="round"
+                 stroke-linejoin="round"
+                 aria-hidden="true">
+
+                <path d="M19 12H5"></path>
+                <path d="M12 19l-7-7 7-7"></path>
+
+            </svg>
+
+            Dashboard
+
+        </a>
+
+    </header>
+
+
+    <!-- =====================================
+         SUMMARY STATISTICS
+         ===================================== -->
+
+    <section class="cg-summary-grid"
+             aria-label="Fitness goal statistics">
+
+        <!-- TOTAL GOALS -->
+
+        <div class="cg-summary-card">
+
+            <div class="cg-summary-top">
+
+                <span class="cg-summary-label">
+                    TOTAL GOALS
+                </span>
+
+                <div class="cg-summary-icon">
+
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke-width="1.8"
+                         stroke-linecap="round"
+                         stroke-linejoin="round">
+
+                        <circle cx="12" cy="12" r="9"></circle>
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <circle cx="12" cy="12" r="1"></circle>
+
+                    </svg>
+
+                </div>
+
+            </div>
+
+            <p class="cg-summary-value">
+                @totalGoals
+            </p>
+
+            <p class="cg-summary-description">
+                All your fitness targets
+            </p>
+
+        </div>
+
+
+        <!-- ACTIVE GOALS -->
+
+        <div class="cg-summary-card">
+
+            <div class="cg-summary-top">
+
+                <span class="cg-summary-label">
+                    ACTIVE GOALS
+                </span>
+
+                <div class="cg-summary-icon">
+
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke-width="1.8"
+                         stroke-linecap="round"
+                         stroke-linejoin="round">
+
+                        <path d="M3 17l6-6 4 4 8-8"></path>
+                        <path d="M15 7h6v6"></path>
+
+                    </svg>
+
+                </div>
+
+            </div>
+
+            <p class="cg-summary-value">
+                @activeGoals
+            </p>
+
+            <p class="cg-summary-description">
+                Goals currently in progress
+            </p>
+
+        </div>
+
+
+        <!-- COMPLETED GOALS -->
+
+        <div class="cg-summary-card">
+
+            <div class="cg-summary-top">
+
+                <span class="cg-summary-label">
+                    COMPLETED
+                </span>
+
+                <div class="cg-summary-icon">
+
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke-width="1.8"
+                         stroke-linecap="round"
+                         stroke-linejoin="round">
+
+                        <circle cx="12" cy="12" r="9"></circle>
+                        <path d="M8 12l3 3 5-6"></path>
+
+                    </svg>
+
+                </div>
+
+            </div>
+
+            <p class="cg-summary-value">
+                @completedGoals
+            </p>
+
+            <p class="cg-summary-description">
+                Goals marked as completed
+            </p>
+
+        </div>
+
+
+        <!-- AVERAGE PROGRESS -->
+
+        <div class="cg-summary-card">
+
+            <div class="cg-summary-top">
+
+                <span class="cg-summary-label">
+                    AVG. PROGRESS
+                </span>
+
+                <div class="cg-summary-icon">
+
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke-width="1.8"
+                         stroke-linecap="round"
+                         stroke-linejoin="round">
+
+                        <path d="M4 20V13"></path>
+                        <path d="M10 20V8"></path>
+                        <path d="M16 20V4"></path>
+                        <path d="M22 20H2"></path>
+
+                    </svg>
+
+                </div>
+
+            </div>
+
+            <p class="cg-summary-value">
+                @averageProgress.ToString("0.#")%
+            </p>
+
+            <p class="cg-summary-description">
+                Average measured goal progress
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================
+         SUCCESS MESSAGE
+         ===================================== -->
 
     @if (TempData["SuccessMessage"] != null)
     {
-        <div class="client-goals-message client-goals-success">
+        <div class="cg-alert cg-alert-success"
+             role="status">
+
             @TempData["SuccessMessage"]
+
         </div>
     }
 
-    <!-- ERROR MESSAGE -->
+
+    <!-- =====================================
+         ERROR MESSAGE
+         ===================================== -->
 
     @if (TempData["ErrorMessage"] != null)
     {
-        <div class="client-goals-message client-goals-error">
+        <div class="cg-alert cg-alert-error"
+             role="alert">
+
             @TempData["ErrorMessage"]
+
         </div>
     }
 
-    <!-- CREATE GOAL FORM -->
 
-    <div class="client-goals-panel">
+    <!-- =====================================
+         CREATE FITNESS GOAL
+         ===================================== -->
 
-        <h3>Create a New Goal</h3>
+    <section class="cg-panel"
+             aria-labelledby="cgCreateTitle">
+
+        <div class="cg-panel-header">
+
+            <div class="cg-panel-icon">
+
+                <svg viewBox="0 0 24 24"
+                     fill="none"
+                     stroke-width="1.8"
+                     stroke-linecap="round"
+                     stroke-linejoin="round"
+                     aria-hidden="true">
+
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <path d="M12 8v8"></path>
+                    <path d="M8 12h8"></path>
+
+                </svg>
+
+            </div>
+
+            <div>
+
+                <h2 id="cgCreateTitle"
+                    class="cg-panel-title">
+
+                    Create a New Goal
+
+                </h2>
+
+                <p class="cg-panel-subtitle">
+                    Define a new fitness target
+                    and start tracking your progress.
+                </p>
+
+            </div>
+
+        </div>
+
 
         @using (Html.BeginForm(
             "Create",
             "Goals",
             new { area = "Client" },
-            FormMethod.Post))
+            FormMethod.Post,
+            new { @class = "cg-create-form" }))
         {
             @Html.AntiForgeryToken()
 
@@ -287,375 +1289,645 @@
                 "",
                 new { @class = "text-danger" })
 
-            <div class="row">
+
+            <div class="cg-form-grid">
 
                 <!-- GOAL TYPE -->
 
-                <div class="col-md-6">
-                    <div class="form-group">
+                <div class="cg-form-field">
 
-                        @Html.LabelFor(
-                            m => m.NewGoal.GoalType)
+                    @Html.LabelFor(m => m.NewGoal.GoalType)
+
+                    <div class="cg-input-wrap">
 
                         @Html.EnumDropDownListFor(
                             m => m.NewGoal.GoalType,
-                            "-- Select Goal Type --",
-                            new { @class = "form-control" })
+                            "Select your goal type",
+                            new { @class = "cg-select" })
 
-                        @Html.ValidationMessageFor(
-                            m => m.NewGoal.GoalType,
-                            "",
-                            new { @class = "text-danger" })
+                        <span class="cg-field-icon">
+
+                            <svg viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke-width="2"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round">
+
+                                <path d="M6 9l6 6 6-6"></path>
+
+                            </svg>
+
+                        </span>
 
                     </div>
+
+                    @Html.ValidationMessageFor(
+                        m => m.NewGoal.GoalType,
+                        "",
+                        new { @class = "text-danger" })
+
                 </div>
+
 
                 <!-- GOAL TITLE -->
 
-                <div class="col-md-6">
-                    <div class="form-group">
+                <div class="cg-form-field">
 
-                        @Html.LabelFor(
-                            m => m.NewGoal.Title)
+                    @Html.LabelFor(m => m.NewGoal.Title)
 
-                        @Html.TextBoxFor(
-                            m => m.NewGoal.Title,
-                            new
-                            {
-                                @class = "form-control",
-                                placeholder = "e.g. Reach 65 kg",
-                                maxlength = "150"
-                            })
+                    @Html.TextBoxFor(
+                        m => m.NewGoal.Title,
+                        new
+                        {
+                            @class = "cg-input",
+                            placeholder = "e.g. Reach 65 kg",
+                            maxlength = "150"
+                        })
 
-                        @Html.ValidationMessageFor(
-                            m => m.NewGoal.Title,
-                            "",
-                            new { @class = "text-danger" })
+                    @Html.ValidationMessageFor(
+                        m => m.NewGoal.Title,
+                        "",
+                        new { @class = "text-danger" })
 
-                    </div>
                 </div>
+
 
                 <!-- DESCRIPTION -->
 
-                <div class="col-md-12">
-                    <div class="form-group">
+                <div class="cg-form-field cg-form-field-full">
 
-                        @Html.LabelFor(
-                            m => m.NewGoal.Description)
+                    @Html.LabelFor(m => m.NewGoal.Description)
 
-                        @Html.TextAreaFor(
-                            m => m.NewGoal.Description,
-                            3,
-                            40,
-                            new
-                            {
-                                @class = "form-control",
-                                placeholder = "Describe your fitness goal",
-                                maxlength = "500"
-                            })
+                    @Html.TextAreaFor(
+                        m => m.NewGoal.Description,
+                        new
+                        {
+                            @class = "cg-textarea",
+                            placeholder =
+                                "Describe your goal and how you plan to achieve it...",
+                            maxlength = "500",
+                            rows = "3"
+                        })
 
-                        @Html.ValidationMessageFor(
-                            m => m.NewGoal.Description,
-                            "",
-                            new { @class = "text-danger" })
+                    @Html.ValidationMessageFor(
+                        m => m.NewGoal.Description,
+                        "",
+                        new { @class = "text-danger" })
 
-                    </div>
+                    <small class="cg-field-help">
+                        Optional. Describe what motivates you
+                        or what you plan to achieve.
+                    </small>
+
                 </div>
+
 
                 <!-- STARTING VALUE -->
 
-                <div class="col-md-4">
-                    <div class="form-group">
+                <div class="cg-form-field">
 
-                        @Html.LabelFor(
-                            m => m.NewGoal.StartValue)
+                    @Html.LabelFor(m => m.NewGoal.StartValue)
 
-                        @Html.TextBoxFor(
-                            m => m.NewGoal.StartValue,
-                            new
-                            {
-                                @class = "form-control",
-                                type = "number",
-                                step = "any",
-                                placeholder = "e.g. 70"
-                            })
+                    @Html.TextBoxFor(
+                        m => m.NewGoal.StartValue,
+                        new
+                        {
+                            @class = "cg-input",
+                            type = "number",
+                            step = "any",
+                            placeholder = "e.g. 70"
+                        })
 
-                        @Html.ValidationMessageFor(
-                            m => m.NewGoal.StartValue,
-                            "",
-                            new { @class = "text-danger" })
+                    @Html.ValidationMessageFor(
+                        m => m.NewGoal.StartValue,
+                        "",
+                        new { @class = "text-danger" })
 
-                    </div>
                 </div>
+
 
                 <!-- TARGET VALUE -->
 
-                <div class="col-md-4">
-                    <div class="form-group">
+                <div class="cg-form-field">
 
-                        @Html.LabelFor(
-                            m => m.NewGoal.TargetValue)
+                    @Html.LabelFor(m => m.NewGoal.TargetValue)
 
-                        @Html.TextBoxFor(
-                            m => m.NewGoal.TargetValue,
-                            new
-                            {
-                                @class = "form-control",
-                                type = "number",
-                                step = "any",
-                                placeholder = "e.g. 65"
-                            })
+                    @Html.TextBoxFor(
+                        m => m.NewGoal.TargetValue,
+                        new
+                        {
+                            @class = "cg-input",
+                            type = "number",
+                            step = "any",
+                            placeholder = "e.g. 65"
+                        })
 
-                        @Html.ValidationMessageFor(
-                            m => m.NewGoal.TargetValue,
-                            "",
-                            new { @class = "text-danger" })
+                    @Html.ValidationMessageFor(
+                        m => m.NewGoal.TargetValue,
+                        "",
+                        new { @class = "text-danger" })
 
-                    </div>
                 </div>
+
 
                 <!-- TARGET DATE -->
 
-                <div class="col-md-4">
-                    <div class="form-group">
+                <div class="cg-form-field">
 
-                        @Html.LabelFor(
-                            m => m.NewGoal.TargetDate)
+                    @Html.LabelFor(m => m.NewGoal.TargetDate)
+
+                    <div class="cg-input-wrap">
 
                         @Html.TextBoxFor(
                             m => m.NewGoal.TargetDate,
                             "{0:yyyy-MM-dd}",
                             new
                             {
-                                @class = "form-control",
-                                type = "date"
+                                @class = "cg-input js-goal-datepicker",
+                                type = "date",
+                                min = DateTime.Today.ToString("yyyy-MM-dd")
                             })
 
-                        @Html.ValidationMessageFor(
-                            m => m.NewGoal.TargetDate,
-                            "",
-                            new { @class = "text-danger" })
+                        <span class="cg-field-icon">
+
+                            <svg viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke-width="1.8"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round"
+                                 aria-hidden="true">
+
+                                <rect x="3" y="5"
+                                      width="18" height="16"
+                                      rx="2"></rect>
+
+                                <path d="M8 3v4"></path>
+                                <path d="M16 3v4"></path>
+                                <path d="M3 10h18"></path>
+
+                            </svg>
+
+                        </span>
 
                     </div>
+
+                    @Html.ValidationMessageFor(
+                        m => m.NewGoal.TargetDate,
+                        "",
+                        new { @class = "text-danger" })
+
+                    <small class="cg-field-help">
+                        Optional. Choose today or a future date.
+                    </small>
+
                 </div>
 
             </div>
 
-            <button type="submit"
-                    class="client-goals-btn">
-                + Create Fitness Goal
-            </button>
+
+            <!-- CREATE GOAL BUTTON -->
+
+            <div class="cg-form-footer">
+
+                <p class="cg-form-note">
+                    Your goal will be added to your
+                    personal fitness tracking dashboard.
+                </p>
+
+                <button type="submit"
+                        class="cg-btn cg-btn-primary">
+
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke-width="2"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         aria-hidden="true">
+
+                        <path d="M12 5v14"></path>
+                        <path d="M5 12h14"></path>
+
+                    </svg>
+
+                    Create Fitness Goal
+
+                </button>
+
+            </div>
         }
 
-    </div>
+    </section>
 
-    <!-- EXISTING GOALS -->
 
-    <h3 class="client-goals-section-title">
-        My Goals (@Model.Goals.Count)
-    </h3>
+    <!-- =====================================
+         EXISTING GOALS
+         ===================================== -->
 
-    @if (Model.Goals.Count == 0)
-    {
-        <div class="client-goals-panel client-goals-empty">
+    <section aria-labelledby="cgMyGoalsHeading">
 
-            <h3>No fitness goals yet</h3>
+        <div class="cg-goals-header">
 
-            <p>
-                Create your first fitness goal above
-                to start tracking your progress.
-            </p>
+            <h2 id="cgMyGoalsHeading"
+                class="cg-goals-heading">
+
+                My Goals
+
+                <span class="cg-count">
+                    @totalGoals
+                </span>
+
+            </h2>
+
+            <span class="cg-goals-caption">
+                Track your personal milestones
+            </span>
 
         </div>
-    }
-    else
-    {
-        foreach (var goal in Model.Goals)
+
+
+        @if (totalGoals == 0)
         {
-            var progress = goal.CalculateProgress();
+            <!-- EMPTY STATE -->
 
-            var progressText = progress.ToString(
-                "0.##",
-                System.Globalization.CultureInfo.InvariantCulture);
+            <div class="cg-empty">
 
-            <div class="client-goals-panel">
+                <div class="cg-empty-icon">
 
-                <!-- GOAL HEADING -->
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke-width="1.8"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         aria-hidden="true">
 
-                <div class="client-goals-card-heading">
+                        <circle cx="12" cy="12" r="9"></circle>
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <circle cx="12" cy="12" r="1"></circle>
 
-                    <h3>@goal.Title</h3>
+                    </svg>
+
+                </div>
+
+                <h3 class="cg-empty-title">
+                    Your fitness journey starts here
+                </h3>
+
+                <p class="cg-empty-text">
+                    No goals have been created yet.
+                    Use the form above to set your
+                    first fitness target.
+                </p>
+
+            </div>
+        }
+        else
+        {
+            foreach (var goal in goals)
+            {
+                var measuredProgress = goal.CalculateProgress();
+
+                var progress = Math.Max(
+                    0m,
+                    Math.Min(100m, measuredProgress));
+
+                var progressText = progress.ToString(
+                    "0.##",
+                    CultureInfo.InvariantCulture);
+
+                var currentValueText = goal.CurrentValue.HasValue
+                    ? goal.CurrentValue.Value.ToString(
+                        "0.##",
+                        CultureInfo.InvariantCulture)
+                    : "";
+
+                <article class="cg-goal-card">
+
+                    <!-- GOAL TITLE AND STATUS -->
+
+                    <div class="cg-goal-header">
+
+                        <div>
+
+                            <h3 class="cg-goal-title">
+                                @goal.Title
+                            </h3>
+
+                            <span class="cg-goal-type">
+                                @goal.GoalType
+                            </span>
+
+                        </div>
+
+                        @if (goal.IsCompleted)
+                        {
+                            <span class="cg-status cg-status-completed">
+                                Completed
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="cg-status cg-status-active">
+                                In Progress
+                            </span>
+                        }
+
+                    </div>
+
+
+                    <!-- DESCRIPTION -->
+
+                    @if (!string.IsNullOrWhiteSpace(goal.Description))
+                    {
+                        <p class="cg-goal-description">
+                            @goal.Description
+                        </p>
+                    }
+
+
+                    <!-- MEASUREMENTS -->
+
+                    <div class="cg-metrics-grid">
+
+                        <div class="cg-metric">
+
+                            <span class="cg-metric-label">
+                                STARTING VALUE
+                            </span>
+
+                            <strong class="cg-metric-value">
+
+                                @(goal.StartValue.HasValue
+                                    ? goal.StartValue.Value.ToString("0.##")
+                                    : "--")
+
+                            </strong>
+
+                        </div>
+
+
+                        <div class="cg-metric">
+
+                            <span class="cg-metric-label">
+                                CURRENT VALUE
+                            </span>
+
+                            <strong class="cg-metric-value">
+
+                                @(goal.CurrentValue.HasValue
+                                    ? goal.CurrentValue.Value.ToString("0.##")
+                                    : "--")
+
+                            </strong>
+
+                        </div>
+
+
+                        <div class="cg-metric">
+
+                            <span class="cg-metric-label">
+                                TARGET VALUE
+                            </span>
+
+                            <strong class="cg-metric-value">
+
+                                @(goal.TargetValue.HasValue
+                                    ? goal.TargetValue.Value.ToString("0.##")
+                                    : "--")
+
+                            </strong>
+
+                        </div>
+
+
+                        <div class="cg-metric">
+
+                            <span class="cg-metric-label">
+                                TARGET DATE
+                            </span>
+
+                            <strong class="cg-metric-value cg-metric-value-small">
+
+                                @(goal.TargetDate.HasValue
+                                    ? goal.TargetDate.Value.ToString(
+                                        "dd MMM yyyy")
+                                    : "Not set")
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PROGRESS -->
+
+                    <div class="cg-progress-header">
+
+                        <span class="cg-progress-label">
+                            Measured Progress
+                        </span>
+
+                        <strong class="cg-progress-percent">
+                            @progressText%
+                        </strong>
+
+                    </div>
+
+                    <progress class="cg-progress"
+                              value="@progressText"
+                              max="100"
+                              aria-label="Measured fitness goal progress">
+
+                        @progressText%
+
+                    </progress>
+
 
                     @if (goal.IsCompleted)
                     {
-                        <span class="client-goals-badge client-goals-badge-completed">
-                            Completed
-                        </span>
+                        <small class="cg-progress-note">
+                            This goal was marked as completed.
+                            Measured progress is preserved
+                            separately from completion status.
+                        </small>
                     }
-                    else
+
+
+                    <!-- UPDATE CONTROLS -->
+
+                    @if (!goal.IsCompleted)
                     {
-                        <span class="client-goals-badge">
-                            In Progress
-                        </span>
-                    }
+                        <div class="cg-goal-actions">
 
-                </div>
+                            <!-- UPDATE PROGRESS -->
 
-                <!-- GOAL TYPE -->
+                            @using (Html.BeginForm(
+                                "UpdateProgress",
+                                "Goals",
+                                new { area = "Client" },
+                                FormMethod.Post,
+                                new { @class = "cg-update-form" }))
+                            {
+                                @Html.AntiForgeryToken()
 
-                <p class="client-goals-muted">
-                    @goal.GoalType
-                </p>
+                                <input type="hidden"
+                                       name="FitnessGoalId"
+                                       value="@goal.FitnessGoalId" />
 
-                <!-- GOAL DESCRIPTION -->
+                                <div class="cg-update-field">
 
-                @if (!string.IsNullOrWhiteSpace(goal.Description))
-                {
-                    <p>@goal.Description</p>
-                }
+                                    <label for="cg-current-@goal.FitnessGoalId">
+                                        Current Value
+                                    </label>
 
-                <!-- GOAL STATISTICS -->
+                                    <input type="number"
+                                           id="cg-current-@goal.FitnessGoalId"
+                                           name="CurrentValue"
+                                           class="cg-input"
+                                           step="any"
+                                           required="required"
+                                           value="@currentValueText"
+                                           aria-label="Update goal current value" />
 
-                <div class="client-goals-stats">
-
-                    <div class="client-goals-stat">
-
-                        <span>Starting Value</span>
-
-                        <strong>
-                            @(goal.StartValue.HasValue
-                                ? goal.StartValue.Value.ToString("0.##")
-                                : "--")
-                        </strong>
-
-                    </div>
-
-                    <div class="client-goals-stat">
-
-                        <span>Current Value</span>
-
-                        <strong>
-                            @(goal.CurrentValue.HasValue
-                                ? goal.CurrentValue.Value.ToString("0.##")
-                                : "--")
-                        </strong>
-
-                    </div>
-
-                    <div class="client-goals-stat">
-
-                        <span>Target Value</span>
-
-                        <strong>
-                            @(goal.TargetValue.HasValue
-                                ? goal.TargetValue.Value.ToString("0.##")
-                                : "--")
-                        </strong>
-
-                    </div>
-
-                    <div class="client-goals-stat">
-
-                        <span>Target Date</span>
-
-                        <strong>
-                            @(goal.TargetDate.HasValue
-                                ? goal.TargetDate.Value.ToString("dd MMM yyyy")
-                                : "Not set")
-                        </strong>
-
-                    </div>
-
-                </div>
-
-                <!-- PROGRESS PERCENTAGE -->
-
-                <div class="client-goals-progress-label">
-
-                    <span>Goal Progress</span>
-
-                    <strong>
-                        @progressText%
-                    </strong>
-
-                </div>
-
-                <!-- GREEN PROGRESS BAR -->
-
-                <progress class="client-goals-progress"
-                          value="@progressText"
-                          max="100"
-                          aria-label="Fitness goal progress">
-                    @progressText%
-                </progress>
-
-                <!-- GOAL ACTIONS -->
-
-                @if (!goal.IsCompleted)
-                {
-                    <div class="client-goals-actions">
-
-                        <!-- UPDATE PROGRESS -->
-
-                        @using (Html.BeginForm(
-                            "UpdateProgress",
-                            "Goals",
-                            new { area = "Client" },
-                            FormMethod.Post))
-                        {
-                            @Html.AntiForgeryToken()
-
-                            @Html.Hidden(
-                                "FitnessGoalId",
-                                goal.FitnessGoalId)
-
-                            <label for="current-@goal.FitnessGoalId">
-                                Update Current Value
-                            </label>
-
-                            <div class="client-goals-update-row">
-
-                                <input id="current-@goal.FitnessGoalId"
-                                       type="number"
-                                       name="CurrentValue"
-                                       step="any"
-                                       required="required"
-                                       class="form-control client-goals-update-input"
-                                       aria-label="Current goal value" />
+                                </div>
 
                                 <button type="submit"
-                                        class="client-goals-btn">
+                                        class="cg-btn cg-btn-primary">
+
                                     Update Progress
+
                                 </button>
+                            }
 
-                            </div>
-                        }
 
-                        <!-- MARK COMPLETED -->
+                            <!-- MARK COMPLETED -->
 
-                        @using (Html.BeginForm(
-                            "MarkCompleted",
-                            "Goals",
-                            new { area = "Client" },
-                            FormMethod.Post))
-                        {
-                            @Html.AntiForgeryToken()
+                            @using (Html.BeginForm(
+                                "MarkCompleted",
+                                "Goals",
+                                new { area = "Client" },
+                                FormMethod.Post,
+                                new
+                                {
+                                    @class =
+                                        "cg-complete-form js-confirm-goal"
+                                }))
+                            {
+                                @Html.AntiForgeryToken()
 
-                            @Html.Hidden(
-                                "fitnessGoalId",
-                                goal.FitnessGoalId)
+                                <input type="hidden"
+                                       name="fitnessGoalId"
+                                       value="@goal.FitnessGoalId" />
 
-                            <button type="submit"
-                                    class="client-goals-btn client-goals-btn-outline">
-                                Mark Completed
-                            </button>
-                        }
+                                <button type="submit"
+                                        class="cg-btn cg-btn-outline">
 
-                    </div>
-                }
+                                    <svg viewBox="0 0 24 24"
+                                         fill="none"
+                                         stroke-width="2"
+                                         stroke-linecap="round"
+                                         stroke-linejoin="round"
+                                         aria-hidden="true">
 
-            </div>
+                                        <path d="M5 12l5 5L19 7"></path>
+
+                                    </svg>
+
+                                    Mark Completed
+
+                                </button>
+                            }
+
+                        </div>
+                    }
+
+                </article>
+            }
         }
-    }
+
+    </section>
 
 </div>
+
+
+<!-- =====================================
+     FLATPICKR DATE PICKER
+     ===================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
+
+<script>
+    (function () {
+        "use strict";
+
+        function initializeGoalsPage() {
+
+            // =====================================
+            // DARK DATE PICKER
+            // =====================================
+
+            var dateInput = document.querySelector(
+                ".js-goal-datepicker"
+            );
+
+            if (
+                dateInput &&
+                typeof flatpickr === "function"
+            ) {
+                flatpickr(dateInput, {
+                    dateFormat: "Y-m-d",
+                    altInput: true,
+                    altFormat: "F j, Y",
+                    minDate: "today",
+                    disableMobile: true,
+                    allowInput: false
+                });
+            }
+
+            // If Flatpickr is unavailable,
+            // the native date input remains usable.
+
+
+            // =====================================
+            // CONFIRM GOAL COMPLETION
+            // =====================================
+
+            var completeForms =
+                document.querySelectorAll(
+                    ".js-confirm-goal"
+                );
+
+            for (
+                var i = 0;
+                i < completeForms.length;
+                i++
+            ) {
+                completeForms[i].addEventListener(
+                    "submit",
+                    function (event) {
+
+                        var confirmed = window.confirm(
+                            "Mark this fitness goal as completed?\n\n" +
+                            "You will not be able to update its " +
+                            "progress from this page afterward."
+                        );
+
+                        if (!confirmed) {
+                            event.preventDefault();
+                        }
+                    }
+                );
+            }
+        }
+
+        if (document.readyState === "loading") {
+            document.addEventListener(
+                "DOMContentLoaded",
+                initializeGoalsPage
+            );
+        } else {
+            initializeGoalsPage();
+        }
+
+    })();
+</script>
