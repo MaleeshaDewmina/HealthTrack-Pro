@@ -255,10 +255,15 @@
 </li>
 
                     <li class="ht-nav-item">
-                        <a href="#" class="ht-nav-link ht-nav-pending">
-                            Reports
-                        </a>
-                    </li>
+    <a
+        href="@Url.Action(
+            "Index",
+            "Reports",
+            new { area = "Admin" })"
+        class="ht-nav-link @(controller == "Reports" ? "active" : "")">
+        Reports
+    </a>
+</li>
 
                     <li class="ht-nav-item">
     <a
@@ -356,6 +361,7 @@ else
 
 </body>
 </html>
+
 
 
 

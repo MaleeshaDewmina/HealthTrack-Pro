@@ -246,6 +246,9 @@
     <Compile Include="Areas\Admin\Controllers\AppointmentsController.cs" />
     <Compile Include="Areas\Admin\Models\AuditLogViewModels.cs" />
     <Compile Include="Areas\Admin\Controllers\AuditLogsController.cs" />
+    <Compile Include="Areas\Admin\Models\AdminReportsViewModel.cs" />
+    <Compile Include="Areas\Admin\Controllers\ReportsController.cs" />
+    <Compile Include="Areas\Admin\Models\AdminDashboardViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-grid.css" />
@@ -338,6 +341,7 @@
     <Content Include="Areas\Admin\Views\Appointments\Index.cshtml" />
     <Content Include="Areas\Admin\Views\Appointments\Details.cshtml" />
     <Content Include="Areas\Admin\Views\AuditLogs\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Reports\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

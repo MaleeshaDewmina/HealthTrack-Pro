@@ -1,0 +1,361 @@
+﻿@model HealthTrackPro.Web.Areas.Admin.Models.AdminReportsViewModel
+
+@{
+    ViewBag.Title = "Reports & Analytics";
+}
+
+<div class="ht-card">
+
+    <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:flex-start;
+        gap:20px;
+        margin-bottom:28px;
+        flex-wrap:wrap;">
+
+        <div>
+            <h2 class="ht-card-title">
+                Reports & Analytics
+            </h2>
+
+            <p>
+                System-wide HealthTrack activity,
+                engagement and operational statistics.
+            </p>
+        </div>
+
+        <div>
+            <span class="
+                ht-status
+                ht-status-success">
+                Live database data
+            </span>
+        </div>
+
+    </div>
+
+    <!-- USER SUMMARY -->
+
+    <h3 style="margin-top:0;">
+        User Overview
+    </h3>
+
+    <div style="
+        display:grid;
+        grid-template-columns:
+            repeat(auto-fit,minmax(190px,1fr));
+        gap:16px;
+        margin-bottom:32px;">
+
+        <div class="ht-card">
+            <small>REGISTERED CLIENTS</small>
+
+            <h2 style="margin-bottom:5px;">
+                @Model.TotalClients
+            </h2>
+
+            <div style="opacity:.7;">
+                Active Client profiles
+            </div>
+        </div>
+
+        <div class="ht-card">
+            <small>REGISTERED TRAINERS</small>
+
+            <h2 style="margin-bottom:5px;">
+                @Model.TotalTrainers
+            </h2>
+
+            <div style="opacity:.7;">
+                Trainer profiles
+            </div>
+        </div>
+
+        <div class="ht-card">
+            <small>ACTIVE ASSIGNMENTS</small>
+
+            <h2 style="margin-bottom:5px;">
+                @Model.ActiveAssignments
+            </h2>
+
+            <div style="opacity:.7;">
+                Trainer / Client relationships
+            </div>
+        </div>
+
+        <div class="ht-card">
+            <small>UNASSIGNED CLIENTS</small>
+
+            <h2 style="margin-bottom:5px;">
+                @Model.UnassignedClients
+            </h2>
+
+            <div style="opacity:.7;">
+                Need Trainer assignment
+            </div>
+        </div>
+
+        <div class="ht-card">
+            <small>SUSPENDED USERS</small>
+
+            <h2 style="margin-bottom:5px;">
+                @Model.SuspendedUsers
+            </h2>
+
+            <div style="opacity:.7;">
+                Locked user accounts
+            </div>
+        </div>
+
+    </div>
+
+    <!-- APPOINTMENTS -->
+
+    <h3>
+        Appointment Analytics
+    </h3>
+
+    <div style="
+        display:grid;
+        grid-template-columns:
+            repeat(auto-fit,minmax(170px,1fr));
+        gap:16px;
+        margin-bottom:28px;">
+
+        <div class="ht-card">
+            <small>TOTAL</small>
+            <h2>@Model.TotalAppointments</h2>
+        </div>
+
+        <div class="ht-card">
+            <small>PENDING</small>
+            <h2>@Model.PendingAppointments</h2>
+        </div>
+
+        <div class="ht-card">
+            <small>APPROVED</small>
+            <h2>@Model.ApprovedAppointments</h2>
+        </div>
+
+        <div class="ht-card">
+            <small>COMPLETED</small>
+            <h2>@Model.CompletedAppointments</h2>
+        </div>
+
+        <div class="ht-card">
+            <small>CANCELLED</small>
+            <h2>@Model.CancelledAppointments</h2>
+        </div>
+
+        <div class="ht-card">
+            <small>REJECTED</small>
+            <h2>@Model.RejectedAppointments</h2>
+        </div>
+
+    </div>
+
+    <!-- WORKOUT + DIET -->
+
+    <div style="
+        display:grid;
+        grid-template-columns:
+            repeat(auto-fit,minmax(300px,1fr));
+        gap:20px;
+        margin-bottom:32px;">
+
+        <div class="ht-card">
+
+            <h3 style="margin-top:0;">
+                Workout Activity
+            </h3>
+
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td>Total Workout Plans</td>
+                        <td>
+                            <strong>
+                                @Model.TotalWorkoutPlans
+                            </strong>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Active Workout Plans</td>
+                        <td>
+                            <strong>
+                                @Model.ActiveWorkoutPlans
+                            </strong>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Workout Logs</td>
+                        <td>
+                            <strong>
+                                @Model.WorkoutLogs
+                            </strong>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="ht-card">
+
+            <h3 style="margin-top:0;">
+                Nutrition Activity
+            </h3>
+
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td>Total Diet Plans</td>
+                        <td>
+                            <strong>
+                                @Model.TotalDietPlans
+                            </strong>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Active Diet Plans</td>
+                        <td>
+                            <strong>
+                                @Model.ActiveDietPlans
+                            </strong>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Meal Logs</td>
+                        <td>
+                            <strong>
+                                @Model.MealLogs
+                            </strong>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>
+
+    <!-- PROGRESS -->
+
+    <h3>
+        Client Progress & Engagement
+    </h3>
+
+    <div style="
+        display:grid;
+        grid-template-columns:
+            repeat(auto-fit,minmax(220px,1fr));
+        gap:16px;
+        margin-bottom:32px;">
+
+        <div class="ht-card">
+            <small>FITNESS GOALS</small>
+
+            <h2>
+                @Model.TotalGoals
+            </h2>
+
+            <div>
+                @Model.CompletedGoals completed
+            </div>
+        </div>
+
+        <div class="ht-card">
+            <small>GOAL COMPLETION</small>
+
+            <h2>
+                @Model.GoalCompletionPercentage%
+            </h2>
+
+            <div style="
+                height:8px;
+                border-radius:20px;
+                overflow:hidden;
+                background:rgba(255,255,255,.08);
+                margin-top:12px;">
+
+                <div style="
+                    width:@Model.GoalCompletionPercentage%;
+                    max-width:100%;
+                    height:100%;
+                    background:#22c55e;">
+                </div>
+
+            </div>
+        </div>
+
+        <div class="ht-card">
+            <small>HEALTH MEASUREMENTS</small>
+
+            <h2>
+                @Model.HealthMeasurements
+            </h2>
+
+            <div>
+                Recorded progress entries
+            </div>
+        </div>
+
+        <div class="ht-card">
+            <small>TRAINER COVERAGE</small>
+
+            <h2>
+                @Model.AssignmentCoveragePercentage%
+            </h2>
+
+            <div>
+                Clients with active Trainer relationships
+            </div>
+        </div>
+
+    </div>
+
+    <!-- COMMUNICATION -->
+
+    <h3>
+        Communication
+    </h3>
+
+    <div style="
+        display:grid;
+        grid-template-columns:
+            repeat(auto-fit,minmax(220px,1fr));
+        gap:16px;
+        margin-bottom:12px;">
+
+        <div class="ht-card">
+            <small>TOTAL NOTIFICATIONS</small>
+
+            <h2>
+                @Model.Notifications
+            </h2>
+        </div>
+
+        <div class="ht-card">
+            <small>UNREAD NOTIFICATIONS</small>
+
+            <h2>
+                @Model.UnreadNotifications
+            </h2>
+        </div>
+
+        <div class="ht-card">
+            <small>APPOINTMENT COMPLETION</small>
+
+            <h2>
+                @Model.AppointmentCompletionPercentage%
+            </h2>
+        </div>
+
+    </div>
+
+</div>
