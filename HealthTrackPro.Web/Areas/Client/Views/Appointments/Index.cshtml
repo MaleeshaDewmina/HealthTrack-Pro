@@ -1,0 +1,1011 @@
+﻿
+@model HealthTrackPro.Web.Areas.Client.Models.ClientAppointmentsViewModel
+@using System
+@using System.Linq
+@using HealthTrackPro.Web.Enums
+
+@{
+    ViewBag.Title = "Appointments";
+
+    var appointments = Model.Appointments
+        ?? new System.Collections.Generic.List<HealthTrackPro.Web.Models.Scheduling.Appointment>();
+
+    var now = DateTime.Now;
+
+    var upcoming = appointments
+        .Where(a =>
+            a.AppointmentDateTime >= now &&
+            (a.Status == AppointmentStatus.Pending ||
+             a.Status == AppointmentStatus.Approved))
+        .OrderBy(a => a.AppointmentDateTime)
+        .ToList();
+
+    var history = appointments
+        .Where(a => !upcoming.Any(u => u.AppointmentId == a.AppointmentId))
+        .OrderByDescending(a => a.AppointmentDateTime)
+        .ToList();
+
+    var pendingCount = appointments.Count(a =>
+        a.Status == AppointmentStatus.Pending);
+
+    var approvedCount = appointments.Count(a =>
+        a.Status == AppointmentStatus.Approved);
+
+    var completedCount = appointments.Count(a =>
+        a.Status == AppointmentStatus.Completed);
+
+    var trainerOptions = (Model.AvailableTrainers
+        ?? new System.Collections.Generic.List<HealthTrackPro.Web.Areas.Client.Models.ClientAppointmentTrainerViewModel>())
+        .Select(t => new SelectListItem
+        {
+            Value = t.TrainerUserId,
+            Text = t.FullName +
+                (string.IsNullOrWhiteSpace(t.Specialization)
+                    ? ""
+                    : " — " + t.Specialization)
+        })
+        .ToList();
+}
+
+<style>
+    .ap-page {
+        color: #f3f4f6;
+        padding: 8px 0 48px;
+        font-family: inherit;
+    }
+
+        .ap-page * {
+            box-sizing: border-box;
+        }
+
+    .ap-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 18px;
+        margin-bottom: 26px;
+    }
+
+    .ap-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #4ade80;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 10px;
+    }
+
+    .ap-page h1 {
+        color: #f3f4f6;
+        font-size: clamp(26px, 3vw, 36px);
+        font-weight: 800;
+        letter-spacing: -1.3px;
+        margin: 0 0 8px;
+    }
+
+    .ap-subtitle {
+        color: #9ca3af;
+        font-size: 13px;
+        line-height: 1.7;
+        margin: 0;
+    }
+
+    .ap-toplink {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        border: 1px solid #26362a;
+        background: #111713;
+        color: #d1d5db;
+        padding: 11px 16px;
+        border-radius: 11px;
+        text-decoration: none !important;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+        .ap-toplink:hover {
+            color: #4ade80;
+            border-color: #22c55e;
+        }
+
+    .ap-stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+        margin-bottom: 24px;
+    }
+
+    .ap-stat,
+    .ap-panel {
+        background: #111713;
+        border: 1px solid #1f2a22;
+        border-radius: 17px;
+    }
+
+    .ap-stat {
+        padding: 20px;
+    }
+
+    .ap-stat-label {
+        color: #9ca3af;
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 12px;
+    }
+
+    .ap-stat-value {
+        font-size: 29px;
+        font-weight: 800;
+        color: #f3f4f6;
+        letter-spacing: -1px;
+    }
+
+    .ap-stat-note {
+        color: #7c8b80;
+        font-size: 11px;
+        margin-top: 8px;
+    }
+
+    .ap-stat-green {
+        color: #4ade80;
+    }
+
+    .ap-main {
+        display: grid;
+        grid-template-columns: minmax(0, 1.45fr) minmax(290px, 1fr);
+        gap: 20px;
+        align-items: start;
+    }
+
+    .ap-panel {
+        padding: 23px;
+        margin-bottom: 20px;
+        min-width: 0;
+    }
+
+    .ap-panel-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .ap-panel-title {
+        font-size: 17px;
+        font-weight: 800;
+        margin: 0;
+        color: #f3f4f6;
+    }
+
+    .ap-count {
+        background: #182a1d;
+        border: 1px solid #275a33;
+        color: #4ade80;
+        border-radius: 30px;
+        padding: 5px 10px;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .ap-booking-intro {
+        font-size: 12px;
+        color: #9ca3af;
+        line-height: 1.7;
+        margin: -5px 0 22px;
+    }
+
+    .ap-field {
+        margin-bottom: 17px;
+    }
+
+        .ap-field label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            color: #d1d5db;
+            margin-bottom: 8px;
+        }
+
+    .ap-input {
+        width: 100%;
+        min-width: 0;
+        height: 44px;
+        background: #080b09 !important;
+        color: #f3f4f6 !important;
+        border: 1px solid #29352c !important;
+        border-radius: 10px !important;
+        padding: 10px 12px !important;
+        font-size: 13px !important;
+        outline: none;
+        box-shadow: none !important;
+    }
+
+        .ap-input:focus {
+            border-color: #22c55e !important;
+            box-shadow: 0 0 0 3px rgba(34,197,94,.10) !important;
+        }
+
+    textarea.ap-input {
+        height: 94px;
+        resize: vertical;
+    }
+
+    .ap-input option {
+        background: #111713;
+        color: #f3f4f6;
+    }
+
+    .ap-input::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+        cursor: pointer;
+    }
+
+    .ap-field-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .ap-help {
+        font-size: 11px;
+        color: #7d8b81;
+        margin-top: 6px;
+        line-height: 1.5;
+    }
+
+    .ap-validation {
+        color: #fca5a5;
+        font-size: 11px;
+        display: block;
+        margin-top: 6px;
+    }
+
+    .ap-validation-summary {
+        color: #fca5a5;
+        font-size: 12px;
+        margin-bottom: 12px;
+    }
+
+        .ap-validation-summary ul {
+            padding-left: 18px;
+        }
+
+    .ap-primary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        width: 100%;
+        padding: 13px 17px;
+        background: #22c55e;
+        border: 1px solid #22c55e;
+        color: #071009;
+        border-radius: 11px;
+        font-size: 13px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: background .2s ease;
+    }
+
+        .ap-primary:hover {
+            background: #4ade80;
+        }
+
+        .ap-primary:disabled {
+            opacity: .45;
+            cursor: not-allowed;
+        }
+
+    .ap-notice {
+        padding: 14px 16px;
+        border-radius: 11px;
+        margin-bottom: 20px;
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    .ap-notice-success {
+        background: #102619;
+        border: 1px solid #236b38;
+        color: #86efac;
+    }
+
+    .ap-notice-error {
+        background: #2b1717;
+        border: 1px solid #6c3030;
+        color: #fca5a5;
+    }
+
+    .ap-appointment {
+        background: #0b100c;
+        border: 1px solid #223025;
+        border-radius: 13px;
+        padding: 17px;
+        margin-bottom: 12px;
+    }
+
+        .ap-appointment:last-child {
+            margin-bottom: 0;
+        }
+
+    .ap-appointment-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 15px;
+    }
+
+    .ap-appointment-reason {
+        font-size: 14px;
+        font-weight: 800;
+        color: #f3f4f6;
+        margin: 0 0 5px;
+        overflow-wrap: anywhere;
+    }
+
+    .ap-appointment-trainer {
+        color: #9ca3af;
+        font-size: 12px;
+        margin: 0;
+    }
+
+    .ap-status {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 20px;
+        padding: 6px 10px;
+        font-size: 10px;
+        font-weight: 800;
+        white-space: nowrap;
+        border: 1px solid;
+    }
+
+    .ap-status-pending {
+        color: #fbbf24;
+        background: #302511;
+        border-color: #5c481c;
+    }
+
+    .ap-status-approved {
+        color: #4ade80;
+        background: #142a1b;
+        border-color: #245a32;
+    }
+
+    .ap-status-completed {
+        color: #93c5fd;
+        background: #142337;
+        border-color: #254768;
+    }
+
+    .ap-status-cancelled,
+    .ap-status-rejected {
+        color: #fca5a5;
+        background: #301919;
+        border-color: #653131;
+    }
+
+    .ap-appointment-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px 20px;
+        font-size: 12px;
+        color: #b8c3ba;
+        margin-bottom: 13px;
+    }
+
+        .ap-appointment-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+    .ap-appointment-notes {
+        border-top: 1px solid #1f2a22;
+        padding-top: 12px;
+        margin-top: 8px;
+        font-size: 12px;
+        line-height: 1.6;
+        color: #9ca3af;
+        overflow-wrap: anywhere;
+    }
+
+    .ap-appointment-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 14px;
+        padding-top: 13px;
+        border-top: 1px solid #1f2a22;
+    }
+
+    .ap-booking-id {
+        color: #6f8173;
+        font-size: 11px;
+    }
+
+    .ap-cancel {
+        border: 1px solid #6d3030;
+        background: #2a1515;
+        color: #fca5a5;
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 800;
+        cursor: pointer;
+    }
+
+        .ap-cancel:hover {
+            background: #421d1d;
+        }
+
+    .ap-empty {
+        text-align: center;
+        padding: 32px 15px;
+        border: 1px dashed #2a392d;
+        border-radius: 12px;
+        background: #0b100c;
+    }
+
+    .ap-empty-icon {
+        display: flex;
+        justify-content: center;
+        color: #4ade80;
+        margin-bottom: 12px;
+    }
+
+    .ap-empty-title {
+        color: #e5e7eb;
+        font-size: 14px;
+        font-weight: 800;
+        margin-bottom: 6px;
+    }
+
+    .ap-empty-desc {
+        color: #8b9a8e;
+        font-size: 12px;
+        line-height: 1.7;
+    }
+
+    .ap-info {
+        background: #0c170f;
+        border: 1px solid #25422b;
+        border-radius: 11px;
+        padding: 14px;
+        color: #a7c9ad;
+        font-size: 12px;
+        line-height: 1.7;
+        margin-top: 18px;
+    }
+
+    .ap-history-item {
+        padding: 15px 0;
+        border-bottom: 1px solid #202b23;
+    }
+
+        .ap-history-item:first-child {
+            padding-top: 0;
+        }
+
+        .ap-history-item:last-child {
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+    .ap-history-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 7px;
+    }
+
+    .ap-history-title {
+        color: #e5e7eb;
+        font-size: 13px;
+        font-weight: 800;
+        overflow-wrap: anywhere;
+    }
+
+    .ap-history-meta {
+        color: #8b9a8e;
+        font-size: 11px;
+        line-height: 1.7;
+    }
+
+    .ap-icon {
+        width: 17px;
+        height: 17px;
+        flex-shrink: 0;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 1.8px;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+
+    @@media (max-width: 1050px) {
+        .ap-stats {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .ap-main {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 600px) {
+        .ap-stats {
+            gap: 10px;
+        }
+
+        .ap-stat {
+            padding: 15px;
+        }
+
+        .ap-stat-value {
+            font-size: 24px;
+        }
+
+        .ap-panel {
+            padding: 16px;
+        }
+
+        .ap-field-row {
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+
+        .ap-appointment-top,
+        .ap-history-top {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+    }
+</style>
+
+<div class="ap-page">
+
+    <div class="ap-header">
+        <div>
+            <div class="ap-eyebrow">
+                <svg class="ap-icon" viewBox="0 0 24 24">
+                    <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+                    <path d="M7 3v4M17 3v4M3 10h18"></path>
+                </svg>
+                CLIENT SCHEDULING
+            </div>
+            <h1>My Appointments</h1>
+            <p class="ap-subtitle">
+                Book trainer sessions, track requests and manage your schedule.
+            </p>
+        </div>
+
+        <a class="ap-toplink"
+           href="@Url.Action("Index", "Dashboard", new { area = "Client" })">
+            <svg class="ap-icon" viewBox="0 0 24 24">
+                <path d="M19 12H5M12 19l-7-7 7-7"></path>
+            </svg>
+            Back to Dashboard
+        </a>
+    </div>
+
+    @if (TempData["AppointmentSuccess"] != null)
+    {
+        <div class="ap-notice ap-notice-success" role="status">
+            @TempData["AppointmentSuccess"]
+        </div>
+    }
+
+    @if (TempData["AppointmentError"] != null)
+    {
+        <div class="ap-notice ap-notice-error" role="alert">
+            @TempData["AppointmentError"]
+        </div>
+    }
+
+    <div class="ap-stats">
+        <div class="ap-stat">
+            <div class="ap-stat-label">Total Appointments</div>
+            <div class="ap-stat-value">@appointments.Count</div>
+            <div class="ap-stat-note">All appointment records</div>
+        </div>
+
+        <div class="ap-stat">
+            <div class="ap-stat-label">Pending Requests</div>
+            <div class="ap-stat-value">@pendingCount</div>
+            <div class="ap-stat-note">Awaiting trainer approval</div>
+        </div>
+
+        <div class="ap-stat">
+            <div class="ap-stat-label">Approved Sessions</div>
+            <div class="ap-stat-value ap-stat-green">@approvedCount</div>
+            <div class="ap-stat-note">Approved appointment records</div>
+        </div>
+
+        <div class="ap-stat">
+            <div class="ap-stat-label">Completed Sessions</div>
+            <div class="ap-stat-value">@completedCount</div>
+            <div class="ap-stat-note">Marked completed by trainer</div>
+        </div>
+    </div>
+
+    <div class="ap-main">
+
+        <div>
+            <section class="ap-panel">
+                <div class="ap-panel-head">
+                    <h2 class="ap-panel-title">Upcoming Appointments</h2>
+                    <span class="ap-count">@upcoming.Count Upcoming</span>
+                </div>
+
+                @if (!upcoming.Any())
+                {
+                    <div class="ap-empty">
+                        <div class="ap-empty-icon">
+                            <svg width="37" height="37"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="1.5"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round">
+                                <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+                                <path d="M7 3v4M17 3v4M3 10h18M8 15h8"></path>
+                            </svg>
+                        </div>
+                        <div class="ap-empty-title">
+                            No upcoming appointments
+                        </div>
+                        <div class="ap-empty-desc">
+                            Book a session with your assigned trainer
+                            to get started.
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    foreach (var appointment in upcoming)
+                    {
+                        var statusClass = appointment.Status ==
+                            AppointmentStatus.Approved
+                                ? "ap-status-approved"
+                                : "ap-status-pending";
+
+                        <article class="ap-appointment">
+                            <div class="ap-appointment-top">
+                                <div>
+                                    <h3 class="ap-appointment-reason">
+                                        @appointment.Reason
+                                    </h3>
+                                    <p class="ap-appointment-trainer">
+                                        Trainer:
+                                        @(appointment.Trainer != null
+                                            ? appointment.Trainer.FullName
+                                            : "Assigned Trainer")
+                                    </p>
+                                </div>
+
+                                <span class="ap-status @statusClass">
+                                    @appointment.Status
+                                </span>
+                            </div>
+
+                            <div class="ap-appointment-meta">
+                                <span>
+                                    <svg class="ap-icon" viewBox="0 0 24 24">
+                                        <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+                                        <path d="M7 3v4M17 3v4M3 10h18"></path>
+                                    </svg>
+                                    @appointment.AppointmentDateTime.ToString("dd MMM yyyy")
+                                </span>
+
+                                <span>
+                                    <svg class="ap-icon" viewBox="0 0 24 24">
+                                        <circle cx="12" cy="12" r="9"></circle>
+                                        <path d="M12 7v5l3 2"></path>
+                                    </svg>
+                                    @appointment.AppointmentDateTime.ToString("hh:mm tt")
+                                </span>
+
+                                <span>
+                                    <svg class="ap-icon" viewBox="0 0 24 24">
+                                        <path d="M4 7h16M4 12h16M4 17h10"></path>
+                                    </svg>
+                                    @appointment.DurationMinutes min
+                                </span>
+                            </div>
+
+                            @if (!string.IsNullOrWhiteSpace(appointment.Notes))
+                            {
+                                <div class="ap-appointment-notes">
+                                    @appointment.Notes
+                                </div>
+                            }
+
+                            <div class="ap-appointment-footer">
+                                <span class="ap-booking-id">
+                                    Booking #@appointment.AppointmentId
+                                </span>
+
+                                @using (Html.BeginForm(
+                                    "Cancel",
+                                    "Appointments",
+                                    new { area = "Client", id = appointment.AppointmentId },
+                                    FormMethod.Post,
+                                    new { @class = "ap-cancel-form" }))
+                                {
+                                    @Html.AntiForgeryToken()
+
+                                    <button type="submit"
+                                            class="ap-cancel">
+                                        Cancel Appointment
+                                    </button>
+                                }
+                            </div>
+                        </article>
+                    }
+                }
+            </section>
+
+            <section class="ap-panel">
+                <div class="ap-panel-head">
+                    <h2 class="ap-panel-title">Appointment History</h2>
+                    <span class="ap-count">@history.Count Records</span>
+                </div>
+
+                @if (!history.Any())
+                {
+                    <div class="ap-empty">
+                        <div class="ap-empty-title">
+                            No appointment history
+                        </div>
+                        <div class="ap-empty-desc">
+                            Your previous, cancelled and completed
+                            appointments will appear here.
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    foreach (var appointment in history)
+                    {
+                        var historyStatusClass =
+                            appointment.Status == AppointmentStatus.Completed
+                                ? "ap-status-completed"
+                                : appointment.Status == AppointmentStatus.Approved
+                                    ? "ap-status-approved"
+                                    : appointment.Status == AppointmentStatus.Pending
+                                        ? "ap-status-pending"
+                                        : "ap-status-cancelled";
+
+                        <div class="ap-history-item">
+                            <div class="ap-history-top">
+                                <div class="ap-history-title">
+                                    @appointment.Reason
+                                </div>
+
+                                <span class="ap-status @historyStatusClass">
+                                    @appointment.Status
+                                </span>
+                            </div>
+
+                            <div class="ap-history-meta">
+                                @(appointment.Trainer != null
+                                    ? appointment.Trainer.FullName
+                                    : "Assigned Trainer")
+                                &nbsp;·&nbsp;
+                                @appointment.AppointmentDateTime.ToString("dd MMM yyyy")
+                                &nbsp;·&nbsp;
+                                @appointment.AppointmentDateTime.ToString("hh:mm tt")
+                                &nbsp;·&nbsp;
+                                @appointment.DurationMinutes min
+                            </div>
+                        </div>
+                    }
+                }
+            </section>
+        </div>
+
+        <div>
+            <section class="ap-panel" id="bookAppointment">
+                <div class="ap-panel-head">
+                    <h2 class="ap-panel-title">Book an Appointment</h2>
+                    <svg class="ap-icon" style="color:#4ade80;"
+                         viewBox="0 0 24 24">
+                        <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+                        <path d="M7 3v4M17 3v4M3 10h18M12 13v6M9 16h6"></path>
+                    </svg>
+                </div>
+
+                <p class="ap-booking-intro">
+                    Request a session with an approved trainer
+                    assigned to your account.
+                </p>
+
+                @if (!Model.AvailableTrainers.Any())
+                {
+                    <div class="ap-empty">
+                        <div class="ap-empty-title">
+                            No assigned trainer available
+                        </div>
+                        <div class="ap-empty-desc">
+                            An administrator must assign an approved
+                            trainer to your account before you can book.
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    using (Html.BeginForm(
+                        "Book",
+                        "Appointments",
+                        new { area = "Client" },
+                        FormMethod.Post,
+                        new { id = "apBookingForm" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        @Html.ValidationSummary(
+                            false,
+                            "",
+                            new { @class = "ap-validation-summary" })
+
+                        <div class="ap-field">
+                            @Html.LabelFor(m => m.NewBooking.TrainerUserId)
+
+                            @Html.DropDownListFor(
+                                m => m.NewBooking.TrainerUserId,
+                                trainerOptions,
+                                "Select your trainer",
+                                new { @class = "ap-input" })
+
+                            @Html.ValidationMessageFor(
+                                m => m.NewBooking.TrainerUserId,
+                                "",
+                                new { @class = "ap-validation" })
+                        </div>
+
+                        <div class="ap-field">
+                            @Html.LabelFor(m => m.NewBooking.AppointmentDateTime)
+
+                            @Html.TextBoxFor(
+                                m => m.NewBooking.AppointmentDateTime,
+                                "{0:yyyy-MM-ddTHH:mm}",
+                                new
+                                {
+                                    @class = "ap-input",
+                                    type = "datetime-local",
+                                    step = "60"
+                                })
+
+                            @Html.ValidationMessageFor(
+                                m => m.NewBooking.AppointmentDateTime,
+                                "",
+                                new { @class = "ap-validation" })
+
+                            <div class="ap-help">
+                                Select a future date and time.
+                            </div>
+                        </div>
+
+                        <div class="ap-field">
+                            @Html.LabelFor(m => m.NewBooking.DurationMinutes)
+
+                            @Html.DropDownListFor(
+                                m => m.NewBooking.DurationMinutes,
+                                new[]
+                                {
+                                    new SelectListItem { Text = "15 minutes", Value = "15" },
+                                    new SelectListItem { Text = "30 minutes", Value = "30" },
+                                    new SelectListItem { Text = "45 minutes", Value = "45" },
+                                    new SelectListItem { Text = "60 minutes", Value = "60" },
+                                    new SelectListItem { Text = "90 minutes", Value = "90" },
+                                    new SelectListItem { Text = "120 minutes", Value = "120" }
+                                },
+                                "Select duration",
+                                new { @class = "ap-input" })
+
+                            @Html.ValidationMessageFor(
+                                m => m.NewBooking.DurationMinutes,
+                                "",
+                                new { @class = "ap-validation" })
+                        </div>
+
+                        <div class="ap-field">
+                            @Html.LabelFor(m => m.NewBooking.Reason)
+
+                            @Html.TextBoxFor(
+                                m => m.NewBooking.Reason,
+                                new
+                                {
+                                    @class = "ap-input",
+                                    placeholder = "e.g. Monthly fitness review",
+                                    maxlength = "200"
+                                })
+
+                            @Html.ValidationMessageFor(
+                                m => m.NewBooking.Reason,
+                                "",
+                                new { @class = "ap-validation" })
+                        </div>
+
+                        <div class="ap-field">
+                            @Html.LabelFor(m => m.NewBooking.Notes)
+
+                            @Html.TextAreaFor(
+                                m => m.NewBooking.Notes,
+                                new
+                                {
+                                    @class = "ap-input",
+                                    placeholder = "Anything your trainer should know...",
+                                    maxlength = "1000"
+                                })
+
+                            @Html.ValidationMessageFor(
+                                m => m.NewBooking.Notes,
+                                "",
+                                new { @class = "ap-validation" })
+                        </div>
+
+                        <button type="submit" class="ap-primary">
+                            <svg class="ap-icon" viewBox="0 0 24 24">
+                                <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+                                <path d="M7 3v4M17 3v4M3 10h18M12 13v6M9 16h6"></path>
+                            </svg>
+                            Request Appointment
+                        </button>
+                    }
+                }
+
+                <div class="ap-info">
+                    Appointment requests start as
+                    <strong>Pending</strong> and require trainer approval.
+                    Selecting a time does not guarantee trainer availability.
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        var forms = document.querySelectorAll(".ap-cancel-form");
+
+        Array.prototype.forEach.call(forms, function (form) {
+            form.addEventListener("submit", function (event) {
+                if (!window.confirm(
+                    "Are you sure you want to cancel this appointment?"
+                )) {
+                    event.preventDefault();
+                }
+            });
+        });
+
+        var dateInput = document.getElementById(
+            "NewBooking_AppointmentDateTime"
+        );
+
+        if (dateInput) {
+            var now = new Date();
+
+            var localNow = new Date(
+                now.getTime() - now.getTimezoneOffset() * 60000
+            );
+
+            var minValue = localNow.toISOString().slice(0, 16);
+
+            dateInput.min = minValue;
+        }
+    })();
+</script>
