@@ -111,3 +111,49 @@ namespace HealthTrackPro.Web.Areas.Trainer.Models
         public bool IsActive { get; set; }
     }
 }
+
+namespace HealthTrackPro.Web.Areas.Trainer.Models
+{
+    /// <summary>Trainer dashboard: counts and short lists, all for the logged-in trainer.</summary>
+    public class TrainerDashboardViewModel
+    {
+        public TrainerDashboardViewModel()
+        {
+            RecentClients = new List<DashboardClientRowViewModel>();
+            UpcomingAppointments = new List<DashboardAppointmentRowViewModel>();
+            RecentNotifications = new List<DashboardNotificationRowViewModel>();
+        }
+
+        public int AssignedClientCount { get; set; }
+        public int PendingAppointmentCount { get; set; }
+        public int ActiveWorkoutPlanCount { get; set; }
+        public int ActiveDietPlanCount { get; set; }
+        public int UnreadNotificationCount { get; set; }
+
+        public List<DashboardClientRowViewModel> RecentClients { get; set; }
+        public List<DashboardAppointmentRowViewModel> UpcomingAppointments { get; set; }
+        public List<DashboardNotificationRowViewModel> RecentNotifications { get; set; }
+    }
+
+    public class DashboardClientRowViewModel
+    {
+        public string ClientUserId { get; set; }
+        public string FullName { get; set; }
+        public string PrimaryGoal { get; set; }
+    }
+
+    public class DashboardAppointmentRowViewModel
+    {
+        public string ClientName { get; set; }
+        public string When { get; set; }
+        public string Status { get; set; }
+    }
+
+    public class DashboardNotificationRowViewModel
+    {
+        public string Title { get; set; }
+        public string Message { get; set; }
+        public string When { get; set; }
+        public bool IsRead { get; set; }
+    }
+}
