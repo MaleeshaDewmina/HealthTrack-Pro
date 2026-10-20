@@ -117,13 +117,13 @@
                     </li>
 
                     <li class="ht-nav-item">
-                        <a href="#" class="ht-nav-link ht-nav-pending">
+                        <a href="@Url.Action("Index", "Diet", new { area = "Client" })" class="ht-nav-link @((controller == "Diet" || controller == "MealLog") ? "active" : "")">
                             Diet
                         </a>
                     </li>
 
                     <li class="ht-nav-item">
-                        <a href="#" class="ht-nav-link ht-nav-pending">
+                        <a href="@Url.Action("Index", "Progress", new { area = "Client" })" class="ht-nav-link @(controller == "Progress" ? "active" : "")">
                             Progress
                         </a>
                     </li>
