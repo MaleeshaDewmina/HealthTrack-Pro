@@ -1,0 +1,963 @@
+﻿
+@model List<HealthTrackPro.Web.Models.Diet.MealLog>
+
+@using System
+@using System.Collections.Generic
+@using System.Linq
+@using HealthTrackPro.Web.Models.Diet
+
+@{
+    ViewBag.Title = "Meal Logging";
+
+    var meals = Model ?? new List<MealLog>();
+
+    var activePlan = ViewBag.ActivePlan as DietPlan;
+
+    int todayCalories = Convert.ToInt32(
+        ViewBag.TodayCalories ?? 0);
+
+    decimal todayProtein = Convert.ToDecimal(
+        ViewBag.TodayProtein ?? 0);
+
+    decimal todayCarbs = Convert.ToDecimal(
+        ViewBag.TodayCarbs ?? 0);
+
+    decimal todayFat = Convert.ToDecimal(
+        ViewBag.TodayFat ?? 0);
+
+    int? calorieTarget = activePlan != null
+        ? activePlan.DailyCaloriesTarget
+        : null;
+
+    int progressValue = calorieTarget.HasValue
+        ? Math.Min(todayCalories, Math.Max(0, calorieTarget.Value))
+        : 0;
+}
+
+<style>
+    #ht-meals {
+        color: #F3F4F6;
+        padding: 28px 4px 60px;
+        font-family: inherit;
+    }
+
+        #ht-meals * {
+            box-sizing: border-box;
+        }
+
+        #ht-meals .ml-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+
+        #ht-meals .ml-eyebrow {
+            display: block;
+            color: #4ADE80;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        #ht-meals h1 {
+            font-size: 32px;
+            color: #F3F4F6;
+            font-weight: 800;
+            margin: 0 0 9px;
+        }
+
+        #ht-meals .ml-subtitle {
+            color: #9CA3AF;
+            font-size: 14px;
+            line-height: 1.7;
+            margin: 0;
+        }
+
+        #ht-meals .ml-date {
+            padding: 11px 16px;
+            background: #111713;
+            border: 1px solid #1F2A22;
+            border-radius: 12px;
+            color: #A7B4AA;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        #ht-meals .ml-summary {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 26px;
+        }
+
+        #ht-meals .ml-card {
+            background: #111713;
+            border: 1px solid #1F2A22;
+            border-radius: 16px;
+            padding: 22px;
+            min-width: 0;
+        }
+
+        #ht-meals .ml-card-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        #ht-meals .ml-card-label {
+            color: #9CA3AF;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        #ht-meals .ml-card-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 11px;
+            background: #17271B;
+            color: #4ADE80;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        #ht-meals .ml-card-value {
+            font-size: 28px;
+            font-weight: 800;
+            line-height: 1.2;
+            color: #F3F4F6;
+        }
+
+        #ht-meals .ml-unit {
+            margin-left: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #9CA3AF;
+        }
+
+        #ht-meals .ml-card-note {
+            margin-top: 10px;
+            color: #849389;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        #ht-meals .ml-progress {
+            display: block;
+            width: 100%;
+            height: 8px;
+            margin-top: 13px;
+            border: none;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #263028;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+            #ht-meals .ml-progress::-webkit-progress-bar {
+                background: #263028;
+                border-radius: 20px;
+            }
+
+            #ht-meals .ml-progress::-webkit-progress-value {
+                background: #22C55E;
+                border-radius: 20px;
+            }
+
+            #ht-meals .ml-progress::-moz-progress-bar {
+                background: #22C55E;
+                border-radius: 20px;
+            }
+
+        #ht-meals .ml-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+            gap: 22px;
+            align-items: start;
+        }
+
+        #ht-meals .ml-panel {
+            background: #111713;
+            border: 1px solid #1F2A22;
+            border-radius: 18px;
+            padding: 25px;
+            min-width: 0;
+        }
+
+        #ht-meals .ml-panel-header {
+            margin-bottom: 25px;
+        }
+
+        #ht-meals .ml-panel-title {
+            margin: 0 0 8px;
+            color: #F3F4F6;
+            font-size: 19px;
+            font-weight: 800;
+        }
+
+        #ht-meals .ml-panel-desc {
+            color: #9CA3AF;
+            font-size: 12px;
+            line-height: 1.7;
+            margin: 0;
+        }
+
+        #ht-meals .ml-field {
+            margin-bottom: 19px;
+        }
+
+        #ht-meals .ml-label {
+            display: block;
+            margin-bottom: 9px;
+            color: #DDE5DF;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        #ht-meals .ml-input,
+        #ht-meals .ml-select,
+        #ht-meals .ml-textarea {
+            display: block;
+            width: 100% !important;
+            max-width: none !important;
+            min-width: 0;
+            padding: 13px 14px;
+            background: #0B100D;
+            border: 1px solid #28372C;
+            border-radius: 11px;
+            color: #F3F4F6;
+            font-size: 13px;
+            font-family: inherit;
+            outline: none;
+            box-shadow: none;
+            transition: border-color 0.2s;
+        }
+
+            #ht-meals .ml-input:focus,
+            #ht-meals .ml-select:focus,
+            #ht-meals .ml-textarea:focus {
+                border-color: #22C55E;
+            }
+
+            #ht-meals .ml-input::placeholder,
+            #ht-meals .ml-textarea::placeholder {
+                color: #657368;
+            }
+
+            #ht-meals .ml-select option {
+                background: #111713;
+                color: #F3F4F6;
+            }
+
+        #ht-meals .ml-textarea {
+            min-height: 94px;
+            resize: vertical;
+        }
+
+        #ht-meals .ml-form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0 15px;
+        }
+
+        #ht-meals .ml-section-label {
+            display: block;
+            margin: 5px 0 15px;
+            color: #4ADE80;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        #ht-meals .ml-button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: #22C55E;
+            color: #061008;
+            border: none;
+            border-radius: 11px;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+            #ht-meals .ml-button:hover {
+                background: #4ADE80;
+            }
+
+        #ht-meals .ml-alert {
+            padding: 13px 16px;
+            border-radius: 11px;
+            margin-bottom: 20px;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        #ht-meals .ml-alert-success {
+            color: #86EFAC;
+            background: #10321B;
+            border: 1px solid #205D32;
+        }
+
+        #ht-meals .ml-alert-error {
+            color: #FCA5A5;
+            background: #351818;
+            border: 1px solid #713232;
+        }
+
+        #ht-meals .ml-history-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 23px;
+        }
+
+        #ht-meals .ml-count {
+            padding: 7px 11px;
+            background: #17271B;
+            color: #4ADE80;
+            border-radius: 9px;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        #ht-meals .ml-meal {
+            display: flex;
+            gap: 14px;
+            padding: 18px 0;
+            border-top: 1px solid #1F2A22;
+        }
+
+            #ht-meals .ml-meal:first-child {
+                border-top: none;
+                padding-top: 0;
+            }
+
+        #ht-meals .ml-meal-icon {
+            flex: 0 0 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            background: #182A1D;
+            color: #4ADE80;
+            border-radius: 12px;
+        }
+
+        #ht-meals .ml-meal-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        #ht-meals .ml-meal-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        #ht-meals .ml-meal-name {
+            margin: 0 0 7px;
+            color: #F3F4F6;
+            font-size: 14px;
+            font-weight: 750;
+            overflow-wrap: anywhere;
+        }
+
+        #ht-meals .ml-meal-type {
+            color: #4ADE80;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+
+        #ht-meals .ml-meal-calories {
+            color: #F3F4F6;
+            font-size: 14px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        #ht-meals .ml-meal-desc {
+            margin: 9px 0;
+            color: #9CA3AF;
+            font-size: 12px;
+            line-height: 1.6;
+            overflow-wrap: anywhere;
+        }
+
+        #ht-meals .ml-meal-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9px 15px;
+            margin-top: 12px;
+            color: #9CA3AF;
+            font-size: 11px;
+        }
+
+        #ht-meals .ml-meal-time {
+            margin-top: 12px;
+            color: #829386;
+            font-size: 11px;
+        }
+
+        #ht-meals .ml-empty {
+            padding: 45px 15px;
+            text-align: center;
+            border: 1px dashed #2C4030;
+            border-radius: 14px;
+        }
+
+        #ht-meals .ml-empty-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 55px;
+            height: 55px;
+            margin: 0 auto 16px;
+            background: #182A1D;
+            color: #4ADE80;
+            border-radius: 15px;
+        }
+
+        #ht-meals .ml-empty h3 {
+            margin: 0 0 9px;
+            color: #F3F4F6;
+            font-size: 16px;
+        }
+
+        #ht-meals .ml-empty p {
+            margin: 0;
+            color: #9CA3AF;
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+    @@media (max-width: 1100px) {
+        #ht-meals .ml-summary {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        #ht-meals .ml-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 600px) {
+        #ht-meals {
+            padding-top: 15px;
+        }
+
+            #ht-meals h1 {
+                font-size: 26px;
+            }
+
+            #ht-meals .ml-summary {
+                gap: 10px;
+            }
+
+            #ht-meals .ml-card,
+            #ht-meals .ml-panel {
+                padding: 17px;
+            }
+
+            #ht-meals .ml-card-value {
+                font-size: 22px;
+            }
+
+            #ht-meals .ml-form-grid {
+                grid-template-columns: 1fr;
+            }
+    }
+</style>
+
+<div id="ht-meals">
+
+    <!-- PAGE HEADER -->
+
+    <div class="ml-header">
+
+        <div>
+            <span class="ml-eyebrow">
+                Nutrition Tracking
+            </span>
+
+            <h1>Meal Logging</h1>
+
+            <p class="ml-subtitle">
+                Record your meals, monitor your daily nutrition,
+                and stay consistent with your goals.
+            </p>
+        </div>
+
+        <div class="ml-date">
+            @DateTime.UtcNow.ToString("dddd, dd MMM yyyy") (UTC)
+        </div>
+
+    </div>
+
+    <!-- NUTRITION SUMMARY -->
+
+    <div class="ml-summary">
+
+        <!-- CALORIES -->
+
+        <div class="ml-card">
+            <div class="ml-card-head">
+                <span class="ml-card-label">
+                    Today's Calories
+                </span>
+
+                <span class="ml-card-icon">
+                    KCAL
+                </span>
+            </div>
+
+            <div class="ml-card-value">
+                @todayCalories.ToString("N0")
+                <span class="ml-unit">kcal</span>
+            </div>
+
+            @if (calorieTarget.HasValue &&
+                 calorieTarget.Value > 0)
+            {
+                <progress class="ml-progress"
+                          value="@progressValue"
+                          max="@calorieTarget.Value">
+                </progress>
+
+                <div class="ml-card-note">
+                    @todayCalories.ToString("N0")
+                    of @calorieTarget.Value.ToString("N0")
+                    kcal daily target
+                </div>
+            }
+            else
+            {
+                <div class="ml-card-note">
+                    No daily calorie target assigned
+                </div>
+            }
+        </div>
+
+        <!-- PROTEIN -->
+
+        <div class="ml-card">
+            <div class="ml-card-head">
+                <span class="ml-card-label">
+                    Protein
+                </span>
+
+                <span class="ml-card-icon">P</span>
+            </div>
+
+            <div class="ml-card-value">
+                @todayProtein.ToString("0.#")
+                <span class="ml-unit">g</span>
+            </div>
+
+            <div class="ml-card-note">
+                Total protein logged today
+            </div>
+        </div>
+
+        <!-- CARBOHYDRATES -->
+
+        <div class="ml-card">
+            <div class="ml-card-head">
+                <span class="ml-card-label">
+                    Carbohydrates
+                </span>
+
+                <span class="ml-card-icon">C</span>
+            </div>
+
+            <div class="ml-card-value">
+                @todayCarbs.ToString("0.#")
+                <span class="ml-unit">g</span>
+            </div>
+
+            <div class="ml-card-note">
+                Total carbohydrates logged today
+            </div>
+        </div>
+
+        <!-- FATS -->
+
+        <div class="ml-card">
+            <div class="ml-card-head">
+                <span class="ml-card-label">
+                    Fats
+                </span>
+
+                <span class="ml-card-icon">F</span>
+            </div>
+
+            <div class="ml-card-value">
+                @todayFat.ToString("0.#")
+                <span class="ml-unit">g</span>
+            </div>
+
+            <div class="ml-card-note">
+                Total fats logged today
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SUCCESS / ERROR MESSAGES -->
+
+    @if (TempData["MealLogSuccess"] != null)
+    {
+        <div class="ml-alert ml-alert-success"
+             role="status">
+            @TempData["MealLogSuccess"]
+        </div>
+    }
+
+    @if (TempData["MealLogError"] != null)
+    {
+        <div class="ml-alert ml-alert-error"
+             role="alert">
+            @TempData["MealLogError"]
+        </div>
+    }
+
+    <!-- MAIN CONTENT -->
+
+    <div class="ml-layout">
+
+        <!-- LOG A NEW MEAL -->
+
+        <section class="ml-panel">
+
+            <div class="ml-panel-header">
+                <h2 class="ml-panel-title">
+                    Log a New Meal
+                </h2>
+
+                <p class="ml-panel-desc">
+                    Enter the nutritional details of the food
+                    you have eaten.
+                </p>
+            </div>
+
+            @using (Html.BeginForm(
+                "Create",
+                "MealLog",
+                new { area = "Client" },
+                FormMethod.Post,
+                new { id = "mealLogForm" }))
+            {
+                @Html.AntiForgeryToken()
+
+                <!-- MEAL TYPE -->
+
+                <div class="ml-field">
+                    <label class="ml-label" for="MealType">
+                        Meal Type *
+                    </label>
+
+                    <select class="ml-select"
+                            id="MealType"
+                            name="MealType"
+                            required>
+                        <option value="">
+                            Select meal type
+                        </option>
+                        <option value="Breakfast">
+                            Breakfast
+                        </option>
+                        <option value="Lunch">
+                            Lunch
+                        </option>
+                        <option value="Dinner">
+                            Dinner
+                        </option>
+                        <option value="Snack">
+                            Snack
+                        </option>
+                        <option value="Other">
+                            Other
+                        </option>
+                    </select>
+                </div>
+
+                <!-- FOOD NAME -->
+
+                <div class="ml-field">
+                    <label class="ml-label" for="FoodName">
+                        Food Name *
+                    </label>
+
+                    <input class="ml-input"
+                           type="text"
+                           id="FoodName"
+                           name="FoodName"
+                           maxlength="200"
+                           placeholder="e.g. Rice, chicken and vegetables"
+                           required />
+                </div>
+
+                <span class="ml-section-label">
+                    Nutrition Details
+                </span>
+
+                <div class="ml-form-grid">
+
+                    <!-- CALORIES -->
+
+                    <div class="ml-field">
+                        <label class="ml-label"
+                               for="Calories">
+                            Calories (kcal) *
+                        </label>
+
+                        <input class="ml-input"
+                               type="number"
+                               id="Calories"
+                               name="Calories"
+                               min="0"
+                               max="10000"
+                               step="1"
+                               placeholder="e.g. 450"
+                               required />
+                    </div>
+
+                    <!-- PROTEIN -->
+
+                    <div class="ml-field">
+                        <label class="ml-label"
+                               for="ProteinGrams">
+                            Protein (g)
+                        </label>
+
+                        <input class="ml-input"
+                               type="number"
+                               id="ProteinGrams"
+                               name="ProteinGrams"
+                               min="0"
+                               max="500"
+                               step="any"
+                               placeholder="e.g. 25" />
+                    </div>
+
+                    <!-- CARBOHYDRATES -->
+
+                    <div class="ml-field">
+                        <label class="ml-label"
+                               for="CarbohydrateGrams">
+                            Carbohydrates (g)
+                        </label>
+
+                        <input class="ml-input"
+                               type="number"
+                               id="CarbohydrateGrams"
+                               name="CarbohydrateGrams"
+                               min="0"
+                               max="1000"
+                               step="any"
+                               placeholder="e.g. 60" />
+                    </div>
+
+                    <!-- FATS -->
+
+                    <div class="ml-field">
+                        <label class="ml-label"
+                               for="FatGrams">
+                            Fat (g)
+                        </label>
+
+                        <input class="ml-input"
+                               type="number"
+                               id="FatGrams"
+                               name="FatGrams"
+                               min="0"
+                               max="500"
+                               step="any"
+                               placeholder="e.g. 12" />
+                    </div>
+
+                </div>
+
+                <!-- DESCRIPTION -->
+
+                <div class="ml-field">
+                    <label class="ml-label"
+                           for="Description">
+                        Notes (Optional)
+                    </label>
+
+                    <textarea class="ml-textarea"
+                              id="Description"
+                              name="Description"
+                              maxlength="1000"
+                              placeholder="Add ingredients, portion sizes or meal notes"></textarea>
+                </div>
+
+                <!-- SAVE BUTTON -->
+
+                <button class="ml-button"
+                        type="submit">
+                    Save Meal
+                </button>
+            }
+
+        </section>
+
+        <!-- MEAL HISTORY -->
+
+        <section class="ml-panel">
+
+            <div class="ml-history-header">
+
+                <div>
+                    <h2 class="ml-panel-title">
+                        Meal History
+                    </h2>
+
+                    <p class="ml-panel-desc">
+                        Your previously recorded meals
+                    </p>
+                </div>
+
+                <span class="ml-count">
+                    @meals.Count meal@(meals.Count == 1 ? "" : "s")
+                </span>
+
+            </div>
+
+            @if (!meals.Any())
+            {
+                <!-- EMPTY STATE -->
+
+                <div class="ml-empty">
+
+                    <div class="ml-empty-icon">
+                        <svg width="26"
+                             height="26"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="1.6"
+                             stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <path d="M4 3v7a4 4 0 0 0 4 4V3" />
+                            <path d="M6 3v18" />
+                            <path d="M20 3v18" />
+                            <path d="M20 3c-4 2-4 8 0 10" />
+                        </svg>
+                    </div>
+
+                    <h3>No meals logged yet</h3>
+
+                    <p>
+                        Your meal history will appear here
+                        once you save your first meal.
+                    </p>
+
+                </div>
+            }
+            else
+            {
+                <!-- SAVED MEALS -->
+
+                foreach (var meal in meals)
+                {
+                    <div class="ml-meal">
+
+                        <div class="ml-meal-icon">
+                            <svg width="21"
+                                 height="21"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="1.7"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round">
+                                <path d="M4 3v7a4 4 0 0 0 4 4V3" />
+                                <path d="M6 3v18" />
+                                <path d="M20 3v18" />
+                                <path d="M20 3c-4 2-4 8 0 10" />
+                            </svg>
+                        </div>
+
+                        <div class="ml-meal-content">
+
+                            <div class="ml-meal-top">
+
+                                <div>
+                                    <h3 class="ml-meal-name">
+                                        @meal.FoodName
+                                    </h3>
+
+                                    <span class="ml-meal-type">
+                                        @meal.MealType
+                                    </span>
+                                </div>
+
+                                <span class="ml-meal-calories">
+                                    @meal.Calories kcal
+                                </span>
+
+                            </div>
+
+                            @if (!string.IsNullOrWhiteSpace(
+                                meal.Description))
+                            {
+                                <p class="ml-meal-desc">
+                                    @meal.Description
+                                </p>
+                            }
+
+                            <div class="ml-meal-meta">
+
+                                <span>
+                                    Protein:
+                                    @((meal.ProteinGrams ?? 0).ToString("0.#"))g
+                                </span>
+
+                                <span>
+                                    Carbs:
+                                    @((meal.CarbohydrateGrams ?? 0).ToString("0.#"))g
+                                </span>
+
+                                <span>
+                                    Fat:
+                                    @((meal.FatGrams ?? 0).ToString("0.#"))g
+                                </span>
+
+                            </div>
+
+                            <div class="ml-meal-time">
+                                @meal.LoggedAt.ToString("dd MMM yyyy, HH:mm") UTC
+                            </div>
+
+                        </div>
+
+                    </div>
+                }
+            }
+
+        </section>
+
+    </div>
+</div>
