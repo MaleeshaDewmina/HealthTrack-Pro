@@ -1,0 +1,1120 @@
+﻿
+@model HealthTrackPro.Web.Areas.Client.Models.ClientDietViewModel
+
+@using System
+@using System.Linq
+@using System.Collections.Generic
+@using HealthTrackPro.Web.Models.Diet
+
+@{
+    ViewBag.Title = "My Diet Plan";
+
+    var plans = Model != null && Model.Plans != null
+        ? Model.Plans
+        : new List<DietPlan>();
+
+    var activePlan = Model != null
+        ? Model.ActivePlan
+        : null;
+
+    var meals = activePlan != null && activePlan.Meals != null
+        ? activePlan.Meals
+            .OrderBy(m => m.DisplayOrder)
+            .ThenBy(m => m.MealId)
+            .ToList()
+        : new List<Meal>();
+
+    int totalPlans = plans.Count;
+    int totalMeals = meals.Count;
+
+    int plannedCalories = meals.Sum(m => m.Calories);
+
+    var otherPlans = plans
+        .Where(p => activePlan == null ||
+                    p.DietPlanId != activePlan.DietPlanId)
+        .OrderByDescending(p => p.StartDate)
+        .ToList();
+
+    var dashboardUrl = Url.Action(
+        "Index",
+        "Dashboard",
+        new { area = "Client" });
+}
+
+<style>
+    /* ========================================
+       HEALTHTRACK PRO - CLIENT DIET PLAN
+       ======================================== */
+
+    .cd-page,
+    .cd-page * {
+        box-sizing: border-box;
+    }
+
+    .cd-page {
+        max-width: 1450px;
+        margin: 0 auto;
+        padding: 15px 0 50px;
+        color: #F3F4F6;
+    }
+
+    /* HEADER */
+
+    .cd-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-bottom: 28px;
+    }
+
+    .cd-eyebrow {
+        display: block;
+        margin-bottom: 10px;
+        color: #4ADE80;
+        font-size: 11px;
+        font-weight: 750;
+        letter-spacing: 1.4px;
+        text-transform: uppercase;
+    }
+
+    .cd-title {
+        margin: 0 0 10px;
+        color: #F3F4F6;
+        font-size: 33px;
+        font-weight: 800;
+    }
+
+    .cd-subtitle {
+        max-width: 650px;
+        margin: 0;
+        color: #9CA3AF;
+        font-size: 13px;
+        line-height: 1.8;
+    }
+
+    .cd-back-link {
+        display: inline-flex;
+        align-items: center;
+        padding: 11px 17px;
+        border: 1px solid #2B4233;
+        border-radius: 10px;
+        background: #121C16;
+        color: #D1D5DB;
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+        .cd-back-link:hover,
+        .cd-back-link:focus {
+            color: #4ADE80;
+            border-color: #22C55E;
+            text-decoration: none;
+        }
+
+    /* STATISTICS */
+
+    .cd-stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 23px;
+    }
+
+    .cd-stat {
+        min-height: 140px;
+        padding: 22px;
+        border: 1px solid #26382B;
+        border-radius: 15px;
+        background: #111713;
+    }
+
+    .cd-stat-label {
+        display: block;
+        margin-bottom: 19px;
+        color: #9CA3AF;
+        font-size: 11px;
+        font-weight: 750;
+        line-height: 1.5;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+    }
+
+    .cd-stat-value {
+        color: #F3F4F6;
+        font-size: 29px;
+        font-weight: 800;
+        line-height: 1.1;
+    }
+
+    .cd-stat-unit {
+        margin-left: 5px;
+        color: #9CA3AF;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .cd-stat-note {
+        display: block;
+        margin-top: 11px;
+        color: #748678;
+        font-size: 11px;
+        line-height: 1.5;
+    }
+
+    /* SHARED CARDS */
+
+    .cd-card {
+        padding: 25px;
+        margin-bottom: 22px;
+        border: 1px solid #26382B;
+        border-radius: 16px;
+        background: #111713;
+    }
+
+    .cd-section-title {
+        margin: 0 0 9px;
+        color: #F3F4F6;
+        font-size: 19px;
+        font-weight: 800;
+    }
+
+    .cd-section-description {
+        margin: 0 0 23px;
+        color: #9CA3AF;
+        font-size: 12px;
+        line-height: 1.8;
+    }
+
+    .cd-card-heading {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin-bottom: 20px;
+    }
+
+    .cd-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 7px 12px;
+        border: 1px solid #347B49;
+        border-radius: 100px;
+        background: #194027;
+        color: #86EFAC;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: .3px;
+    }
+
+    .cd-badge-inactive {
+        border-color: #37463B;
+        background: #1A241D;
+        color: #9CA3AF;
+    }
+
+    /* ACTIVE PLAN */
+
+    .cd-plan-hero {
+        padding: 27px;
+        border: 1px solid #315E3D;
+        border-radius: 14px;
+        background: linear-gradient( 120deg, #173622 0%, #102017 54%, #0A120D 100% );
+    }
+
+    .cd-plan-name {
+        margin: 14px 0 11px;
+        color: #F3F4F6;
+        font-size: 26px;
+        font-weight: 800;
+        line-height: 1.3;
+    }
+
+    .cd-plan-description {
+        max-width: 800px;
+        margin: 0;
+        color: #B5C7BA;
+        font-size: 13px;
+        line-height: 1.9;
+        white-space: pre-line;
+        overflow-wrap: anywhere;
+    }
+
+    .cd-plan-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 23px;
+    }
+
+    .cd-meta-item {
+        padding: 11px 15px;
+        border: 1px solid #32543B;
+        border-radius: 10px;
+        background: rgba(0, 0, 0, .19);
+    }
+
+    .cd-meta-label {
+        display: block;
+        margin-bottom: 6px;
+        color: #94AA99;
+        font-size: 10px;
+        font-weight: 650;
+    }
+
+    .cd-meta-value {
+        color: #F3F4F6;
+        font-size: 12px;
+        font-weight: 750;
+    }
+
+    /* MACRO TARGETS */
+
+    .cd-macro-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 15px;
+    }
+
+    .cd-macro {
+        position: relative;
+        padding: 22px;
+        border: 1px solid #304235;
+        border-radius: 13px;
+        background: #0B120D;
+        overflow: hidden;
+    }
+
+        .cd-macro::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            right: 0;
+            height: 3px;
+            background: #22C55E;
+        }
+
+        .cd-macro:nth-child(2)::before {
+            background: #79C88B;
+        }
+
+        .cd-macro:nth-child(3)::before {
+            background: #A4D6AF;
+        }
+
+    .cd-macro-label {
+        display: block;
+        margin-bottom: 17px;
+        color: #9CA3AF;
+        font-size: 12px;
+        font-weight: 750;
+    }
+
+    .cd-macro-value {
+        color: #F3F4F6;
+        font-size: 29px;
+        font-weight: 800;
+    }
+
+    .cd-macro-unit {
+        margin-left: 5px;
+        color: #9CA3AF;
+        font-size: 12px;
+    }
+
+    .cd-macro-caption {
+        display: block;
+        margin-top: 11px;
+        color: #728879;
+        font-size: 11px;
+    }
+
+    /* MEAL CARDS */
+
+    .cd-meal-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .cd-meal {
+        padding: 21px;
+        border: 1px solid #2A3D30;
+        border-radius: 13px;
+        background: #0B120D;
+    }
+
+    .cd-meal-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 15px;
+    }
+
+    .cd-meal-type {
+        display: inline-flex;
+        align-items: center;
+        padding: 7px 11px;
+        border: 1px solid #325940;
+        border-radius: 8px;
+        background: #173222;
+        color: #86EFAC;
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .45px;
+        overflow-wrap: anywhere;
+    }
+
+    .cd-meal-calories {
+        color: #F3F4F6;
+        font-size: 15px;
+        font-weight: 800;
+    }
+
+        .cd-meal-calories span {
+            margin-left: 3px;
+            color: #9CA3AF;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+    .cd-meal-name {
+        margin: 0 0 11px;
+        color: #F3F4F6;
+        font-size: 17px;
+        font-weight: 800;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+    }
+
+    .cd-meal-description {
+        margin: 0 0 19px;
+        color: #9CA3AF;
+        font-size: 12px;
+        line-height: 1.8;
+        white-space: pre-line;
+        overflow-wrap: anywhere;
+    }
+
+    .cd-meal-macros {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 9px;
+        padding-top: 15px;
+        border-top: 1px solid #27372C;
+    }
+
+    .cd-meal-macro {
+        min-width: 0;
+    }
+
+    .cd-meal-macro-label {
+        display: block;
+        margin-bottom: 7px;
+        color: #819287;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    .cd-meal-macro-value {
+        color: #D8EBDD;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    /* OTHER PLANS */
+
+    .cd-other-plan {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 15px;
+        padding: 19px 0;
+        border-bottom: 1px solid #26382B;
+    }
+
+        .cd-other-plan:first-child {
+            padding-top: 2px;
+        }
+
+        .cd-other-plan:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+    .cd-other-name {
+        margin: 0 0 8px;
+        color: #E5E7EB;
+        font-size: 14px;
+        font-weight: 800;
+        overflow-wrap: anywhere;
+    }
+
+    .cd-other-detail {
+        color: #9CA3AF;
+        font-size: 11px;
+        line-height: 1.8;
+    }
+
+    /* EMPTY STATES */
+
+    .cd-empty {
+        padding: 38px 24px;
+        border: 1px dashed #34513D;
+        border-radius: 13px;
+        background: #0B140E;
+        text-align: center;
+    }
+
+    .cd-empty-icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 62px;
+        height: 62px;
+        margin: 0 auto 19px;
+        border: 1px solid #2B5637;
+        border-radius: 16px;
+        background: #16301E;
+    }
+
+        .cd-empty-icon svg {
+            width: 29px;
+            height: 29px;
+            fill: none;
+            stroke: #4ADE80;
+            stroke-width: 1.7px;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+    .cd-empty-title {
+        margin: 0 0 10px;
+        color: #F3F4F6;
+        font-size: 17px;
+        font-weight: 800;
+    }
+
+    .cd-empty-text {
+        max-width: 550px;
+        margin: 0 auto;
+        color: #9CA3AF;
+        font-size: 12px;
+        line-height: 1.9;
+    }
+
+    /* RESPONSIVE */
+
+    @@media (max-width: 1100px) {
+        .cd-stats {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @@media (max-width: 800px) {
+        .cd-meal-list {
+            grid-template-columns: 1fr;
+        }
+
+        .cd-macro-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 540px) {
+        .cd-title {
+            font-size: 27px;
+        }
+
+        .cd-stats {
+            grid-template-columns: 1fr;
+        }
+
+        .cd-card {
+            padding: 18px;
+        }
+
+        .cd-plan-hero {
+            padding: 19px;
+        }
+
+        .cd-plan-name {
+            font-size: 21px;
+        }
+    }
+</style>
+
+<div class="cd-page">
+
+    <!-- PAGE HEADER -->
+
+    <header class="cd-header">
+
+        <div>
+            <span class="cd-eyebrow">
+                CLIENT / NUTRITION
+            </span>
+
+            <h1 class="cd-title">
+                My Diet Plan
+            </h1>
+
+            <p class="cd-subtitle">
+                Stay on track with your trainer-assigned
+                nutrition plan, daily calorie targets,
+                and recommended meals.
+            </p>
+        </div>
+
+        <a href="@dashboardUrl"
+           class="cd-back-link">
+            Back to Dashboard
+        </a>
+
+    </header>
+
+    <!-- NUTRITION OVERVIEW -->
+
+    <div class="cd-stats">
+
+        <div class="cd-stat">
+
+            <span class="cd-stat-label">
+                Daily Calorie Target
+            </span>
+
+            @if (activePlan != null &&
+                 activePlan.DailyCaloriesTarget.HasValue)
+            {
+                <span class="cd-stat-value">
+                    @activePlan.DailyCaloriesTarget.Value
+                </span>
+
+                <span class="cd-stat-unit">
+                    kcal
+                </span>
+            }
+            else
+            {
+                <span class="cd-stat-value">—</span>
+            }
+
+            <span class="cd-stat-note">
+                Trainer-defined target
+            </span>
+
+        </div>
+
+        <div class="cd-stat">
+
+            <span class="cd-stat-label">
+                Planned Meal Calories
+            </span>
+
+            @if (totalMeals > 0)
+            {
+                <span class="cd-stat-value">
+                    @plannedCalories
+                </span>
+
+                <span class="cd-stat-unit">
+                    kcal
+                </span>
+            }
+            else
+            {
+                <span class="cd-stat-value">—</span>
+            }
+
+            <span class="cd-stat-note">
+                Sum of assigned meals
+            </span>
+
+        </div>
+
+        <div class="cd-stat">
+
+            <span class="cd-stat-label">
+                Meals in Active Plan
+            </span>
+
+            <span class="cd-stat-value">
+                @totalMeals
+            </span>
+
+            <span class="cd-stat-note">
+                Trainer-added meals
+            </span>
+
+        </div>
+
+        <div class="cd-stat">
+
+            <span class="cd-stat-label">
+                Assigned Diet Plans
+            </span>
+
+            <span class="cd-stat-value">
+                @totalPlans
+            </span>
+
+            <span class="cd-stat-note">
+                All plans in your account
+            </span>
+
+        </div>
+
+    </div>
+
+    <!-- ACTIVE DIET PLAN -->
+
+    <section class="cd-card">
+
+        <h2 class="cd-section-title">
+            Active Diet Plan
+        </h2>
+
+        <p class="cd-section-description">
+            Your current nutrition plan assigned
+            by your trainer.
+        </p>
+
+        @if (activePlan != null)
+        {
+            <div class="cd-plan-hero">
+
+                <span class="cd-badge">
+                    ACTIVE PLAN
+                </span>
+
+                <h3 class="cd-plan-name">
+                    @activePlan.Name
+                </h3>
+
+                @if (!string.IsNullOrWhiteSpace(
+                    activePlan.Description))
+                {
+                    <p class="cd-plan-description">
+                        @activePlan.Description
+                    </p>
+                }
+
+                <div class="cd-plan-meta">
+
+                    <div class="cd-meta-item">
+
+                        <span class="cd-meta-label">
+                            START DATE
+                        </span>
+
+                        <span class="cd-meta-value">
+                            @activePlan.StartDate.ToString(
+                                "dd MMM yyyy")
+                        </span>
+
+                    </div>
+
+                    <div class="cd-meta-item">
+
+                        <span class="cd-meta-label">
+                            END DATE
+                        </span>
+
+                        <span class="cd-meta-value">
+                            @(activePlan.EndDate.HasValue
+                                ? activePlan.EndDate.Value
+                                    .ToString("dd MMM yyyy")
+                                : "Not specified")
+                        </span>
+
+                    </div>
+
+                    <div class="cd-meta-item">
+
+                        <span class="cd-meta-label">
+                            ASSIGNED MEALS
+                        </span>
+
+                        <span class="cd-meta-value">
+                            @totalMeals
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+        }
+        else
+        {
+            <div class="cd-empty">
+
+                <div class="cd-empty-icon">
+                    <svg viewBox="0 0 24 24"
+                         aria-hidden="true">
+                        <path d="M4 3v7a3 3 0 0 0 6 0V3" />
+                        <path d="M7 3v18" />
+                        <path d="M17 21V3c-3 2-4 5-4 9h4" />
+                    </svg>
+                </div>
+
+                <h3 class="cd-empty-title">
+                    No Active Diet Plan
+                </h3>
+
+                <p class="cd-empty-text">
+                    Your trainer has not assigned an
+                    active diet plan yet. Once a plan
+                    is activated for you, its nutritional
+                    targets and meals will appear here.
+                </p>
+
+            </div>
+        }
+
+    </section>
+
+    <!-- MACRONUTRIENT TARGETS -->
+
+    <section class="cd-card">
+
+        <h2 class="cd-section-title">
+            Daily Macronutrient Targets
+        </h2>
+
+        <p class="cd-section-description">
+            Your recommended daily amounts of
+            protein, carbohydrates, and fats.
+        </p>
+
+        <div class="cd-macro-grid">
+
+            <div class="cd-macro">
+
+                <span class="cd-macro-label">
+                    Protein
+                </span>
+
+                @if (activePlan != null &&
+                     activePlan.ProteinTargetGrams.HasValue)
+                {
+                    <span class="cd-macro-value">
+                        @activePlan.ProteinTargetGrams.Value.ToString("0.#")
+                    </span>
+
+                    <span class="cd-macro-unit">g</span>
+                }
+                else
+                {
+                    <span class="cd-macro-value">—</span>
+                }
+
+                <span class="cd-macro-caption">
+                    Daily protein target
+                </span>
+
+            </div>
+
+            <div class="cd-macro">
+
+                <span class="cd-macro-label">
+                    Carbohydrates
+                </span>
+
+                @if (activePlan != null &&
+                     activePlan.CarbohydrateTargetGrams.HasValue)
+                {
+                    <span class="cd-macro-value">
+                        @activePlan.CarbohydrateTargetGrams.Value.ToString("0.#")
+                    </span>
+
+                    <span class="cd-macro-unit">g</span>
+                }
+                else
+                {
+                    <span class="cd-macro-value">—</span>
+                }
+
+                <span class="cd-macro-caption">
+                    Daily carbohydrate target
+                </span>
+
+            </div>
+
+            <div class="cd-macro">
+
+                <span class="cd-macro-label">
+                    Fat
+                </span>
+
+                @if (activePlan != null &&
+                     activePlan.FatTargetGrams.HasValue)
+                {
+                    <span class="cd-macro-value">
+                        @activePlan.FatTargetGrams.Value.ToString("0.#")
+                    </span>
+
+                    <span class="cd-macro-unit">g</span>
+                }
+                else
+                {
+                    <span class="cd-macro-value">—</span>
+                }
+
+                <span class="cd-macro-caption">
+                    Daily fat target
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- DAILY MEAL SCHEDULE -->
+
+    <section class="cd-card">
+
+        <div class="cd-card-heading">
+
+            <div>
+                <h2 class="cd-section-title">
+                    Your Meal Schedule
+                </h2>
+
+                <p class="cd-section-description"
+                   style="margin-bottom:0">
+                    Meals recommended in your active
+                    trainer-assigned diet plan.
+                </p>
+            </div>
+
+            @if (totalMeals > 0)
+            {
+                <span class="cd-badge">
+                    @totalMeals MEALS
+                </span>
+            }
+
+        </div>
+
+        @if (meals.Any())
+        {
+            <div class="cd-meal-list">
+
+                @foreach (var meal in meals)
+                {
+                    <article class="cd-meal">
+
+                        <div class="cd-meal-top">
+
+                            <span class="cd-meal-type">
+                                @meal.MealType
+                            </span>
+
+                            <div class="cd-meal-calories">
+                                @meal.Calories
+                                <span>kcal</span>
+                            </div>
+
+                        </div>
+
+                        <h3 class="cd-meal-name">
+                            @meal.Name
+                        </h3>
+
+                        @if (!string.IsNullOrWhiteSpace(
+                            meal.Description))
+                        {
+                            <p class="cd-meal-description">
+                                @meal.Description
+                            </p>
+                        }
+
+                        <div class="cd-meal-macros">
+
+                            <div class="cd-meal-macro">
+
+                                <span class="cd-meal-macro-label">
+                                    PROTEIN
+                                </span>
+
+                                <span class="cd-meal-macro-value">
+                                    @(meal.ProteinGrams.HasValue
+                                        ? meal.ProteinGrams.Value
+                                            .ToString("0.#") + " g"
+                                        : "—")
+                                </span>
+
+                            </div>
+
+                            <div class="cd-meal-macro">
+
+                                <span class="cd-meal-macro-label">
+                                    CARBS
+                                </span>
+
+                                <span class="cd-meal-macro-value">
+                                    @(meal.CarbohydrateGrams.HasValue
+                                        ? meal.CarbohydrateGrams.Value
+                                            .ToString("0.#") + " g"
+                                        : "—")
+                                </span>
+
+                            </div>
+
+                            <div class="cd-meal-macro">
+
+                                <span class="cd-meal-macro-label">
+                                    FAT
+                                </span>
+
+                                <span class="cd-meal-macro-value">
+                                    @(meal.FatGrams.HasValue
+                                        ? meal.FatGrams.Value
+                                            .ToString("0.#") + " g"
+                                        : "—")
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+                }
+
+            </div>
+        }
+        else
+        {
+            <div class="cd-empty">
+
+                <div class="cd-empty-icon">
+                    <svg viewBox="0 0 24 24"
+                         aria-hidden="true">
+                        <rect x="3"
+                              y="4"
+                              width="18"
+                              height="17"
+                              rx="2" />
+                        <path d="M8 2v4M16 2v4M3 10h18" />
+                        <path d="M8 15h3M8 18h6" />
+                    </svg>
+                </div>
+
+                <h3 class="cd-empty-title">
+                    No Meals Available
+                </h3>
+
+                <p class="cd-empty-text">
+                    There are no meals in your active
+                    diet plan yet. Once your trainer adds
+                    meals, they will appear here with
+                    their nutritional information.
+                </p>
+
+            </div>
+        }
+
+    </section>
+
+    <!-- OTHER ASSIGNED DIET PLANS -->
+
+    <section class="cd-card">
+
+        <h2 class="cd-section-title">
+            Other Assigned Plans
+        </h2>
+
+        <p class="cd-section-description">
+            Previously assigned or inactive
+            diet plans in your account.
+        </p>
+
+        @if (otherPlans.Any())
+        {
+            <div>
+
+                @foreach (var plan in otherPlans)
+                {
+                    <div class="cd-other-plan">
+
+                        <div>
+
+                            <h3 class="cd-other-name">
+                                @plan.Name
+                            </h3>
+
+                            <div class="cd-other-detail">
+
+                                Start:
+                                @plan.StartDate.ToString(
+                                    "dd MMM yyyy")
+
+                                @if (plan.EndDate.HasValue)
+                                {
+                                    <span>
+                                        &nbsp; | &nbsp;
+                                        End:
+                                        @plan.EndDate.Value.ToString(
+                                            "dd MMM yyyy")
+                                    </span>
+                                }
+
+                                <span>
+                                    &nbsp; | &nbsp;
+                                    Meals:
+                                    @(plan.Meals != null
+                                        ? plan.Meals.Count
+                                        : 0)
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        @if (plan.IsActive)
+                        {
+                            <span class="cd-badge">
+                                ACTIVE
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="cd-badge cd-badge-inactive">
+                                INACTIVE
+                            </span>
+                        }
+
+                    </div>
+                }
+
+            </div>
+        }
+        else
+        {
+            <div class="cd-empty">
+
+                <h3 class="cd-empty-title">
+                    No Other Diet Plans
+                </h3>
+
+                <p class="cd-empty-text">
+                    Any additional diet plans assigned
+                    by your trainer will be listed here.
+                </p>
+
+            </div>
+        }
+
+    </section>
+
+</div>
