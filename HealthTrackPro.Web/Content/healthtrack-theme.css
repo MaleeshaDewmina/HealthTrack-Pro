@@ -996,3 +996,861 @@ select:-webkit-autofill:focus {
     transition:
         background-color 9999s ease-in-out 0s;
 }
+
+
+/* ==========================================================
+   HEALTHTRACK-LIGHT-MODE-V1
+   ========================================================== */
+
+:root,
+html[data-theme="dark"] {
+    --ht-page-bg: #070B08;
+    --ht-sidebar-bg: #050806;
+    --ht-topbar-bg: #0A0F0C;
+    --ht-surface: #0F1711;
+    --ht-surface-2: #131D16;
+    --ht-text: #F3F4F6;
+    --ht-text-soft: #D1D5DB;
+    --ht-muted: #91A096;
+    --ht-border: #213126;
+    --ht-accent: #22C55E;
+    --ht-accent-soft: rgba(34, 197, 94, .12);
+}
+
+html[data-theme="light"] {
+    --ht-page-bg: #F4F7F5;
+    --ht-sidebar-bg: #FFFFFF;
+    --ht-topbar-bg: #FFFFFF;
+    --ht-surface: #FFFFFF;
+    --ht-surface-2: #EEF4F0;
+    --ht-text: #17221A;
+    --ht-text-soft: #33483A;
+    --ht-muted: #6B7B70;
+    --ht-border: #D6E1D9;
+    --ht-accent: #16A34A;
+    --ht-accent-soft: rgba(22, 163, 74, .10);
+}
+
+
+/* APP SHELL */
+
+html[data-theme="light"] body {
+    background: var(--ht-page-bg) !important;
+    color: var(--ht-text) !important;
+}
+
+html[data-theme="light"] .ht-sidebar {
+    background: var(--ht-sidebar-bg) !important;
+    border-color: var(--ht-border) !important;
+}
+
+html[data-theme="light"] .ht-topbar {
+    background: var(--ht-topbar-bg) !important;
+    border-color: var(--ht-border) !important;
+    color: var(--ht-text) !important;
+}
+
+html[data-theme="light"] .ht-main,
+html[data-theme="light"] .ht-content {
+    background: var(--ht-page-bg) !important;
+    color: var(--ht-text) !important;
+}
+
+
+/* NAVIGATION */
+
+html[data-theme="light"] .ht-nav-title {
+    color: var(--ht-muted) !important;
+}
+
+html[data-theme="light"] .ht-nav-link {
+    color: var(--ht-text-soft) !important;
+}
+
+html[data-theme="light"] .ht-nav-link:hover {
+    background: #EEF6F0 !important;
+    color: var(--ht-accent) !important;
+}
+
+html[data-theme="light"] .ht-nav-link.active {
+    background: #E4F4E8 !important;
+    color: var(--ht-accent) !important;
+}
+
+
+/* TEXT */
+
+html[data-theme="light"] h1,
+html[data-theme="light"] h2,
+html[data-theme="light"] h3,
+html[data-theme="light"] h4,
+html[data-theme="light"] h5,
+html[data-theme="light"] h6 {
+    color: var(--ht-text);
+}
+
+html[data-theme="light"] p,
+html[data-theme="light"] label {
+    color: var(--ht-text-soft);
+}
+
+
+/* COMMON SURFACES */
+
+html[data-theme="light"] .card,
+html[data-theme="light"] .panel,
+html[data-theme="light"] .well,
+html[data-theme="light"] .modal-content,
+html[data-theme="light"] .dropdown-menu {
+    background: var(--ht-surface) !important;
+    color: var(--ht-text) !important;
+    border-color: var(--ht-border) !important;
+}
+
+
+/* FORMS */
+
+html[data-theme="light"] input:not([type="checkbox"]):not([type="radio"]),
+html[data-theme="light"] textarea,
+html[data-theme="light"] select {
+    background: #FFFFFF !important;
+    color: var(--ht-text) !important;
+    border-color: var(--ht-border) !important;
+}
+
+html[data-theme="light"] input::placeholder,
+html[data-theme="light"] textarea::placeholder {
+    color: #87968C !important;
+}
+
+
+/* TABLES */
+
+html[data-theme="light"] table,
+html[data-theme="light"] .table {
+    color: var(--ht-text) !important;
+}
+
+html[data-theme="light"] .table > thead > tr > th,
+html[data-theme="light"] .table > tbody > tr > td {
+    border-color: var(--ht-border) !important;
+}
+
+
+/* THEME TOGGLE */
+
+.ht-theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    min-height: 38px;
+    padding: 7px 11px;
+
+    background: #101812;
+    color: #D1D5DB;
+
+    border: 1px solid #26372B;
+    border-radius: 10px;
+
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+html[data-theme="light"] .ht-theme-toggle {
+    background: #FFFFFF !important;
+    color: #26372B !important;
+    border-color: #D1DDD5 !important;
+}
+
+.ht-theme-toggle:hover {
+    color: #22C55E;
+    border-color: #22C55E;
+}
+
+.ht-theme-icon {
+    font-size: 16px;
+    line-height: 1;
+}
+
+
+/* TOP-RIGHT CONTROLS */
+
+html[data-theme="light"] .ht-notification-button {
+    background: #FFFFFF !important;
+    border-color: var(--ht-border) !important;
+}
+
+html[data-theme="light"] .ht-user-name,
+html[data-theme="light"] .ht-topbar a {
+    color: var(--ht-text) !important;
+}
+
+
+/* SMOOTH SWITCH */
+
+body,
+.ht-sidebar,
+.ht-topbar,
+.ht-nav-link,
+.card,
+.panel,
+input,
+textarea,
+select {
+    transition:
+        background-color .18s ease,
+        color .18s ease,
+        border-color .18s ease;
+}
+
+/* ==========================================================
+   CLIENT-THEME-TONES-V1
+
+   Dark mode uses HealthTrack's original colours.
+   Light mode replaces those surfaces with professional
+   light equivalents.
+
+   ========================================================== */
+
+html[data-theme="dark"] {
+    --ht-tone-080b09: #080B09;
+    --ht-tone-080c09: #080C09;
+    --ht-tone-080d09: #080D09;
+    --ht-tone-080d0a: #080D0A;
+    --ht-tone-090d0a: #090D0A;
+    --ht-tone-090f0b: #090F0B;
+    --ht-tone-0a0f0c: #0A0F0C;
+    --ht-tone-0a100c: #0A100C;
+    --ht-tone-0b100c: #0B100C;
+    --ht-tone-0b100d: #0B100D;
+    --ht-tone-0b110d: #0B110D;
+    --ht-tone-0b120d: #0B120D;
+    --ht-tone-0b140e: #0B140E;
+    --ht-tone-0c120e: #0C120E;
+    --ht-tone-0c140e: #0C140E;
+    --ht-tone-0c150f: #0C150F;
+    --ht-tone-0c170f: #0C170F;
+    --ht-tone-0d130f: #0D130F;
+    --ht-tone-0d1710: #0D1710;
+    --ht-tone-0e140f: #0E140F;
+    --ht-tone-0f1711: #0F1711;
+    --ht-tone-0f1712: #0F1712;
+    --ht-tone-101612: #101612;
+    --ht-tone-101812: #101812;
+    --ht-tone-111713: #111713;
+    --ht-tone-111913: #111913;
+    --ht-tone-111914: #111914;
+    --ht-tone-111a14: #111A14;
+    --ht-tone-121a14: #121A14;
+    --ht-tone-121c16: #121C16;
+    --ht-tone-121e16: #121E16;
+    --ht-tone-131e16: #131E16;
+    --ht-tone-14291b: #14291B;
+    --ht-tone-151f18: #151F18;
+    --ht-tone-152219: #152219;
+    --ht-tone-15251a: #15251A;
+    --ht-tone-172019: #172019;
+    --ht-tone-17241a: #17241A;
+    --ht-tone-17251b: #17251B;
+    --ht-tone-17261c: #17261C;
+    --ht-tone-17271b: #17271B;
+    --ht-tone-18261c: #18261C;
+    --ht-tone-1a241d: #1A241D;
+    --ht-tone-1b2420: #1B2420;
+    --ht-tone-242b26: #242B26;
+    --ht-tone-263028: #263028;
+    --ht-tone-27342b: #27342B;
+    --ht-tone-29372d: #29372D;
+    --ht-tone-35523e: #35523E;
+    --ht-tone-1f2a22: #1F2A22;
+    --ht-tone-1c2a20: #1C2A20;
+    --ht-tone-19261d: #19261D;
+    --ht-tone-1c2c21: #1C2C21;
+    --ht-tone-102619: #102619;
+    --ht-tone-10321b: #10321B;
+    --ht-tone-12371f: #12371F;
+    --ht-tone-142a1b: #142A1B;
+    --ht-tone-142b1d: #142B1D;
+    --ht-tone-14301d: #14301D;
+    --ht-tone-152b1c: #152B1C;
+    --ht-tone-153b24: #153B24;
+    --ht-tone-16301e: #16301E;
+    --ht-tone-173221: #173221;
+    --ht-tone-173222: #173222;
+    --ht-tone-17472b: #17472B;
+    --ht-tone-182a1d: #182A1D;
+    --ht-tone-182a1e: #182A1E;
+    --ht-tone-183121: #183121;
+    --ht-tone-183522: #183522;
+    --ht-tone-193423: #193423;
+    --ht-tone-193523: #193523;
+    --ht-tone-193a23: #193A23;
+    --ht-tone-194027: #194027;
+    --ht-tone-1a3a25: #1A3A25;
+    --ht-tone-1b3523: #1B3523;
+    --ht-tone-1b3624: #1B3624;
+    --ht-tone-1b4629: #1B4629;
+    --ht-tone-1d452a: #1D452A;
+    --ht-tone-203827: #203827;
+    --ht-tone-20452b: #20452B;
+    --ht-tone-213a28: #213A28;
+    --ht-tone-21432b: #21432B;
+    --ht-tone-25372b: #25372B;
+    --ht-tone-294330: #294330;
+    --ht-tone-2a1515: #2A1515;
+    --ht-tone-2b1717: #2B1717;
+    --ht-tone-301919: #301919;
+    --ht-tone-351818: #351818;
+    --ht-tone-351a1d: #351A1D;
+    --ht-tone-381a1d: #381A1D;
+    --ht-tone-421d1d: #421D1D;
+    --ht-tone-201c11: #201C11;
+    --ht-tone-292214: #292214;
+    --ht-tone-302511: #302511;
+    --ht-tone-342b12: #342B12;
+    --ht-tone-142337: #142337;
+
+}
+
+html[data-theme="light"] {
+    --ht-tone-080b09: #F4F7F5;
+    --ht-tone-080c09: #F4F7F5;
+    --ht-tone-080d09: #F4F7F5;
+    --ht-tone-080d0a: #F4F7F5;
+    --ht-tone-090d0a: #F4F7F5;
+    --ht-tone-090f0b: #F4F7F5;
+    --ht-tone-0a0f0c: #F4F7F5;
+    --ht-tone-0a100c: #F4F7F5;
+    --ht-tone-0b100c: #F4F7F5;
+    --ht-tone-0b100d: #F4F7F5;
+    --ht-tone-0b110d: #F4F7F5;
+    --ht-tone-0b120d: #F4F7F5;
+    --ht-tone-0b140e: #F4F7F5;
+    --ht-tone-0c120e: #F4F7F5;
+    --ht-tone-0c140e: #F4F7F5;
+    --ht-tone-0c150f: #F4F7F5;
+    --ht-tone-0c170f: #F4F7F5;
+    --ht-tone-0d130f: #F4F7F5;
+    --ht-tone-0d1710: #F4F7F5;
+    --ht-tone-0e140f: #F4F7F5;
+    --ht-tone-0f1711: #F4F7F5;
+    --ht-tone-0f1712: #F4F7F5;
+    --ht-tone-101612: #FFFFFF;
+    --ht-tone-101812: #FFFFFF;
+    --ht-tone-111713: #FFFFFF;
+    --ht-tone-111913: #FFFFFF;
+    --ht-tone-111914: #FFFFFF;
+    --ht-tone-111a14: #FFFFFF;
+    --ht-tone-121a14: #FFFFFF;
+    --ht-tone-121c16: #FFFFFF;
+    --ht-tone-121e16: #FFFFFF;
+    --ht-tone-131e16: #FFFFFF;
+    --ht-tone-14291b: #FFFFFF;
+    --ht-tone-151f18: #FFFFFF;
+    --ht-tone-152219: #FFFFFF;
+    --ht-tone-15251a: #FFFFFF;
+    --ht-tone-172019: #FFFFFF;
+    --ht-tone-17241a: #FFFFFF;
+    --ht-tone-17251b: #FFFFFF;
+    --ht-tone-17261c: #FFFFFF;
+    --ht-tone-17271b: #FFFFFF;
+    --ht-tone-18261c: #FFFFFF;
+    --ht-tone-1a241d: #FFFFFF;
+    --ht-tone-1b2420: #FFFFFF;
+    --ht-tone-242b26: #FFFFFF;
+    --ht-tone-263028: #FFFFFF;
+    --ht-tone-27342b: #FFFFFF;
+    --ht-tone-29372d: #FFFFFF;
+    --ht-tone-35523e: #FFFFFF;
+    --ht-tone-1f2a22: #D6E1D9;
+    --ht-tone-1c2a20: #D6E1D9;
+    --ht-tone-19261d: #D6E1D9;
+    --ht-tone-1c2c21: #D6E1D9;
+    --ht-tone-102619: #E6F4EA;
+    --ht-tone-10321b: #E6F4EA;
+    --ht-tone-12371f: #E6F4EA;
+    --ht-tone-142a1b: #E6F4EA;
+    --ht-tone-142b1d: #E6F4EA;
+    --ht-tone-14301d: #E6F4EA;
+    --ht-tone-152b1c: #E6F4EA;
+    --ht-tone-153b24: #E6F4EA;
+    --ht-tone-16301e: #E6F4EA;
+    --ht-tone-173221: #E6F4EA;
+    --ht-tone-173222: #E6F4EA;
+    --ht-tone-17472b: #E6F4EA;
+    --ht-tone-182a1d: #E6F4EA;
+    --ht-tone-182a1e: #E6F4EA;
+    --ht-tone-183121: #E6F4EA;
+    --ht-tone-183522: #E6F4EA;
+    --ht-tone-193423: #E6F4EA;
+    --ht-tone-193523: #E6F4EA;
+    --ht-tone-193a23: #E6F4EA;
+    --ht-tone-194027: #E6F4EA;
+    --ht-tone-1a3a25: #E6F4EA;
+    --ht-tone-1b3523: #E6F4EA;
+    --ht-tone-1b3624: #E6F4EA;
+    --ht-tone-1b4629: #E6F4EA;
+    --ht-tone-1d452a: #E6F4EA;
+    --ht-tone-203827: #E6F4EA;
+    --ht-tone-20452b: #E6F4EA;
+    --ht-tone-213a28: #E6F4EA;
+    --ht-tone-21432b: #E6F4EA;
+    --ht-tone-25372b: #E6F4EA;
+    --ht-tone-294330: #E6F4EA;
+    --ht-tone-2a1515: #FDECEC;
+    --ht-tone-2b1717: #FDECEC;
+    --ht-tone-301919: #FDECEC;
+    --ht-tone-351818: #FDECEC;
+    --ht-tone-351a1d: #FDECEC;
+    --ht-tone-381a1d: #FDECEC;
+    --ht-tone-421d1d: #FDECEC;
+    --ht-tone-201c11: #FFF5DD;
+    --ht-tone-292214: #FFF5DD;
+    --ht-tone-302511: #FFF5DD;
+    --ht-tone-342b12: #FFF5DD;
+    --ht-tone-142337: #EDF4FF;
+
+}
+
+
+/* ==========================================================
+   CLIENT-LIGHT-CONTRAST-V1
+   Fine-tuning after automatic Client theme conversion.
+   Dark mode is intentionally untouched.
+   ========================================================== */
+
+
+/* ----------------------------------------------------------
+   CLIENT DASHBOARD
+   ---------------------------------------------------------- */
+
+html[data-theme="light"] .htd-dashboard {
+    color: #17221A !important;
+}
+
+html[data-theme="light"] .htd-title,
+html[data-theme="light"] .htd-stat-value,
+html[data-theme="light"] .htd-panel-title,
+html[data-theme="light"] .htd-workout-title,
+html[data-theme="light"] .htd-appointment-title,
+html[data-theme="light"] .htd-chart-empty-title {
+    color: #17221A !important;
+}
+
+html[data-theme="light"] .htd-subtitle,
+html[data-theme="light"] .htd-stat-label,
+html[data-theme="light"] .htd-stat-unit,
+html[data-theme="light"] .htd-stat-description,
+html[data-theme="light"] .htd-panel-subtitle,
+html[data-theme="light"] .htd-chart-empty-text,
+html[data-theme="light"] .htd-section-label,
+html[data-theme="light"] .htd-workout-description,
+html[data-theme="light"] .htd-appointment-description {
+    color: #66756B !important;
+}
+
+html[data-theme="light"] .htd-eyebrow,
+html[data-theme="light"] .htd-stat-description-green {
+    color: #16A34A !important;
+}
+
+html[data-theme="light"] .htd-stat-card,
+html[data-theme="light"] .htd-panel {
+    box-shadow:
+        0 1px 2px rgba(23, 34, 26, .025),
+        0 5px 18px rgba(23, 34, 26, .035);
+}
+
+html[data-theme="light"] .htd-chart-tab {
+    color: #526157 !important;
+    border-color: #C9D7CD !important;
+}
+
+html[data-theme="light"] .htd-chart-tab:hover {
+    color: #15803D !important;
+    border-color: #22C55E !important;
+}
+
+html[data-theme="light"] .htd-chart-tab.active {
+    color: #15803D !important;
+    background: #E7F6EB !important;
+    border-color: #22C55E !important;
+}
+
+html[data-theme="light"] .htd-trend-summary {
+    color: #31563C !important;
+    border-color: #C8DDCE !important;
+}
+
+html[data-theme="light"] .htd-action-link {
+    color: #15803D !important;
+    border-color: #BFD5C5 !important;
+}
+
+html[data-theme="light"] .htd-action-link:hover,
+html[data-theme="light"] .htd-action-link:focus {
+    color: #166534 !important;
+    background: #E5F4E9 !important;
+}
+
+html[data-theme="light"] .htd-status-label {
+    color: #526157 !important;
+    border-color: #D2DED5 !important;
+}
+
+
+/* ----------------------------------------------------------
+   CLIENT GOALS
+   ---------------------------------------------------------- */
+
+html[data-theme="light"] .cg-back-link {
+    background: #FFFFFF !important;
+    color: #33483A !important;
+    border-color: #BFCFC4 !important;
+}
+
+html[data-theme="light"] .cg-back-link:hover,
+html[data-theme="light"] .cg-back-link:focus {
+    background: #E8F5EB !important;
+    color: #15803D !important;
+    border-color: #22C55E !important;
+}
+
+html[data-theme="light"] .cg-page .cg-input,
+html[data-theme="light"] .cg-page .cg-select,
+html[data-theme="light"] .cg-page .cg-textarea {
+    color: #17221A !important;
+}
+
+html[data-theme="light"] .cg-page .cg-select option {
+    background: #FFFFFF !important;
+    color: #17221A !important;
+}
+
+
+/* Flatpickr light-mode readability */
+
+html[data-theme="light"] .flatpickr-calendar {
+    color: #17221A !important;
+    box-shadow:
+        0 16px 38px rgba(25, 45, 32, .16) !important;
+}
+
+html[data-theme="light"] .flatpickr-current-month,
+html[data-theme="light"] .flatpickr-current-month input.cur-year,
+html[data-theme="light"] .flatpickr-current-month .flatpickr-monthDropdown-months,
+html[data-theme="light"] .flatpickr-day {
+    color: #17221A !important;
+}
+
+html[data-theme="light"] .flatpickr-weekday {
+    color: #15803D !important;
+}
+
+/* ==========================================================
+   ROLE-SURFACE-TONES-V1
+
+   Trainer + Admin adaptive surfaces.
+   Original colours are preserved in Dark mode.
+   ========================================================== */
+
+html[data-theme="dark"] {
+    --ht-role-tone-203026: #203026;
+    --ht-role-tone-101612: #101612;
+    --ht-role-tone-1f2a22: #1F2A22;
+    --ht-role-tone-26332a: #26332A;
+    --ht-role-tone-0c120e: #0C120E;
+    --ht-role-tone-0d130f: #0D130F;
+    --ht-role-tone-285c39: #285C39;
+    --ht-role-tone-2b4934: #2B4934;
+    --ht-role-tone-1b251e: #1B251E;
+    --ht-role-tone-15351f: #15351F;
+    --ht-role-tone-0e2114: #0E2114;
+    --ht-role-tone-1d2820: #1D2820;
+    --ht-role-tone-1d2920: #1D2920;
+    --ht-role-tone-0a100c: #0A100C;
+    --ht-role-tone-2a382e: #2A382E;
+    --ht-role-tone-121a14: #121A14;
+    --ht-role-tone-1b261e: #1B261E;
+    --ht-role-tone-28352c: #28352C;
+    --ht-role-tone-0e140f: #0E140F;
+    --ht-role-tone-0e1510: #0E1510;
+    --ht-role-tone-3a5742: #3A5742;
+    --ht-role-tone-1e3426: #1E3426;
+    --ht-role-tone-0d160f: #0D160F;
+    --ht-role-tone-111713: #111713;
+    --ht-role-tone-1a241d: #1A241D;
+    --ht-role-tone-1b241e: #1B241E;
+    --ht-role-tone-31543b: #31543B;
+    --ht-role-tone-27342b: #27342B;
+    --ht-role-tone-1e3526: #1E3526;
+    --ht-role-tone-10301c: #10301C;
+    --ht-role-tone-0b1710: #0B1710;
+    --ht-role-tone-1e2a21: #1E2A21;
+    --ht-role-tone-0b110d: #0B110D;
+    --ht-role-tone-0c1710: #0C1710;
+    --ht-role-tone-1a251d: #1A251D;
+    --ht-role-tone-1e3225: #1E3225;
+    --ht-role-tone-10261a: #10261A;
+    --ht-role-tone-0d150f: #0D150F;
+    --ht-role-tone-1c2720: #1C2720;
+    --ht-role-tone-2c3d31: #2C3D31;
+    --ht-role-tone-172019: #172019;
+    --ht-role-tone-1e2b22: #1E2B22;
+    --ht-role-tone-26342b: #26342B;
+    --ht-role-tone-202c24: #202C24;
+    --ht-role-tone-29362d: #29362D;
+    --ht-role-tone-203027: #203027;
+    --ht-role-tone-111914: #111914;
+    --ht-role-tone-1f2d24: #1F2D24;
+    --ht-role-tone-101712: #101712;
+    --ht-role-tone-243329: #243329;
+    --ht-role-tone-1d2921: #1D2921;
+    --ht-role-tone-26352b: #26352B;
+    --ht-role-tone-0d140f: #0D140F;
+    --ht-role-tone-2f6d45: #2F6D45;
+    --ht-role-tone-1a261e: #1A261E;
+    --ht-role-tone-1f2c23: #1F2C23;
+    --ht-role-tone-26372c: #26372C;
+    --ht-role-tone-0b120d: #0B120D;
+    --ht-role-tone-2a392f: #2A392F;
+    --ht-role-tone-111913: #111913;
+    --ht-role-tone-28382e: #28382E;
+
+}
+
+html[data-theme="light"] {
+    --ht-role-tone-203026: #D6E1D9;
+    --ht-role-tone-101612: #FFFFFF;
+    --ht-role-tone-1f2a22: #D6E1D9;
+    --ht-role-tone-26332a: #D6E1D9;
+    --ht-role-tone-0c120e: #FFFFFF;
+    --ht-role-tone-0d130f: #FFFFFF;
+    --ht-role-tone-285c39: #D6E1D9;
+    --ht-role-tone-2b4934: #D6E1D9;
+    --ht-role-tone-1b251e: #D6E1D9;
+    --ht-role-tone-15351f: #E6F4EA;
+    --ht-role-tone-0e2114: #E6F4EA;
+    --ht-role-tone-1d2820: #D6E1D9;
+    --ht-role-tone-1d2920: #D6E1D9;
+    --ht-role-tone-0a100c: #FFFFFF;
+    --ht-role-tone-2a382e: #D6E1D9;
+    --ht-role-tone-121a14: #FFFFFF;
+    --ht-role-tone-1b261e: #D6E1D9;
+    --ht-role-tone-28352c: #D6E1D9;
+    --ht-role-tone-0e140f: #FFFFFF;
+    --ht-role-tone-0e1510: #FFFFFF;
+    --ht-role-tone-3a5742: #D6E1D9;
+    --ht-role-tone-1e3426: #D6E1D9;
+    --ht-role-tone-0d160f: #FFFFFF;
+    --ht-role-tone-111713: #FFFFFF;
+    --ht-role-tone-1a241d: #D6E1D9;
+    --ht-role-tone-1b241e: #FFFFFF;
+    --ht-role-tone-31543b: #D6E1D9;
+    --ht-role-tone-27342b: #D6E1D9;
+    --ht-role-tone-1e3526: #D6E1D9;
+    --ht-role-tone-10301c: #E6F4EA;
+    --ht-role-tone-0b1710: #FFFFFF;
+    --ht-role-tone-1e2a21: #D6E1D9;
+    --ht-role-tone-0b110d: #FFFFFF;
+    --ht-role-tone-0c1710: #FFFFFF;
+    --ht-role-tone-1a251d: #D6E1D9;
+    --ht-role-tone-1e3225: #D6E1D9;
+    --ht-role-tone-10261a: #E6F4EA;
+    --ht-role-tone-0d150f: #FFFFFF;
+    --ht-role-tone-1c2720: #D6E1D9;
+    --ht-role-tone-2c3d31: #D6E1D9;
+    --ht-role-tone-172019: #FFFFFF;
+    --ht-role-tone-1e2b22: #D6E1D9;
+    --ht-role-tone-26342b: #D6E1D9;
+    --ht-role-tone-202c24: #D6E1D9;
+    --ht-role-tone-29362d: #D6E1D9;
+    --ht-role-tone-203027: #D6E1D9;
+    --ht-role-tone-111914: #FFFFFF;
+    --ht-role-tone-1f2d24: #D6E1D9;
+    --ht-role-tone-101712: #FFFFFF;
+    --ht-role-tone-243329: #D6E1D9;
+    --ht-role-tone-1d2921: #D6E1D9;
+    --ht-role-tone-26352b: #D6E1D9;
+    --ht-role-tone-0d140f: #FFFFFF;
+    --ht-role-tone-2f6d45: #D6E1D9;
+    --ht-role-tone-1a261e: #FFFFFF;
+    --ht-role-tone-1f2c23: #D6E1D9;
+    --ht-role-tone-26372c: #D6E1D9;
+    --ht-role-tone-0b120d: #FFFFFF;
+    --ht-role-tone-2a392f: #D6E1D9;
+    --ht-role-tone-111913: #FFFFFF;
+    --ht-role-tone-28382e: #D6E1D9;
+
+}
+
+
+/* ==========================================================
+   ADMIN-LIGHT-CONTRAST-V1
+   Light-mode readability for Administrator Dashboard.
+   Dark mode remains unchanged.
+   ========================================================== */
+
+html[data-theme="light"] .had-hero h1,
+html[data-theme="light"] .had-kpi-value,
+html[data-theme="light"] .had-panel-head h3,
+html[data-theme="light"] .had-table strong,
+html[data-theme="light"] .had-action strong {
+    color: #17221A !important;
+}
+
+html[data-theme="light"] .had-hero p {
+    color: #526157 !important;
+}
+
+html[data-theme="light"] .had-kpi-label {
+    color: #66756B !important;
+}
+
+html[data-theme="light"] .had-kpi-note {
+    color: #718078 !important;
+}
+
+html[data-theme="light"] .had-panel-head p {
+    color: #718078 !important;
+}
+
+html[data-theme="light"] .had-table th {
+    color: #66756B !important;
+}
+
+html[data-theme="light"] .had-table td {
+    color: #33483A !important;
+}
+
+html[data-theme="light"] .had-muted {
+    color: #75857A !important;
+}
+
+html[data-theme="light"] .had-action {
+    color: #33483A !important;
+}
+
+html[data-theme="light"] .had-action span {
+    color: #718078 !important;
+}
+
+
+/* Semantic badges */
+
+html[data-theme="light"] .had-live,
+html[data-theme="light"] .had-panel-tag,
+html[data-theme="light"] .had-success {
+    color: #15803D !important;
+}
+
+html[data-theme="light"] .had-warning {
+    color: #B45309 !important;
+}
+
+html[data-theme="light"] .had-danger {
+    color: #B91C1C !important;
+}
+
+
+/* Give the white cards a little definition */
+
+html[data-theme="light"] .had-kpi,
+html[data-theme="light"] .had-panel {
+    box-shadow:
+        0 1px 2px rgba(23,34,26,.025),
+        0 6px 18px rgba(23,34,26,.035);
+}
+
+
+/* ==========================================================
+   TRAINER-LIGHT-CONTRAST-V1
+   Trainer Dashboard light-mode readability.
+   Dark mode remains unchanged.
+   ========================================================== */
+
+
+/* MAIN TEXT */
+
+html[data-theme="light"] .htt-date-value,
+html[data-theme="light"] .htt-stat-value,
+html[data-theme="light"] .htt-panel-head h3,
+html[data-theme="light"] .htt-goal-mini strong,
+html[data-theme="light"] .htt-client-name,
+html[data-theme="light"] .htt-item-title {
+    color: #17221A !important;
+}
+
+
+/* SECONDARY TEXT */
+
+html[data-theme="light"] .htt-hero p {
+    color: #526157 !important;
+}
+
+html[data-theme="light"] .htt-date-label,
+html[data-theme="light"] .htt-stat-mini {
+    color: #66756B !important;
+}
+
+html[data-theme="light"] .htt-stat-label {
+    color: #66756B !important;
+}
+
+html[data-theme="light"] .htt-panel-head p,
+html[data-theme="light"] .htt-client-goal,
+html[data-theme="light"] .htt-item-sub,
+html[data-theme="light"] .htt-goal-mini span,
+html[data-theme="light"] .htt-chart-empty,
+html[data-theme="light"] .htt-empty {
+    color: #718078 !important;
+}
+
+
+/* GREEN ACCENTS */
+
+html[data-theme="light"] .htt-eyebrow,
+html[data-theme="light"] .htt-head-stat,
+html[data-theme="light"] .htt-progress-text,
+html[data-theme="light"] .htt-view-link,
+html[data-theme="light"] .htt-status-approved {
+    color: #15803D !important;
+}
+
+html[data-theme="light"] .htt-status-pending {
+    color: #B45309 !important;
+}
+
+
+/* EMPTY STATE ICON */
+
+html[data-theme="light"] .htt-empty-icon {
+    color: #9FB0A4 !important;
+}
+
+
+/* CARD POLISH */
+
+html[data-theme="light"] .htt-stat,
+html[data-theme="light"] .htt-panel,
+html[data-theme="light"] .htt-date-box {
+    box-shadow:
+        0 1px 2px rgba(23,34,26,.025),
+        0 6px 18px rgba(23,34,26,.035);
+}
+
+
+/* GREEN ICON TILE */
+
+html[data-theme="light"] .htt-stat-icon {
+    color: #16A34A !important;
+
+    box-shadow:
+        inset 0 0 0 1px rgba(22,163,74,.08),
+        0 5px 14px rgba(22,163,74,.06);
+}

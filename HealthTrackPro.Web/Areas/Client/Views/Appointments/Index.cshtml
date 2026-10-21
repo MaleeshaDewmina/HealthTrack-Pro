@@ -1,4 +1,4 @@
-﻿
+
 @model HealthTrackPro.Web.Areas.Client.Models.ClientAppointmentsViewModel
 @using System
 @using System.Linq
@@ -99,7 +99,7 @@
         align-items: center;
         gap: 9px;
         border: 1px solid #26362a;
-        background: #111713;
+        background: var(--ht-tone-111713);
         color: #d1d5db;
         padding: 11px 16px;
         border-radius: 11px;
@@ -122,8 +122,8 @@
 
     .ap-stat,
     .ap-panel {
-        background: #111713;
-        border: 1px solid #1f2a22;
+        background: var(--ht-tone-111713);
+        border: 1px solid var(--ht-tone-1f2a22);
         border-radius: 17px;
     }
 
@@ -184,7 +184,7 @@
     }
 
     .ap-count {
-        background: #182a1d;
+        background: var(--ht-tone-182a1d);
         border: 1px solid #275a33;
         color: #4ade80;
         border-radius: 30px;
@@ -216,7 +216,7 @@
         width: 100%;
         min-width: 0;
         height: 44px;
-        background: #080b09 !important;
+        background: var(--ht-tone-080b09) !important;
         color: #f3f4f6 !important;
         border: 1px solid #29352c !important;
         border-radius: 10px !important;
@@ -237,7 +237,7 @@
     }
 
     .ap-input option {
-        background: #111713;
+        background: var(--ht-tone-111713);
         color: #f3f4f6;
     }
 
@@ -311,19 +311,19 @@
     }
 
     .ap-notice-success {
-        background: #102619;
+        background: var(--ht-tone-102619);
         border: 1px solid #236b38;
         color: #86efac;
     }
 
     .ap-notice-error {
-        background: #2b1717;
+        background: var(--ht-tone-2b1717);
         border: 1px solid #6c3030;
         color: #fca5a5;
     }
 
     .ap-appointment {
-        background: #0b100c;
+        background: var(--ht-tone-0b100c);
         border: 1px solid #223025;
         border-radius: 13px;
         padding: 17px;
@@ -369,26 +369,26 @@
 
     .ap-status-pending {
         color: #fbbf24;
-        background: #302511;
+        background: var(--ht-tone-302511);
         border-color: #5c481c;
     }
 
     .ap-status-approved {
         color: #4ade80;
-        background: #142a1b;
+        background: var(--ht-tone-142a1b);
         border-color: #245a32;
     }
 
     .ap-status-completed {
         color: #93c5fd;
-        background: #142337;
+        background: var(--ht-tone-142337);
         border-color: #254768;
     }
 
     .ap-status-cancelled,
     .ap-status-rejected {
         color: #fca5a5;
-        background: #301919;
+        background: var(--ht-tone-301919);
         border-color: #653131;
     }
 
@@ -408,7 +408,7 @@
         }
 
     .ap-appointment-notes {
-        border-top: 1px solid #1f2a22;
+        border-top: 1px solid var(--ht-tone-1f2a22);
         padding-top: 12px;
         margin-top: 8px;
         font-size: 12px;
@@ -425,7 +425,7 @@
         gap: 10px;
         margin-top: 14px;
         padding-top: 13px;
-        border-top: 1px solid #1f2a22;
+        border-top: 1px solid var(--ht-tone-1f2a22);
     }
 
     .ap-booking-id {
@@ -435,7 +435,7 @@
 
     .ap-cancel {
         border: 1px solid #6d3030;
-        background: #2a1515;
+        background: var(--ht-tone-2a1515);
         color: #fca5a5;
         padding: 8px 12px;
         border-radius: 8px;
@@ -445,7 +445,7 @@
     }
 
         .ap-cancel:hover {
-            background: #421d1d;
+            background: var(--ht-tone-421d1d);
         }
 
     .ap-empty {
@@ -453,7 +453,7 @@
         padding: 32px 15px;
         border: 1px dashed #2a392d;
         border-radius: 12px;
-        background: #0b100c;
+        background: var(--ht-tone-0b100c);
     }
 
     .ap-empty-icon {
@@ -477,7 +477,7 @@
     }
 
     .ap-info {
-        background: #0c170f;
+        background: var(--ht-tone-0c170f);
         border: 1px solid #25422b;
         border-radius: 11px;
         padding: 14px;

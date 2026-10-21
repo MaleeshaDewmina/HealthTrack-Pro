@@ -1,4 +1,4 @@
-﻿
+
 @model HealthTrackPro.Web.Areas.Client.Models.ClientProfileViewModel
 @using System
 @using System.Globalization
@@ -168,7 +168,7 @@
         padding: 25px;
         border: 1px solid #26352A;
         border-radius: 19px;
-        background: #111713;
+        background: var(--ht-tone-111713);
     }
 
     /* PROFILE HEADER */
@@ -178,7 +178,7 @@
         align-items: center;
         gap: 24px;
         padding: 30px;
-        background: radial-gradient( circle at top right, rgba(34,197,94,.13), transparent 45% ), #111713;
+        background: radial-gradient( circle at top right, rgba(34,197,94,.13), transparent 45% ), var(--ht-tone-111713);
     }
 
     .cp2-avatar {
@@ -301,7 +301,7 @@
         flex: 0 0 42px;
         border: 1px solid #2B5939;
         border-radius: 12px;
-        background: #14291B;
+        background: var(--ht-tone-14291b);
         color: #4ADE80;
     }
 
@@ -339,7 +339,7 @@
         padding: 17px 14px;
         border: 1px solid #263B2C;
         border-radius: 13px;
-        background: #0A100C;
+        background: var(--ht-tone-0a100c);
         min-width: 0;
     }
 
@@ -399,7 +399,7 @@
         padding: 10px 17px;
         border: 1px solid #34543D;
         border-radius: 11px;
-        background: #17241A;
+        background: var(--ht-tone-17241a);
         color: #E5F7E9;
         font-size: 12px;
         font-weight: 750;
@@ -409,7 +409,7 @@
 
         .cp2-btn:hover,
         .cp2-btn:focus {
-            background: #203827;
+            background: var(--ht-tone-203827);
             color: #FFFFFF;
             text-decoration: none;
         }
@@ -485,7 +485,7 @@
         padding: 0 13px;
         border: 1px solid #304537;
         border-radius: 10px;
-        background: #090F0B;
+        background: var(--ht-tone-090f0b);
         color: #F3F4F6;
         font-size: 13px;
         outline: none;
@@ -528,19 +528,19 @@
     }
 
     .cp2-success {
-        background: #12371F;
+        background: var(--ht-tone-12371f);
         border: 1px solid #2B7440;
         color: #BDF7CD;
     }
 
     .cp2-warning {
-        background: #342B12;
+        background: var(--ht-tone-342b12);
         border: 1px solid #76622C;
         color: #F8DF9B;
     }
 
     .cp2-error {
-        background: #381A1D;
+        background: var(--ht-tone-381a1d);
         border: 1px solid #7C3039;
         color: #FECACA;
     }
@@ -561,7 +561,7 @@
     /* DATE PICKER */
 
     .flatpickr-calendar {
-        background: #0D1710 !important;
+        background: var(--ht-tone-0d1710) !important;
         border: 1px solid #2C5338 !important;
         box-shadow: 0 15px 35px rgba(0,0,0,.5) !important;
     }

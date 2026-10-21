@@ -1,4 +1,4 @@
-﻿
+
 @model HealthTrackPro.Web.Areas.Client.Models.ClientProgressViewModel
 
 @using System
@@ -121,7 +121,7 @@
             justify-content: center;
             padding: 11px 16px;
             border: 1px solid #304435;
-            background: #111713;
+            background: var(--ht-tone-111713);
             color: #D1D5DB;
             border-radius: 10px;
             text-decoration: none;
@@ -144,8 +144,8 @@
 
         #ht-progress .hp-card,
         #ht-progress .hp-panel {
-            background: #111713;
-            border: 1px solid #1F2A22;
+            background: var(--ht-tone-111713);
+            border: 1px solid var(--ht-tone-1f2a22);
             border-radius: 16px;
             min-width: 0;
         }
@@ -216,7 +216,7 @@
         }
 
         #ht-progress .hp-chart-tab {
-            background: #0C120E;
+            background: var(--ht-tone-0c120e);
             color: #A5B4A9;
             border: 1px solid #2A3D30;
             border-radius: 9px;
@@ -227,7 +227,7 @@
         }
 
             #ht-progress .hp-chart-tab.active {
-                background: #193A23;
+                background: var(--ht-tone-193a23);
                 border-color: #22C55E;
                 color: #86EFAC;
             }
@@ -241,7 +241,7 @@
             padding: 35px 20px;
             border: 1px dashed #31503A;
             border-radius: 12px;
-            background: #0C150F;
+            background: var(--ht-tone-0c150f);
             text-align: center;
             color: #9CA3AF;
             font-size: 12px;
@@ -265,7 +265,7 @@
             width: 100% !important;
             max-width: none !important;
             padding: 12px 13px;
-            background: #0B100D;
+            background: var(--ht-tone-0b100d);
             border: 1px solid #2C3D30;
             border-radius: 10px;
             color: #F3F4F6;
@@ -306,7 +306,7 @@
         }
 
         #ht-progress .hp-success {
-            background: #10321B;
+            background: var(--ht-tone-10321b);
             border: 1px solid #205D32;
             color: #86EFAC;
             padding: 13px 16px;
@@ -348,7 +348,7 @@
         #ht-progress .hp-goal-track {
             height: 7px;
             border-radius: 10px;
-            background: #29372D;
+            background: var(--ht-tone-29372d);
             margin-top: 13px;
             overflow: hidden;
         }
