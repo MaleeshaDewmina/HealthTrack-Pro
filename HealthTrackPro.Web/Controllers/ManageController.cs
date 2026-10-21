@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -238,7 +238,51 @@ namespace HealthTrackPro.Web.Controllers
                 {
                     await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
                 }
-                return RedirectToAction("Index", new { Message = ManageMessageId.ChangePasswordSuccess });
+                                    // REMOVE-TEMP-PASSWORD-CLAIM-V1
+                    var passwordClaims =
+                        await UserManager.GetClaimsAsync(
+                            User.Identity.GetUserId());
+
+                    foreach (
+                        var passwordClaim
+                        in passwordClaims)
+                    {
+                        if (
+                            passwordClaim.Type ==
+                                "MustChangePassword")
+                        {
+                            await UserManager
+                                .RemoveClaimAsync(
+                                    User.Identity
+                                        .GetUserId(),
+                                    passwordClaim);
+                        }
+                    }
+
+                    // REFRESH-PASSWORD-COOKIE-V1
+                    // Reissue the authentication cookie so the
+                    // removed MustChangePassword claim disappears
+                    // from the current signed-in session too.
+                    var refreshedUser =
+                        await UserManager.FindByIdAsync(
+                            User.Identity.GetUserId());
+
+                    if (refreshedUser != null)
+                    {
+                        await SignInManager.SignInAsync(
+                            refreshedUser,
+                            isPersistent: false,
+                            rememberBrowser: false);
+                    }
+
+                    return RedirectToAction(
+                        "Index",
+                        new
+                        {
+                            Message =
+                                ManageMessageId
+                                    .ChangePasswordSuccess
+                        });
             }
             AddErrors(result);
             return View(model);
