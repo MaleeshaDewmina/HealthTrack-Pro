@@ -169,6 +169,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Areas\Client\Controllers\AppointmentsController.cs" />
+    <Compile Include="Areas\Client\Controllers\NotificationsController.cs" />
     <Compile Include="Areas\Client\Controllers\DietController.cs" />
     <Compile Include="Areas\Client\Controllers\GoalsController.cs" />
     <Compile Include="Areas\Client\Controllers\AiChatController.cs" />
@@ -177,6 +178,7 @@
     <Compile Include="Areas\Client\Controllers\ProgressController.cs" />
     <Compile Include="Areas\Client\Controllers\WorkoutController.cs" />
     <Compile Include="Areas\Client\Models\ClientAppointmentsViewModel.cs" />
+    <Compile Include="Areas\Client\Models\ClientNotificationViewModel.cs" />
     <Compile Include="Areas\Client\Models\ClientDashboardViewModel.cs" />
     <Compile Include="Areas\Client\Models\ClientAiChatViewModel.cs" />
     <Compile Include="Areas\Client\Models\ClientDietViewModel.cs" />
@@ -310,6 +312,7 @@
     <Content Include="Areas\Client\Views\MealLog\Index.cshtml" />
     <Content Include="Areas\Client\Views\Progress\Index.cshtml" />
     <Content Include="Areas\Client\Views\Appointments\Index.cshtml" />
+    <Content Include="Areas\Client\Views\Notifications\Index.cshtml" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />

@@ -136,7 +136,8 @@
                     </li>
 
                     <li class="ht-nav-item">
-                        <a href="#" class="ht-nav-link ht-nav-pending">
+                        <a href="@Url.Action("Index", "Notifications", new { area = "Client" })"
+                           class="ht-nav-link @(controller == "Notifications" ? "active" : "")">
                             Notifications
                         </a>
                     </li>
@@ -308,11 +309,36 @@
 
                 <div class="ht-topbar-right">
 
-                    <span
-                        class="ht-notification-button"
-                        title="Notifications">
-                        &#128276;
-                    </span>
+                    @if (User.IsInRole("Trainer"))
+                    {
+                        <a
+                            href="@Url.Action("Index", "Notifications", new { area = "Trainer" })"
+                            class="ht-notification-button"
+                            title="Notifications"
+                            aria-label="Open notifications"
+                            style="text-decoration:none;">
+                            &#128276;
+                        </a>
+                    }
+                    else if (User.IsInRole("Client"))
+                    {
+                        <a
+                            href="@Url.Action("Index", "Notifications", new { area = "Client" })"
+                            class="ht-notification-button"
+                            title="Notifications"
+                            aria-label="Open notifications"
+                            style="text-decoration:none;">
+                            &#128276;
+                        </a>
+                    }
+                    else
+                    {
+                        <span
+                            class="ht-notification-button"
+                            title="Notifications">
+                            &#128276;
+                        </span>
+                    }
 
                     @Html.Partial("_LoginPartial")
 

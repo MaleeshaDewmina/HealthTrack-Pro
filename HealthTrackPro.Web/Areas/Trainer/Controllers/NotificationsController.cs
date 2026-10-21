@@ -40,6 +40,7 @@ namespace HealthTrackPro.Web.Areas.Trainer.Controllers
                     Title = n.Title,
                     Message = n.Message,
                     CreatedAt = n.CreatedAt.ToString("MMM d, yyyy h:mm tt"),
+                    Type = n.Type.ToString(),
                     IsRead = n.IsRead
                 });
             }

@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 
+using HealthTrackPro.Web.Enums;
 using HealthTrackPro.Web.Models;
 using HealthTrackPro.Web.Models.Scheduling;
 using HealthTrackPro.Web.Services.Interfaces;
@@ -16,6 +17,7 @@ namespace HealthTrackPro.Web.Services.Implementations
     {
         private readonly ApplicationDbContext db;
         private readonly bool ownsContext;
+        private readonly INotificationService notificationService;
 
         public AppointmentService()
             : this(new ApplicationDbContext(), true)
@@ -40,6 +42,9 @@ namespace HealthTrackPro.Web.Services.Implementations
 
             db = context;
             this.ownsContext = ownsContext;
+
+            notificationService =
+                new NotificationService(db);
         }
 
         public async Task<List<Appointment>>
@@ -162,6 +167,17 @@ namespace HealthTrackPro.Web.Services.Implementations
 
             await db.SaveChangesAsync();
 
+            await CreateAppointmentNotificationAsync(
+                trainerUserId,
+                "New appointment request",
+                "A client requested a " +
+                durationMinutes +
+                "-minute appointment for " +
+                FormatDateTime(
+                    appointmentDateTime) +
+                "."
+            );
+
             return true;
         }
 
@@ -183,6 +199,15 @@ namespace HealthTrackPro.Web.Services.Implementations
 
             await db.SaveChangesAsync();
 
+            await CreateAppointmentNotificationAsync(
+                appointment.ClientUserId,
+                "Appointment approved",
+                "Your trainer approved your appointment for " +
+                FormatDateTime(
+                    appointment.AppointmentDateTime) +
+                "."
+            );
+
             return true;
         }
 
@@ -203,6 +228,15 @@ namespace HealthTrackPro.Web.Services.Implementations
             appointment.Reject();
 
             await db.SaveChangesAsync();
+
+            await CreateAppointmentNotificationAsync(
+                appointment.ClientUserId,
+                "Appointment rejected",
+                "Your appointment request for " +
+                FormatDateTime(
+                    appointment.AppointmentDateTime) +
+                " was rejected by your trainer."
+            );
 
             return true;
         }
@@ -233,9 +267,27 @@ namespace HealthTrackPro.Web.Services.Implementations
                 return false;
             }
 
+            string recipientUserId =
+                appointment.ClientUserId == userId
+                    ? appointment.TrainerUserId
+                    : appointment.ClientUserId;
+
             appointment.Cancel();
 
             await db.SaveChangesAsync();
+
+            if (!string.IsNullOrWhiteSpace(
+                recipientUserId))
+            {
+                await CreateAppointmentNotificationAsync(
+                    recipientUserId,
+                    "Appointment cancelled",
+                    "The appointment scheduled for " +
+                    FormatDateTime(
+                        appointment.AppointmentDateTime) +
+                    " was cancelled."
+                );
+            }
 
             return true;
         }
@@ -260,6 +312,15 @@ namespace HealthTrackPro.Web.Services.Implementations
 
             await db.SaveChangesAsync();
 
+            await CreateAppointmentNotificationAsync(
+                appointment.ClientUserId,
+                "Appointment rescheduled",
+                "Your trainer rescheduled your appointment to " +
+                FormatDateTime(
+                    newDateTime) +
+                "."
+            );
+
             return true;
         }
 
@@ -280,6 +341,15 @@ namespace HealthTrackPro.Web.Services.Implementations
             appointment.Complete();
 
             await db.SaveChangesAsync();
+
+            await CreateAppointmentNotificationAsync(
+                appointment.ClientUserId,
+                "Appointment completed",
+                "Your appointment from " +
+                FormatDateTime(
+                    appointment.AppointmentDateTime) +
+                " was marked as completed."
+            );
 
             return true;
         }
@@ -302,6 +372,31 @@ namespace HealthTrackPro.Web.Services.Implementations
                         appointmentId &&
                     a.TrainerUserId ==
                         trainerUserId);
+        }
+
+        private async Task
+            CreateAppointmentNotificationAsync(
+                string userId,
+                string title,
+                string message)
+        {
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                return;
+            }
+
+            await notificationService.CreateAsync(
+                userId,
+                title,
+                message,
+                NotificationType.AppointmentUpdate);
+        }
+
+        private static string FormatDateTime(
+            DateTime value)
+        {
+            return value.ToString(
+                "ddd, MMM d, yyyy 'at' h:mm tt");
         }
 
         public void Dispose()
