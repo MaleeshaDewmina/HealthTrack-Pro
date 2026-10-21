@@ -1,94 +1,1275 @@
 @model HealthTrackPro.Web.Areas.Trainer.Models.AvailabilityIndexViewModel
+@using System.Linq
 
 @{
     ViewBag.Title = "Availability";
+
+    var openCount =
+        Model.Slots.Count(x => x.IsOpen);
+
+    var closedCount =
+        Model.Slots.Count - openCount;
+
+    var minimumDate =
+        DateTime.Today.ToString("yyyy-MM-dd");
 }
 
-<div class="ht-card">
-    <h2 class="ht-card-title">Availability</h2>
-    <p class="text-muted">Add the times you can take appointments. Close a slot to hide it from clients.</p>
+<style>
+    .htav-page {
+        max-width: 1450px;
+        margin: 0 auto;
+    }
 
-    @if (TempData["SuccessMessage"] != null) { <div class="alert alert-success">@TempData["SuccessMessage"]</div> }
-    @if (TempData["ErrorMessage"] != null) { <div class="alert alert-danger">@TempData["ErrorMessage"]</div> }
+    .htav-hero {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 22px;
+    }
 
-    @using (Html.BeginForm("Add", "Availability", new { area = "Trainer" }, FormMethod.Post, new { @class = "form-horizontal" }))
+    .htav-heading {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .htav-heading-icon {
+        display: flex;
+        width: 48px;
+        height: 48px;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 48px;
+        border: 1px solid rgba(74,222,128,.14);
+        border-radius: 14px;
+        background:
+            linear-gradient(
+                145deg,
+                rgba(34,197,94,.18),
+                rgba(34,197,94,.06)
+            );
+        color: #4ADE80;
+    }
+
+    .htav-heading-icon svg {
+        width: 24px;
+        height: 24px;
+        fill: currentColor;
+    }
+
+    .htav-hero h2 {
+        margin: 0 0 5px;
+        color: #F4F7F5;
+        font-size: 27px;
+        font-weight: 800;
+        letter-spacing: -.4px;
+    }
+
+    .htav-hero p {
+        margin: 0;
+        color: #829087;
+        font-size: 12px;
+    }
+
+    .htav-today {
+        padding: 11px 14px;
+        border: 1px solid #203026;
+        border-radius: 10px;
+        background: #101612;
+        color: #C8D1CB;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .htav-summary {
+        display: grid;
+        grid-template-columns:
+            repeat(3,minmax(0,1fr));
+        gap: 13px;
+        margin-bottom: 18px;
+    }
+
+    .htav-stat {
+        position: relative;
+        overflow: hidden;
+        padding: 17px;
+        border: 1px solid #1F2A22;
+        border-radius: 13px;
+        background:
+            radial-gradient(
+                circle at 100% 0,
+                rgba(34,197,94,.08),
+                transparent 48%
+            ),
+            #101612;
+    }
+
+    .htav-stat-label {
+        display: block;
+        margin-bottom: 8px;
+        color: #68766D;
+        font-size: 9px;
+        font-weight: 900;
+        letter-spacing: .8px;
+        text-transform: uppercase;
+    }
+
+    .htav-stat-value {
+        color: #F1F5F2;
+        font-size: 25px;
+        font-weight: 900;
+    }
+
+    .htav-alert {
+        margin-bottom: 17px;
+        padding: 12px 14px;
+        border-radius: 10px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .htav-alert-success {
+        border: 1px solid rgba(34,197,94,.22);
+        background: rgba(34,197,94,.08);
+        color: #86EFAC;
+    }
+
+    .htav-alert-danger {
+        border: 1px solid rgba(239,68,68,.22);
+        background: rgba(239,68,68,.08);
+        color: #FCA5A5;
+    }
+
+    .htav-grid {
+        display: grid;
+        grid-template-columns:
+            minmax(0,1.35fr)
+            minmax(370px,.65fr);
+        gap: 18px;
+        align-items: start;
+    }
+
+    .htav-card {
+        overflow: hidden;
+        border: 1px solid #1F2A22;
+        border-radius: 14px;
+        background: #101612;
+    }
+
+    .htav-card-head {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 19px 20px;
+        border-bottom: 1px solid #1B251E;
+    }
+
+    .htav-card-icon {
+        display: flex;
+        width: 39px;
+        height: 39px;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 39px;
+        border-radius: 10px;
+        background: rgba(34,197,94,.11);
+        color: #4ADE80;
+    }
+
+    .htav-card-icon svg {
+        width: 19px;
+        height: 19px;
+        fill: currentColor;
+    }
+
+    .htav-card-head h3 {
+        margin: 0 0 3px;
+        color: #EEF3EF;
+        font-size: 15px;
+        font-weight: 900;
+    }
+
+    .htav-card-head p {
+        margin: 0;
+        color: #758178;
+        font-size: 10px;
+    }
+
+    .htav-toolbar {
+        display: flex;
+        justify-content: flex-end;
+        padding: 12px 16px;
+        border-bottom: 1px solid #1B251E;
+    }
+
+    .htav-filters {
+        display: flex;
+        gap: 6px;
+    }
+
+    .htav-filter {
+        min-height: 36px;
+        padding: 0 12px;
+        border: 1px solid #26332A;
+        border-radius: 8px;
+        background: #0D130F;
+        color: #8C9990;
+        font-size: 9px;
+        font-weight: 800;
+        cursor: pointer;
+    }
+
+    .htav-filter.active {
+        border-color: #285C39;
+        background: rgba(34,197,94,.12);
+        color: #4ADE80;
+    }
+
+    .htav-slots {
+        padding: 16px;
+    }
+
+    .htav-slot {
+        display: grid;
+        grid-template-columns:
+            58px minmax(0,1fr) auto;
+        gap: 14px;
+        align-items: center;
+        margin-bottom: 11px;
+        padding: 15px;
+        border: 1px solid #1D2820;
+        border-radius: 11px;
+        background:
+            linear-gradient(
+                145deg,
+                #0E1510,
+                #0C120E
+            );
+    }
+
+    .htav-slot:last-child {
+        margin-bottom: 0;
+    }
+
+    .htav-date-box {
+        display: flex;
+        width: 58px;
+        min-height: 58px;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        border-radius: 11px;
+        background:
+            rgba(34,197,94,.09);
+        color: #4ADE80;
+    }
+
+    .htav-date-icon {
+        width: 20px;
+        height: 20px;
+        margin-bottom: 4px;
+        fill: currentColor;
+    }
+
+    .htav-date-mini {
+        font-size: 7px;
+        font-weight: 900;
+        letter-spacing: .5px;
+        text-transform: uppercase;
+    }
+
+    .htav-slot-date {
+        margin: 0 0 5px;
+        color: #EDF2EE;
+        font-size: 13px;
+        font-weight: 900;
+    }
+
+    .htav-slot-time {
+        margin-bottom: 5px;
+        color: #AAB6AE;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .htav-slot-note {
+        color: #6F7C73;
+        font-size: 9px;
+        line-height: 1.45;
+    }
+
+    .htav-slot-side {
+        display: flex;
+        min-width: 105px;
+        align-items: flex-end;
+        flex-direction: column;
+        gap: 9px;
+    }
+
+    .htav-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 8px;
+        border-radius: 999px;
+        font-size: 8px;
+        font-weight: 900;
+        letter-spacing: .5px;
+        text-transform: uppercase;
+    }
+
+    .htav-status:before {
+        content: "";
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .htav-status-open {
+        background: rgba(34,197,94,.12);
+        color: #4ADE80;
+    }
+
+    .htav-status-closed {
+        background: rgba(245,158,11,.10);
+        color: #FBBF24;
+    }
+
+    .htav-toggle-form {
+        margin: 0;
+    }
+
+    .htav-toggle {
+        min-height: 35px;
+        padding: 0 11px;
+        border: 1px solid #2A382E;
+        border-radius: 8px;
+        background: #121A14;
+        color: #C5CEC8;
+        font-size: 9px;
+        font-weight: 900;
+    }
+
+    .htav-toggle:hover {
+        border-color: #3A5742;
+        color: #4ADE80;
+    }
+
+    .htav-empty {
+        padding: 55px 22px;
+        text-align: center;
+        color: #748178;
+        font-size: 11px;
+    }
+
+    .htav-empty-icon {
+        display: flex;
+        width: 58px;
+        height: 58px;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 13px;
+        border-radius: 15px;
+        background: rgba(34,197,94,.08);
+        color: #4ADE80;
+    }
+
+    .htav-empty-icon svg {
+        width: 27px;
+        height: 27px;
+        fill: currentColor;
+    }
+
+    .htav-form {
+        padding: 20px;
+    }
+
+    .htav-preview {
+        margin-bottom: 17px;
+        padding: 15px;
+        border: 1px solid #1E3426;
+        border-radius: 11px;
+        background:
+            radial-gradient(
+                circle at 100% 0,
+                rgba(34,197,94,.11),
+                transparent 52%
+            ),
+            #0D160F;
+    }
+
+    .htav-preview-label {
+        display: block;
+        margin-bottom: 5px;
+        color: #6D7B71;
+        font-size: 8px;
+        font-weight: 900;
+        letter-spacing: .8px;
+        text-transform: uppercase;
+    }
+
+    .htav-preview-time {
+        display: block;
+        margin-bottom: 4px;
+        color: #EDF3EF;
+        font-size: 18px;
+        font-weight: 900;
+    }
+
+    .htav-preview-duration {
+        color: #7C8A80;
+        font-size: 9px;
+    }
+
+    .htav-field {
+        margin-bottom: 16px;
+    }
+
+    .htav-label {
+        display: block;
+        margin-bottom: 6px;
+        color: #DCE4DE;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .htav-required {
+        color: #4ADE80;
+    }
+
+    .htav-page .form-control {
+        width: 100%;
+        max-width: none;
+        height: 44px;
+        padding: 10px 12px;
+        border: 1px solid #26332A;
+        border-radius: 9px;
+        background: #0C120E;
+        color: #F0F4F1;
+        box-shadow: none;
+    }
+
+    .htav-page .form-control:focus {
+        border-color: #22C55E;
+        background: #0C120E;
+        box-shadow: 0 0 0 3px rgba(34,197,94,.10);
+    }
+
+    .htav-page input[type="date"],
+    .htav-page input[type="time"] {
+        color-scheme: dark;
+    }
+
+    .htav-two {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .htav-help {
+        display: block;
+        margin-top: 5px;
+        color: #68756C;
+        font-size: 9px;
+    }
+
+    .htav-validation {
+        display: block;
+        margin-top: 5px;
+        color: #F87171;
+        font-size: 9px;
+    }
+
+    .htav-validation-summary {
+        margin-bottom: 15px;
+        padding: 11px 13px;
+        border: 1px solid rgba(239,68,68,.22);
+        border-radius: 9px;
+        background: rgba(239,68,68,.07);
+    }
+
+    .htav-submit {
+        width: 100%;
+        min-height: 44px;
+        border: 0;
+        border-radius: 9px;
+        background:
+            linear-gradient(
+                135deg,
+                #22C55E,
+                #16A34A
+            );
+        color: #061009;
+        font-size: 11px;
+        font-weight: 900;
+        box-shadow:
+            0 9px 22px
+            rgba(34,197,94,.12);
+    }
+
+    .htav-no-results {
+        display: none;
+        padding: 34px 20px;
+        text-align: center;
+        color: #748178;
+        font-size: 10px;
+    }
+
+    @@media (max-width: 1050px) {
+        .htav-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 750px) {
+        .htav-hero {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .htav-summary {
+            grid-template-columns: 1fr;
+        }
+
+        .htav-slot {
+            grid-template-columns: 1fr;
+        }
+
+        .htav-slot-side {
+            align-items: flex-start;
+        }
+    }
+
+    @@media (max-width: 500px) {
+        .htav-two {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+
+<div class="htav-page">
+
+    <div class="htav-hero">
+
+        <div class="htav-heading">
+
+            <div class="htav-heading-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M7 2h2v2h6V2h2v2h3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h3V2Zm13 8H4v10h16V10ZM4 8h16V6H4v2Zm8 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm1 2v2h2v1h-3v-3h1Z"/>
+                </svg>
+            </div>
+
+            <div>
+                <h2>Trainer Availability</h2>
+                <p>
+                    Publish consultation times and control
+                    when clients can request appointments.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="htav-today">
+            @DateTime.Now.ToString("dddd, dd MMMM yyyy")
+        </div>
+
+    </div>
+
+
+    @if (TempData["SuccessMessage"] != null)
     {
-        @Html.AntiForgeryToken()
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-        <div class="form-group">
-            @Html.LabelFor(m => m.Form.Date, new { @class = "col-md-3 control-label" })
-            <div class="col-md-9">
-                @Html.TextBoxFor(m => m.Form.Date, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
-                @Html.ValidationMessageFor(m => m.Form.Date, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.Form.StartTime, new { @class = "col-md-3 control-label" })
-            <div class="col-md-9">
-                @Html.TextBoxFor(m => m.Form.StartTime, new { @class = "form-control", type = "time" })
-                @Html.ValidationMessageFor(m => m.Form.StartTime, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.Form.EndTime, new { @class = "col-md-3 control-label" })
-            <div class="col-md-9">
-                @Html.TextBoxFor(m => m.Form.EndTime, new { @class = "form-control", type = "time" })
-                @Html.ValidationMessageFor(m => m.Form.EndTime, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.Form.Notes, new { @class = "col-md-3 control-label" })
-            <div class="col-md-9">
-                @Html.TextBoxFor(m => m.Form.Notes, new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.Form.Notes, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-offset-3 col-md-9">
-                <button type="submit" class="btn btn-success">Add slot</button>
-            </div>
+        <div class="htav-alert htav-alert-success">
+            @TempData["SuccessMessage"]
         </div>
     }
-</div>
 
-<div class="ht-card">
-    <h3 class="ht-card-title">Upcoming slots</h3>
-    @if (Model.Slots.Count == 0)
+    @if (TempData["ErrorMessage"] != null)
     {
-        <p class="text-muted">No upcoming availability slots.</p>
+        <div class="htav-alert htav-alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
     }
-    else
-    {
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
-                    <tr><th>Date</th><th>Time</th><th>Notes</th><th>Status</th><th></th></tr>
-                </thead>
-                <tbody>
-                @foreach (var slot in Model.Slots)
+
+
+    <div class="htav-summary">
+
+        <div class="htav-stat">
+            <span class="htav-stat-label">
+                Upcoming slots
+            </span>
+            <span class="htav-stat-value">
+                @Model.Slots.Count
+            </span>
+        </div>
+
+        <div class="htav-stat">
+            <span class="htav-stat-label">
+                Open slots
+            </span>
+            <span class="htav-stat-value">
+                @openCount
+            </span>
+        </div>
+
+        <div class="htav-stat">
+            <span class="htav-stat-label">
+                Closed slots
+            </span>
+            <span class="htav-stat-value">
+                @closedCount
+            </span>
+        </div>
+
+    </div>
+
+
+    <div class="htav-grid">
+
+        <section class="htav-card">
+
+            <div class="htav-card-head">
+
+                <div class="htav-card-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M7 2h2v2h6V2h2v2h3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h3V2Zm13 8H4v10h16V10ZM4 8h16V6H4v2Z"/>
+                    </svg>
+                </div>
+
+                <div>
+                    <h3>Upcoming schedule</h3>
+                    <p>
+                        Future appointment windows published
+                        from your trainer profile.
+                    </p>
+                </div>
+
+            </div>
+
+
+            @if (Model.Slots.Count > 0)
+            {
+                <div class="htav-toolbar">
+
+                    <div class="htav-filters">
+
+                        <button
+                            type="button"
+                            class="htav-filter active"
+                            data-filter="all">
+                            All
+                        </button>
+
+                        <button
+                            type="button"
+                            class="htav-filter"
+                            data-filter="open">
+                            Open
+                        </button>
+
+                        <button
+                            type="button"
+                            class="htav-filter"
+                            data-filter="closed">
+                            Closed
+                        </button>
+
+                    </div>
+
+                </div>
+            }
+
+
+            <div class="htav-slots">
+
+                @if (Model.Slots.Count == 0)
                 {
-                    <tr>
-                        <td>@slot.Date</td>
-                        <td>@slot.Time</td>
-                        <td>@slot.Notes</td>
-                        <td>
-                            <span class="ht-status @(slot.IsOpen ? "ht-status-success" : "ht-status-warning")">
-                                @(slot.IsOpen ? "Open" : "Closed")
-                            </span>
-                        </td>
-                        <td>
-                            <form method="post" action="@Url.Action("Toggle", "Availability", new { area = "Trainer" })" style="display:inline;">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="id" value="@slot.SlotId" />
-                                <input type="hidden" name="open" value="@(!slot.IsOpen)" />
-                                <button type="submit" class="btn btn-default btn-sm">@(slot.IsOpen ? "Close" : "Open")</button>
-                            </form>
-                        </td>
-                    </tr>
+                    <div class="htav-empty">
+
+                        <div class="htav-empty-icon">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M7 2h2v2h6V2h2v2h3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h3V2Zm13 8H4v10h16V10ZM4 8h16V6H4v2Z"/>
+                            </svg>
+                        </div>
+
+                        No upcoming availability slots.<br />
+                        Create your first consultation window.
+
+                    </div>
                 }
-                </tbody>
-            </table>
-        </div>
-    }
+                else
+                {
+                    foreach (var slot in Model.Slots)
+                    {
+                        var state =
+                            slot.IsOpen
+                                ? "open"
+                                : "closed";
+
+                        <article
+                            class="htav-slot"
+                            data-status="@state">
+
+                            <div class="htav-date-box">
+
+                                <svg
+                                    class="htav-date-icon"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true">
+                                    <path d="M7 2h2v2h6V2h2v2h3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h3V2Zm13 8H4v10h16V10ZM4 8h16V6H4v2Z"/>
+                                </svg>
+
+                                <span class="htav-date-mini">
+                                    Slot
+                                </span>
+
+                            </div>
+
+
+                            <div>
+
+                                <h4 class="htav-slot-date">
+                                    @slot.Date
+                                </h4>
+
+                                <div class="htav-slot-time">
+                                    @slot.Time
+                                </div>
+
+                                <div class="htav-slot-note">
+                                    @(string.IsNullOrWhiteSpace(slot.Notes)
+                                        ? "No additional notes."
+                                        : slot.Notes)
+                                </div>
+
+                            </div>
+
+
+                            <div class="htav-slot-side">
+
+                                <span
+                                    class="htav-status @(slot.IsOpen ? "htav-status-open" : "htav-status-closed")">
+                                    @(slot.IsOpen
+                                        ? "Open"
+                                        : "Closed")
+                                </span>
+
+
+                                <form
+                                    class="htav-toggle-form"
+                                    method="post"
+                                    action="@Url.Action(
+                                        "Toggle",
+                                        "Availability",
+                                        new { area = "Trainer" })">
+
+                                    @Html.AntiForgeryToken()
+
+                                    <input
+                                        type="hidden"
+                                        name="id"
+                                        value="@slot.SlotId" />
+
+                                    <input
+                                        type="hidden"
+                                        name="open"
+                                        value="@(!slot.IsOpen)" />
+
+                                    <button
+                                        type="submit"
+                                        class="htav-toggle">
+
+                                        @(slot.IsOpen
+                                            ? "Close slot"
+                                            : "Open slot")
+
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </article>
+                    }
+                }
+
+
+                @if (Model.Slots.Count > 0)
+                {
+                    <div
+                        id="htavNoResults"
+                        class="htav-no-results">
+                        No slots match this filter.
+                    </div>
+                }
+
+            </div>
+
+        </section>
+
+
+        <aside class="htav-card">
+
+            <div class="htav-card-head">
+
+                <div class="htav-card-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6V5Z"/>
+                    </svg>
+                </div>
+
+                <div>
+                    <h3>Add availability</h3>
+                    <p>
+                        Publish a new appointment window.
+                    </p>
+                </div>
+
+            </div>
+
+
+            @using (Html.BeginForm(
+                "Add",
+                "Availability",
+                new { area = "Trainer" },
+                FormMethod.Post,
+                new { @class = "htav-form" }))
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.ValidationSummary(
+                    true,
+                    "",
+                    new
+                    {
+                        @class =
+                            "text-danger htav-validation-summary"
+                    })
+
+
+                <div class="htav-preview">
+
+                    <span class="htav-preview-label">
+                        Slot preview
+                    </span>
+
+                    <span
+                        id="htavPreviewTime"
+                        class="htav-preview-time">
+                        Select a time
+                    </span>
+
+                    <span
+                        id="htavPreviewDuration"
+                        class="htav-preview-duration">
+                        Choose a start and end time
+                    </span>
+
+                </div>
+
+
+                <div class="htav-field">
+
+                    <label
+                        class="htav-label"
+                        for="Form_Date">
+
+                        Date
+                        <span class="htav-required">*</span>
+
+                    </label>
+
+                    @Html.TextBoxFor(
+                        m => m.Form.Date,
+                        "{0:yyyy-MM-dd}",
+                        new
+                        {
+                            @class = "form-control",
+                            type = "date",
+                            min = minimumDate,
+                            id = "Form_Date"
+                        })
+
+                    @Html.ValidationMessageFor(
+                        m => m.Form.Date,
+                        "",
+                        new
+                        {
+                            @class =
+                                "text-danger htav-validation"
+                        })
+
+                </div>
+
+
+                <div class="htav-two">
+
+                    <div class="htav-field">
+
+                        <label
+                            class="htav-label"
+                            for="Form_StartTime">
+
+                            Start time
+                            <span class="htav-required">*</span>
+
+                        </label>
+
+                        @Html.TextBoxFor(
+                            m => m.Form.StartTime,
+                            new
+                            {
+                                @class = "form-control",
+                                type = "time",
+                                id = "Form_StartTime"
+                            })
+
+                        @Html.ValidationMessageFor(
+                            m => m.Form.StartTime,
+                            "",
+                            new
+                            {
+                                @class =
+                                    "text-danger htav-validation"
+                            })
+
+                    </div>
+
+
+                    <div class="htav-field">
+
+                        <label
+                            class="htav-label"
+                            for="Form_EndTime">
+
+                            End time
+                            <span class="htav-required">*</span>
+
+                        </label>
+
+                        @Html.TextBoxFor(
+                            m => m.Form.EndTime,
+                            new
+                            {
+                                @class = "form-control",
+                                type = "time",
+                                id = "Form_EndTime"
+                            })
+
+                        @Html.ValidationMessageFor(
+                            m => m.Form.EndTime,
+                            "",
+                            new
+                            {
+                                @class =
+                                    "text-danger htav-validation"
+                            })
+
+                    </div>
+
+                </div>
+
+
+                <div class="htav-field">
+
+                    <label
+                        class="htav-label"
+                        for="Form_Notes">
+                        Notes
+                    </label>
+
+                    @Html.TextBoxFor(
+                        m => m.Form.Notes,
+                        new
+                        {
+                            @class = "form-control",
+                            maxlength = "300",
+                            id = "Form_Notes",
+                            placeholder =
+                                "e.g. Online consultation available"
+                        })
+
+                    <span class="htav-help">
+                        Optional notes visible with this slot.
+                    </span>
+
+                    @Html.ValidationMessageFor(
+                        m => m.Form.Notes,
+                        "",
+                        new
+                        {
+                            @class =
+                                "text-danger htav-validation"
+                        })
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="htav-submit">
+                    + Add availability slot
+                </button>
+            }
+
+        </aside>
+
+    </div>
+
 </div>
+
+
+@section scripts {
+
+<script>
+(function () {
+
+    "use strict";
+
+    var start =
+        document.getElementById(
+            "Form_StartTime"
+        );
+
+    var end =
+        document.getElementById(
+            "Form_EndTime"
+        );
+
+    var preview =
+        document.getElementById(
+            "htavPreviewTime"
+        );
+
+    var duration =
+        document.getElementById(
+            "htavPreviewDuration"
+        );
+
+
+    function formatTime(value) {
+
+        if (!value) {
+            return null;
+        }
+
+        var parts =
+            value.split(":");
+
+        var hour =
+            parseInt(parts[0], 10);
+
+        var minute =
+            parts[1];
+
+        var suffix =
+            hour >= 12
+                ? "PM"
+                : "AM";
+
+        var displayHour =
+            hour % 12 || 12;
+
+        return (
+            displayHour +
+            ":" +
+            minute +
+            " " +
+            suffix
+        );
+    }
+
+
+    function refreshPreview() {
+
+        if (
+            !start ||
+            !end ||
+            !start.value ||
+            !end.value
+        ) {
+
+            preview.textContent =
+                "Select a time";
+
+            duration.textContent =
+                "Choose a start and end time";
+
+            return;
+        }
+
+
+        preview.textContent =
+            formatTime(start.value) +
+            " to " +
+            formatTime(end.value);
+
+
+        var startParts =
+            start.value
+                .split(":")
+                .map(Number);
+
+        var endParts =
+            end.value
+                .split(":")
+                .map(Number);
+
+        var startMinutes =
+            startParts[0] * 60 +
+            startParts[1];
+
+        var endMinutes =
+            endParts[0] * 60 +
+            endParts[1];
+
+        var total =
+            endMinutes -
+            startMinutes;
+
+
+        if (total <= 0) {
+
+            duration.textContent =
+                "End time must be later than start time";
+
+            return;
+        }
+
+
+        var hours =
+            Math.floor(total / 60);
+
+        var minutes =
+            total % 60;
+
+        var text = "";
+
+        if (hours > 0) {
+
+            text +=
+                hours +
+                (hours === 1
+                    ? " hour"
+                    : " hours");
+        }
+
+        if (minutes > 0) {
+
+            if (text) {
+                text += " ";
+            }
+
+            text +=
+                minutes +
+                " minutes";
+        }
+
+        duration.textContent =
+            text + " availability window";
+    }
+
+
+    if (start) {
+        start.addEventListener(
+            "input",
+            refreshPreview
+        );
+    }
+
+    if (end) {
+        end.addEventListener(
+            "input",
+            refreshPreview
+        );
+    }
+
+
+    var filters =
+        Array.prototype.slice.call(
+            document.querySelectorAll(
+                ".htav-filter"
+            )
+        );
+
+    var slots =
+        Array.prototype.slice.call(
+            document.querySelectorAll(
+                ".htav-slot"
+            )
+        );
+
+    var noResults =
+        document.getElementById(
+            "htavNoResults"
+        );
+
+
+    filters.forEach(function (button) {
+
+        button.addEventListener(
+            "click",
+            function () {
+
+                var filter =
+                    button.getAttribute(
+                        "data-filter"
+                    );
+
+                var visible = 0;
+
+                filters.forEach(
+                    function (item) {
+                        item.classList.remove(
+                            "active"
+                        );
+                    }
+                );
+
+                button.classList.add(
+                    "active"
+                );
+
+
+                slots.forEach(function (slot) {
+
+                    var state =
+                        slot.getAttribute(
+                            "data-status"
+                        );
+
+                    var show =
+                        filter === "all" ||
+                        state === filter;
+
+                    slot.style.display =
+                        show
+                            ? ""
+                            : "none";
+
+                    if (show) {
+                        visible++;
+                    }
+                });
+
+
+                if (noResults) {
+
+                    noResults.style.display =
+                        visible === 0
+                            ? "block"
+                            : "none";
+                }
+            }
+        );
+    });
+
+
+    refreshPreview();
+
+})();
+</script>
+
+}

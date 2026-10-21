@@ -32,22 +32,22 @@ namespace HealthTrackPro.Web.Areas.Trainer.Controllers
 
             if (!TimeSpan.TryParse(form.StartTime, out start))
             {
-                ModelState.AddModelError("StartTime", "Enter a valid start time.");
+                ModelState.AddModelError("Form.StartTime", "Enter a valid start time.");
             }
 
             if (!TimeSpan.TryParse(form.EndTime, out end))
             {
-                ModelState.AddModelError("EndTime", "Enter a valid end time.");
+                ModelState.AddModelError("Form.EndTime", "Enter a valid end time.");
             }
 
             if (ModelState.IsValid && end <= start)
             {
-                ModelState.AddModelError("EndTime", "End time must be later than start time.");
+                ModelState.AddModelError("Form.EndTime", "End time must be later than start time.");
             }
 
             if (form.Date.Date < DateTime.Today)
             {
-                ModelState.AddModelError("Date", "Choose today or a future date.");
+                ModelState.AddModelError("Form.Date", "Choose today or a future date.");
             }
 
             if (!ModelState.IsValid)
