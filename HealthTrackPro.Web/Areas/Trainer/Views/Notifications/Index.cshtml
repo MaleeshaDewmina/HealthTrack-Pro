@@ -1,0 +1,767 @@
+@model HealthTrackPro.Web.Areas.Trainer.Models.NotificationIndexViewModel
+
+@{
+    ViewBag.Title = "Notifications";
+
+    var totalCount = Model.Items.Count;
+    var readCount = totalCount - Model.UnreadCount;
+}
+
+<style>
+    .tn-page {
+        max-width: 1380px;
+        margin: 0 auto;
+    }
+
+    .tn-hero {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 18px;
+        margin-bottom: 22px;
+    }
+
+    .tn-heading {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .tn-main-icon {
+        display: flex;
+        width: 50px;
+        height: 50px;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        border: 1px solid rgba(74, 222, 128, .16);
+        border-radius: 14px;
+        background: rgba(34, 197, 94, .10);
+        font-size: 22px;
+    }
+
+    .tn-hero h2 {
+        margin: 0 0 5px;
+        color: #f4f7f5;
+        font-size: 28px;
+        font-weight: 900;
+    }
+
+    .tn-hero p {
+        margin: 0;
+        color: #829087;
+        font-size: 12px;
+    }
+
+    .tn-mark-all {
+        min-height: 42px;
+        padding: 0 15px;
+        border: 1px solid #285c39;
+        border-radius: 9px;
+        background: rgba(34, 197, 94, .10);
+        color: #4ade80;
+        font-size: 10px;
+        font-weight: 900;
+    }
+
+    .tn-summary {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 13px;
+        margin-bottom: 18px;
+    }
+
+    .tn-stat {
+        position: relative;
+        overflow: hidden;
+        padding: 18px;
+        border: 1px solid #1f2a22;
+        border-radius: 13px;
+        background:
+            radial-gradient(
+                circle at 100% 0,
+                rgba(34, 197, 94, .08),
+                transparent 50%
+            ),
+            #101612;
+    }
+
+    .tn-stat-label {
+        display: block;
+        margin-bottom: 8px;
+        color: #68766d;
+        font-size: 8px;
+        font-weight: 900;
+        letter-spacing: .8px;
+        text-transform: uppercase;
+    }
+
+    .tn-stat-value {
+        color: #f1f5f2;
+        font-size: 27px;
+        font-weight: 900;
+    }
+
+    .tn-alert {
+        margin-bottom: 16px;
+        padding: 12px 14px;
+        border-radius: 10px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .tn-alert-success {
+        border: 1px solid rgba(34, 197, 94, .22);
+        background: rgba(34, 197, 94, .08);
+        color: #86efac;
+    }
+
+    .tn-alert-danger {
+        border: 1px solid rgba(239, 68, 68, .22);
+        background: rgba(239, 68, 68, .08);
+        color: #fca5a5;
+    }
+
+    .tn-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 15px;
+        padding: 12px;
+        border: 1px solid #1f2a22;
+        border-radius: 12px;
+        background: #101612;
+    }
+
+    .tn-search {
+        width: 100%;
+        max-width: 470px;
+        height: 40px;
+        padding: 8px 12px;
+        border: 1px solid #26332a;
+        border-radius: 8px;
+        outline: none;
+        background: #0c120e;
+        color: #edf3ef;
+        font-size: 10px;
+    }
+
+    .tn-search:focus {
+        border-color: #22c55e;
+        box-shadow: 0 0 0 3px rgba(34, 197, 94, .10);
+    }
+
+    .tn-filters {
+        display: flex;
+        gap: 7px;
+    }
+
+    .tn-filter {
+        min-height: 37px;
+        padding: 0 13px;
+        border: 1px solid #26332a;
+        border-radius: 8px;
+        background: #0d130f;
+        color: #87948b;
+        font-size: 9px;
+        font-weight: 900;
+    }
+
+    .tn-filter.active {
+        border-color: #285c39;
+        background: rgba(34, 197, 94, .12);
+        color: #4ade80;
+    }
+
+    .tn-list {
+        display: grid;
+        gap: 11px;
+    }
+
+    .tn-item {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        gap: 14px;
+        align-items: start;
+        padding: 17px;
+        border: 1px solid #1f2a22;
+        border-radius: 13px;
+        background: #101612;
+        transition: .15s ease;
+    }
+
+    .tn-item:hover {
+        border-color: #2c3d31;
+    }
+
+    .tn-item.unread {
+        border-color: #285c39;
+        background:
+            radial-gradient(
+                circle at 100% 0,
+                rgba(34, 197, 94, .09),
+                transparent 46%
+            ),
+            #101612;
+    }
+
+    .tn-item-icon {
+        display: flex;
+        width: 42px;
+        height: 42px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 11px;
+        background: rgba(34, 197, 94, .10);
+        font-size: 17px;
+    }
+
+    .tn-title-row {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 7px;
+        margin-bottom: 6px;
+    }
+
+    .tn-title {
+        color: #edf3ef;
+        font-size: 13px;
+        font-weight: 900;
+    }
+
+    .tn-new {
+        padding: 4px 7px;
+        border-radius: 999px;
+        background: rgba(34, 197, 94, .14);
+        color: #4ade80;
+        font-size: 7px;
+        font-weight: 900;
+        text-transform: uppercase;
+    }
+
+    .tn-type {
+        padding: 4px 7px;
+        border-radius: 999px;
+        background: #172019;
+        color: #77867c;
+        font-size: 7px;
+        font-weight: 900;
+        letter-spacing: .5px;
+        text-transform: uppercase;
+    }
+
+    .tn-message {
+        margin-bottom: 8px;
+        color: #b9c4bc;
+        font-size: 10px;
+        line-height: 1.65;
+    }
+
+    .tn-time {
+        color: #69766d;
+        font-size: 8px;
+    }
+
+    .tn-actions {
+        display: flex;
+        min-width: 120px;
+        flex-direction: column;
+        gap: 7px;
+    }
+
+    .tn-actions form {
+        margin: 0;
+    }
+
+    .tn-btn,
+    .tn-link {
+        display: inline-flex;
+        width: 100%;
+        min-height: 36px;
+        align-items: center;
+        justify-content: center;
+        padding: 0 11px;
+        border: 1px solid #2a382e;
+        border-radius: 8px;
+        background: #121a14;
+        color: #c7d0ca !important;
+        font-size: 9px;
+        font-weight: 900;
+        text-decoration: none !important;
+    }
+
+    .tn-link {
+        border-color: #285c39;
+        background: rgba(34, 197, 94, .08);
+        color: #4ade80 !important;
+    }
+
+    .tn-empty,
+    .tn-no-results {
+        padding: 60px 25px;
+        border: 1px dashed #28352c;
+        border-radius: 14px;
+        background: #0e140f;
+        color: #758178;
+        text-align: center;
+    }
+
+    .tn-empty-icon {
+        display: flex;
+        width: 58px;
+        height: 58px;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 14px;
+        border-radius: 15px;
+        background: rgba(34, 197, 94, .08);
+        font-size: 24px;
+    }
+
+    .tn-empty strong {
+        display: block;
+        margin-bottom: 6px;
+        color: #e7ede9;
+        font-size: 16px;
+    }
+
+    .tn-no-results {
+        display: none;
+        margin-top: 12px;
+        padding: 30px;
+        font-size: 10px;
+    }
+
+    @@media (max-width: 760px) {
+        .tn-hero,
+        .tn-toolbar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .tn-summary {
+            grid-template-columns: 1fr;
+        }
+
+        .tn-search {
+            max-width: none;
+        }
+
+        .tn-item {
+            grid-template-columns: auto 1fr;
+        }
+
+        .tn-actions {
+            grid-column: 2;
+            min-width: 0;
+        }
+    }
+</style>
+
+
+<div class="tn-page">
+
+    <div class="tn-hero">
+
+        <div class="tn-heading">
+
+            <div class="tn-main-icon">
+                &#128276;
+            </div>
+
+            <div>
+                <h2>Trainer Notifications</h2>
+
+                <p>
+                    Appointment requests, client activity and
+                    important HealthTrack updates.
+                </p>
+            </div>
+
+        </div>
+
+
+        @if (Model.UnreadCount > 0)
+        {
+            <form
+                method="post"
+                action="@Url.Action(
+                    "MarkAllRead",
+                    "Notifications",
+                    new { area = "Trainer" })">
+
+                @Html.AntiForgeryToken()
+
+                <button
+                    type="submit"
+                    class="tn-mark-all">
+                    Mark all read (@Model.UnreadCount)
+                </button>
+
+            </form>
+        }
+
+    </div>
+
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="tn-alert tn-alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="tn-alert tn-alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+
+    <div class="tn-summary">
+
+        <div class="tn-stat">
+            <span class="tn-stat-label">
+                Total notifications
+            </span>
+
+            <span class="tn-stat-value">
+                @totalCount
+            </span>
+        </div>
+
+
+        <div class="tn-stat">
+            <span class="tn-stat-label">
+                Unread
+            </span>
+
+            <span class="tn-stat-value">
+                @Model.UnreadCount
+            </span>
+        </div>
+
+
+        <div class="tn-stat">
+            <span class="tn-stat-label">
+                Read
+            </span>
+
+            <span class="tn-stat-value">
+                @readCount
+            </span>
+        </div>
+
+    </div>
+
+
+    @if (Model.Items.Count > 0)
+    {
+        <div class="tn-toolbar">
+
+            <input
+                id="tnSearch"
+                class="tn-search"
+                type="search"
+                placeholder="Search title, message or type..." />
+
+
+            <div class="tn-filters">
+
+                <button
+                    type="button"
+                    class="tn-filter active"
+                    data-filter="all">
+                    All
+                </button>
+
+                <button
+                    type="button"
+                    class="tn-filter"
+                    data-filter="unread">
+                    Unread
+                </button>
+
+                <button
+                    type="button"
+                    class="tn-filter"
+                    data-filter="read">
+                    Read
+                </button>
+
+            </div>
+
+        </div>
+    }
+
+
+    <div class="tn-list">
+
+        @if (Model.Items.Count == 0)
+        {
+            <div class="tn-empty">
+
+                <div class="tn-empty-icon">
+                    &#128276;
+                </div>
+
+                <strong>
+                    You're all caught up
+                </strong>
+
+                New appointment requests and client updates
+                will appear here.
+
+            </div>
+        }
+        else
+        {
+            foreach (var item in Model.Items)
+            {
+                var state =
+                    item.IsRead
+                        ? "read"
+                        : "unread";
+
+                var searchText =
+                    (
+                        item.Title +
+                        " " +
+                        item.Message +
+                        " " +
+                        item.Type
+                    ).ToLowerInvariant();
+
+                <article
+                    class="tn-item @state"
+                    data-state="@state"
+                    data-search="@searchText">
+
+                    <div class="tn-item-icon">
+                        &#128276;
+                    </div>
+
+
+                    <div>
+
+                        <div class="tn-title-row">
+
+                            <span class="tn-title">
+                                @item.Title
+                            </span>
+
+
+                            @if (!item.IsRead)
+                            {
+                                <span class="tn-new">
+                                    New
+                                </span>
+                            }
+
+
+                            <span class="tn-type">
+                                @item.Type
+                            </span>
+
+                        </div>
+
+
+                        <div class="tn-message">
+                            @item.Message
+                        </div>
+
+
+                        <div class="tn-time">
+                            @item.CreatedAt
+                        </div>
+
+                    </div>
+
+
+                    <div class="tn-actions">
+
+                        @if (item.Type == "AppointmentUpdate")
+                        {
+                            <a
+                                class="tn-link"
+                                href="@Url.Action(
+                                    "Index",
+                                    "Appointments",
+                                    new { area = "Trainer" })">
+                                View appointments
+                            </a>
+                        }
+
+
+                        @if (!item.IsRead)
+                        {
+                            <form
+                                method="post"
+                                action="@Url.Action(
+                                    "MarkRead",
+                                    "Notifications",
+                                    new { area = "Trainer" })">
+
+                                @Html.AntiForgeryToken()
+
+                                <input
+                                    type="hidden"
+                                    name="id"
+                                    value="@item.NotificationId" />
+
+                                <button
+                                    type="submit"
+                                    class="tn-btn">
+                                    Mark read
+                                </button>
+
+                            </form>
+                        }
+
+                    </div>
+
+                </article>
+            }
+        }
+
+    </div>
+
+
+    @if (Model.Items.Count > 0)
+    {
+        <div
+            id="tnNoResults"
+            class="tn-no-results">
+            No notifications match your search or filter.
+        </div>
+    }
+
+</div>
+
+
+<script>
+(function () {
+
+    "use strict";
+
+    var search =
+        document.getElementById("tnSearch");
+
+    var filters =
+        Array.prototype.slice.call(
+            document.querySelectorAll(
+                ".tn-filter"
+            )
+        );
+
+    var items =
+        Array.prototype.slice.call(
+            document.querySelectorAll(
+                ".tn-item"
+            )
+        );
+
+    var noResults =
+        document.getElementById(
+            "tnNoResults"
+        );
+
+    var currentFilter = "all";
+
+
+    function refresh() {
+
+        var term =
+            search
+                ? search.value
+                    .trim()
+                    .toLowerCase()
+                : "";
+
+        var visible = 0;
+
+
+        items.forEach(function (item) {
+
+            var state =
+                item.getAttribute(
+                    "data-state"
+                );
+
+            var text =
+                item.getAttribute(
+                    "data-search"
+                ) || "";
+
+            var matchesFilter =
+                currentFilter === "all" ||
+                state === currentFilter;
+
+            var matchesSearch =
+                !term ||
+                text.indexOf(term) !== -1;
+
+            var show =
+                matchesFilter &&
+                matchesSearch;
+
+            item.style.display =
+                show ? "" : "none";
+
+            if (show) {
+                visible++;
+            }
+        });
+
+
+        if (noResults) {
+
+            noResults.style.display =
+                visible === 0
+                    ? "block"
+                    : "none";
+        }
+    }
+
+
+    filters.forEach(function (button) {
+
+        button.addEventListener(
+            "click",
+            function () {
+
+                currentFilter =
+                    button.getAttribute(
+                        "data-filter"
+                    );
+
+                filters.forEach(
+                    function (item) {
+                        item.classList.remove(
+                            "active"
+                        );
+                    }
+                );
+
+                button.classList.add(
+                    "active"
+                );
+
+                refresh();
+            }
+        );
+    });
+
+
+    if (search) {
+        search.addEventListener(
+            "input",
+            refresh
+        );
+    }
+
+})();
+</script>

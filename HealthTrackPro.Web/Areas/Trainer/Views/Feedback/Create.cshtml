@@ -1,0 +1,845 @@
+@model HealthTrackPro.Web.Areas.Trainer.Models.FeedbackCreateViewModel
+
+@{
+    ViewBag.Title = "Give Feedback";
+}
+
+<style>
+    .htfc-page {
+        max-width: 1380px;
+        margin: 0 auto;
+    }
+
+    .htfc-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 22px;
+    }
+
+    .htfc-heading {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .htfc-heading-icon {
+        display: flex;
+        width: 48px;
+        height: 48px;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 48px;
+        border: 1px solid rgba(74,222,128,.14);
+        border-radius: 14px;
+        background:
+            linear-gradient(
+                145deg,
+                rgba(34,197,94,.18),
+                rgba(34,197,94,.06)
+            );
+        color: #4ADE80;
+    }
+
+    .htfc-heading-icon svg {
+        width: 24px;
+        height: 24px;
+        fill: currentColor;
+    }
+
+    .htfc-header h2 {
+        margin: 0 0 5px;
+        color: #F4F7F5;
+        font-size: 27px;
+        font-weight: 800;
+    }
+
+    .htfc-header p {
+        margin: 0;
+        color: #829087;
+        font-size: 12px;
+    }
+
+    .htfc-back {
+        display: inline-flex;
+        min-height: 42px;
+        align-items: center;
+        padding: 0 15px;
+        border: 1px solid #203026;
+        border-radius: 10px;
+        background: #101612;
+        color: #C8D1CB !important;
+        font-size: 11px;
+        font-weight: 800;
+        text-decoration: none !important;
+    }
+
+    .htfc-grid {
+        display: grid;
+        grid-template-columns:
+            minmax(0,1fr)
+            minmax(340px,.72fr);
+        gap: 18px;
+        align-items: start;
+    }
+
+    .htfc-card {
+        overflow: hidden;
+        border: 1px solid #1F2A22;
+        border-radius: 14px;
+        background: #101612;
+    }
+
+    .htfc-card-head {
+        padding: 19px 21px;
+        border-bottom: 1px solid #1B251E;
+    }
+
+    .htfc-card-head h3 {
+        margin: 0 0 4px;
+        color: #EDF2EE;
+        font-size: 15px;
+        font-weight: 900;
+    }
+
+    .htfc-card-head p {
+        margin: 0;
+        color: #748078;
+        font-size: 10px;
+    }
+
+    .htfc-form {
+        padding: 21px;
+    }
+
+    .htfc-field {
+        margin-bottom: 18px;
+    }
+
+    .htfc-label {
+        display: block;
+        margin-bottom: 6px;
+        color: #DCE5DE;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .htfc-required {
+        color: #4ADE80;
+    }
+
+    .htfc-page .form-control {
+        width: 100%;
+        max-width: none;
+        height: 46px;
+        padding: 10px 12px;
+        border: 1px solid #26332A;
+        border-radius: 9px;
+        background: #0C120E;
+        color: #F0F4F1;
+        box-shadow: none;
+    }
+
+    .htfc-page .form-control:focus {
+        border-color: #22C55E;
+        background: #0C120E;
+        box-shadow: 0 0 0 3px rgba(34,197,94,.10);
+    }
+
+    .htfc-page textarea.form-control {
+        min-height: 125px;
+        height: auto;
+        resize: vertical;
+    }
+
+    .htfc-validation {
+        display: block;
+        margin-top: 5px;
+        color: #F87171;
+        font-size: 9px;
+    }
+
+    .htfc-validation-summary {
+        margin-bottom: 15px;
+        padding: 11px 13px;
+        border: 1px solid rgba(239,68,68,.22);
+        border-radius: 9px;
+        background: rgba(239,68,68,.07);
+    }
+
+    .htfc-char {
+        margin-top: 5px;
+        color: #637068;
+        font-size: 9px;
+        text-align: right;
+    }
+
+    .htfc-rating {
+        display: flex;
+        gap: 7px;
+    }
+
+    .htfc-rating label {
+        margin: 0;
+        cursor: pointer;
+    }
+
+    .htfc-rating input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .htfc-rating-box {
+        display: flex;
+        width: 48px;
+        height: 43px;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #26332A;
+        border-radius: 9px;
+        background: #0C120E;
+        color: #728077;
+        font-size: 12px;
+        font-weight: 900;
+        transition: .15s ease;
+    }
+
+    .htfc-rating input:checked + .htfc-rating-box {
+        border-color: #285C39;
+        background: rgba(34,197,94,.12);
+        color: #4ADE80;
+    }
+
+    .htfc-actions {
+        display: flex;
+        gap: 9px;
+        margin-top: 5px;
+    }
+
+    .htfc-submit {
+        min-height: 45px;
+        padding: 0 19px;
+        border: 0;
+        border-radius: 9px;
+        background: linear-gradient(135deg,#22C55E,#16A34A);
+        color: #061009;
+        font-size: 11px;
+        font-weight: 900;
+    }
+
+    .htfc-cancel {
+        display: inline-flex;
+        min-height: 45px;
+        align-items: center;
+        justify-content: center;
+        padding: 0 17px;
+        border: 1px solid #27342B;
+        border-radius: 9px;
+        background: #121A14;
+        color: #BEC8C1 !important;
+        font-size: 11px;
+        font-weight: 800;
+        text-decoration: none !important;
+    }
+
+    .htfc-preview {
+        padding: 20px;
+    }
+
+    .htfc-preview-hero {
+        margin-bottom: 13px;
+        padding: 18px;
+        border: 1px solid #1E3426;
+        border-radius: 12px;
+        background:
+            radial-gradient(
+                circle at 100% 0,
+                rgba(34,197,94,.12),
+                transparent 55%
+            ),
+            #0D160F;
+    }
+
+    .htfc-preview-label {
+        display: block;
+        margin-bottom: 6px;
+        color: #6E7C72;
+        font-size: 8px;
+        font-weight: 900;
+        letter-spacing: .8px;
+        text-transform: uppercase;
+    }
+
+    .htfc-preview-client {
+        display: block;
+        margin-bottom: 5px;
+        color: #F0F5F1;
+        font-size: 18px;
+        font-weight: 900;
+    }
+
+    .htfc-preview-area {
+        color: #4ADE80;
+        font-size: 10px;
+        font-weight: 800;
+    }
+
+    .htfc-preview-box {
+        margin-bottom: 10px;
+        padding: 14px;
+        border: 1px solid #1D2820;
+        border-radius: 10px;
+        background: #0D130F;
+    }
+
+    .htfc-preview-box:last-child {
+        margin-bottom: 0;
+    }
+
+    .htfc-preview-value {
+        color: #DDE5DF;
+        font-size: 10px;
+        line-height: 1.6;
+    }
+
+    .htfc-preview-stars {
+        color: #FBBF24;
+        font-size: 18px;
+        letter-spacing: 2px;
+    }
+
+    .htfc-empty {
+        padding: 55px 22px;
+        text-align: center;
+        color: #748078;
+    }
+
+    @@media (max-width: 1000px) {
+        .htfc-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 650px) {
+        .htfc-header,
+        .htfc-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .htfc-back,
+        .htfc-submit,
+        .htfc-cancel {
+            width: 100%;
+        }
+
+        .htfc-rating {
+            flex-wrap: wrap;
+        }
+    }
+</style>
+
+
+<div class="htfc-page">
+
+    <div class="htfc-header">
+
+        <div class="htfc-heading">
+
+            <div class="htfc-heading-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M4 3h16a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-9l-5 4v-4H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm2 5v2h12V8H6Zm0 4v2h8v-2H6Z"/>
+                </svg>
+            </div>
+
+            <div>
+                <h2>Give Feedback</h2>
+                <p>
+                    Share coaching guidance, performance notes
+                    and a clear next focus.
+                </p>
+            </div>
+
+        </div>
+
+        <a
+            class="htfc-back"
+            href="@Url.Action(
+                "Index",
+                "Feedback",
+                new { area = "Trainer" })">
+            &larr; Back to feedback
+        </a>
+
+    </div>
+
+
+    @if (Model.Clients.Count == 0)
+    {
+        <div class="htfc-card htfc-empty">
+            No assigned clients are available for feedback.
+        </div>
+    }
+    else
+    {
+        using (Html.BeginForm(
+            "Create",
+            "Feedback",
+            new { area = "Trainer" },
+            FormMethod.Post,
+            new { @class = "htfc-grid" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <section class="htfc-card">
+
+                <div class="htfc-card-head">
+                    <h3>Feedback details</h3>
+                    <p>
+                        Select a client and provide useful
+                        coaching guidance.
+                    </p>
+                </div>
+
+
+                <div class="htfc-form">
+
+                    @Html.ValidationSummary(
+                        true,
+                        "",
+                        new
+                        {
+                            @class =
+                                "text-danger htfc-validation-summary"
+                        })
+
+
+                    <div class="htfc-field">
+
+                        <label
+                            class="htfc-label"
+                            for="ClientUserId">
+
+                            Client
+                            <span class="htfc-required">*</span>
+
+                        </label>
+
+                        @Html.DropDownListFor(
+                            m => m.ClientUserId,
+                            Model.Clients,
+                            "Select a client",
+                            new
+                            {
+                                @class = "form-control",
+                                id = "ClientUserId"
+                            })
+
+                        @Html.ValidationMessageFor(
+                            m => m.ClientUserId,
+                            "",
+                            new
+                            {
+                                @class =
+                                    "text-danger htfc-validation"
+                            })
+
+                    </div>
+
+
+                    <div class="htfc-field">
+
+                        <label
+                            class="htfc-label"
+                            for="RelatedArea">
+                            Related area
+                        </label>
+
+                        @Html.TextBoxFor(
+                            m => m.RelatedArea,
+                            new
+                            {
+                                @class = "form-control",
+                                id = "RelatedArea",
+                                maxlength = "100",
+                                placeholder =
+                                    "e.g. Workout, Diet, Progress"
+                            })
+
+                        @Html.ValidationMessageFor(
+                            m => m.RelatedArea,
+                            "",
+                            new
+                            {
+                                @class =
+                                    "text-danger htfc-validation"
+                            })
+
+                    </div>
+
+
+                    <div class="htfc-field">
+
+                        <label
+                            class="htfc-label"
+                            for="FeedbackText">
+
+                            Feedback
+                            <span class="htfc-required">*</span>
+
+                        </label>
+
+                        @Html.TextAreaFor(
+                            m => m.FeedbackText,
+                            new
+                            {
+                                @class = "form-control",
+                                id = "FeedbackText",
+                                maxlength = "1500",
+                                placeholder =
+                                    "Describe progress, strengths and areas to improve..."
+                            })
+
+                        <div class="htfc-char">
+                            <span id="htfcFeedbackCount">0</span>/1500
+                        </div>
+
+                        @Html.ValidationMessageFor(
+                            m => m.FeedbackText,
+                            "",
+                            new
+                            {
+                                @class =
+                                    "text-danger htfc-validation"
+                            })
+
+                    </div>
+
+
+                    <div class="htfc-field">
+
+                        <label class="htfc-label">
+                            Rating
+                        </label>
+
+                        <div class="htfc-rating">
+
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                <label>
+
+                                    @Html.RadioButtonFor(
+                                        m => m.Rating,
+                                        i,
+                                        new
+                                        {
+                                            id = "Rating_" + i
+                                        })
+
+                                    <span class="htfc-rating-box">
+                                        @i &#9733;
+                                    </span>
+
+                                </label>
+                            }
+
+                        </div>
+
+                        @Html.ValidationMessageFor(
+                            m => m.Rating,
+                            "",
+                            new
+                            {
+                                @class =
+                                    "text-danger htfc-validation"
+                            })
+
+                    </div>
+
+
+                    <div class="htfc-field">
+
+                        <label
+                            class="htfc-label"
+                            for="NextFocus">
+                            Next focus
+                        </label>
+
+                        @Html.TextAreaFor(
+                            m => m.NextFocus,
+                            new
+                            {
+                                @class = "form-control",
+                                id = "NextFocus",
+                                maxlength = "500",
+                                placeholder =
+                                    "What should the client focus on next?"
+                            })
+
+                        <div class="htfc-char">
+                            <span id="htfcFocusCount">0</span>/500
+                        </div>
+
+                        @Html.ValidationMessageFor(
+                            m => m.NextFocus,
+                            "",
+                            new
+                            {
+                                @class =
+                                    "text-danger htfc-validation"
+                            })
+
+                    </div>
+
+
+                    <div class="htfc-actions">
+
+                        <button
+                            type="submit"
+                            class="htfc-submit">
+                            &#10003; Send feedback
+                        </button>
+
+                        <a
+                            class="htfc-cancel"
+                            href="@Url.Action(
+                                "Index",
+                                "Feedback",
+                                new { area = "Trainer" })">
+                            Cancel
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <aside class="htfc-card">
+
+                <div class="htfc-card-head">
+                    <h3>Live preview</h3>
+                    <p>
+                        Review the message before sending it.
+                    </p>
+                </div>
+
+
+                <div class="htfc-preview">
+
+                    <div class="htfc-preview-hero">
+
+                        <span class="htfc-preview-label">
+                            Client
+                        </span>
+
+                        <span
+                            id="htfcPreviewClient"
+                            class="htfc-preview-client">
+                            Not selected
+                        </span>
+
+                        <span
+                            id="htfcPreviewArea"
+                            class="htfc-preview-area">
+                            General feedback
+                        </span>
+
+                    </div>
+
+
+                    <div class="htfc-preview-box">
+
+                        <span class="htfc-preview-label">
+                            Rating
+                        </span>
+
+                        <div
+                            id="htfcPreviewRating"
+                            class="htfc-preview-stars">
+                            No rating selected
+                        </div>
+
+                    </div>
+
+
+                    <div class="htfc-preview-box">
+
+                        <span class="htfc-preview-label">
+                            Feedback
+                        </span>
+
+                        <div
+                            id="htfcPreviewFeedback"
+                            class="htfc-preview-value">
+                            Your coaching feedback will appear here.
+                        </div>
+
+                    </div>
+
+
+                    <div class="htfc-preview-box">
+
+                        <span class="htfc-preview-label">
+                            Next focus
+                        </span>
+
+                        <div
+                            id="htfcPreviewFocus"
+                            class="htfc-preview-value">
+                            No next-focus guidance added yet.
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </aside>
+        }
+    }
+
+</div>
+
+
+@section scripts {
+
+<script>
+(function () {
+
+    "use strict";
+
+    var client =
+        document.getElementById("ClientUserId");
+
+    var area =
+        document.getElementById("RelatedArea");
+
+    var feedback =
+        document.getElementById("FeedbackText");
+
+    var focus =
+        document.getElementById("NextFocus");
+
+
+    function updatePreview() {
+
+        var selected =
+            client.options[
+                client.selectedIndex
+            ];
+
+        document.getElementById(
+            "htfcPreviewClient"
+        ).textContent =
+            client.value && selected
+                ? selected.text
+                : "Not selected";
+
+        document.getElementById(
+            "htfcPreviewArea"
+        ).textContent =
+            area.value.trim() ||
+            "General feedback";
+
+        document.getElementById(
+            "htfcPreviewFeedback"
+        ).textContent =
+            feedback.value.trim() ||
+            "Your coaching feedback will appear here.";
+
+        document.getElementById(
+            "htfcPreviewFocus"
+        ).textContent =
+            focus.value.trim() ||
+            "No next-focus guidance added yet.";
+
+        document.getElementById(
+            "htfcFeedbackCount"
+        ).textContent =
+            feedback.value.length;
+
+        document.getElementById(
+            "htfcFocusCount"
+        ).textContent =
+            focus.value.length;
+
+
+        var checked =
+            document.querySelector(
+                'input[name="Rating"]:checked'
+            );
+
+        var previewRating =
+            document.getElementById(
+                "htfcPreviewRating"
+            );
+
+        if (!checked) {
+
+            previewRating.textContent =
+                "No rating selected";
+
+        } else {
+
+            var value =
+                parseInt(
+                    checked.value,
+                    10
+                );
+
+            var stars = "";
+
+            for (var i = 1; i <= 5; i++) {
+                stars +=
+                    i <= value
+                        ? "\u2605"
+                        : "\u2606";
+            }
+
+            previewRating.textContent =
+                stars + "  " + value + " / 5";
+        }
+    }
+
+
+    [
+        client,
+        area,
+        feedback,
+        focus
+    ].forEach(function (element) {
+
+        element.addEventListener(
+            "input",
+            updatePreview
+        );
+
+        element.addEventListener(
+            "change",
+            updatePreview
+        );
+    });
+
+
+    Array.prototype.slice.call(
+        document.querySelectorAll(
+            'input[name="Rating"]'
+        )
+    ).forEach(function (item) {
+
+        item.addEventListener(
+            "change",
+            updatePreview
+        );
+    });
+
+
+    updatePreview();
+
+})();
+</script>
+
+}

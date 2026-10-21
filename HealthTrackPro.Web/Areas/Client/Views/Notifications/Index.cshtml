@@ -1,0 +1,609 @@
+@model HealthTrackPro.Web.Areas.Client.Models.ClientNotificationIndexViewModel
+@using System.Linq
+
+@{
+    ViewBag.Title = "Notifications";
+
+    var totalCount =
+        Model.Items.Count;
+
+    var readCount =
+        totalCount -
+        Model.UnreadCount;
+}
+
+<style>
+    .htcn-page {
+        max-width: 1380px;
+        margin: 0 auto;
+    }
+
+    .htcn-hero {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 18px;
+        margin-bottom: 22px;
+    }
+
+    .htcn-heading {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .htcn-icon {
+        display: flex;
+        width: 48px;
+        height: 48px;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(74,222,128,.15);
+        border-radius: 14px;
+        background: rgba(34,197,94,.10);
+        color: #4ADE80;
+        font-size: 22px;
+    }
+
+    .htcn-hero h2 {
+        margin: 0 0 5px;
+        color: #F4F7F5;
+        font-size: 28px;
+        font-weight: 900;
+    }
+
+    .htcn-hero p {
+        margin: 0;
+        color: #829087;
+        font-size: 12px;
+    }
+
+    .htcn-mark-all {
+        min-height: 42px;
+        padding: 0 15px;
+        border: 1px solid #285C39;
+        border-radius: 9px;
+        background: rgba(34,197,94,.10);
+        color: #4ADE80;
+        font-size: 10px;
+        font-weight: 900;
+    }
+
+    .htcn-summary {
+        display: grid;
+        grid-template-columns: repeat(3,minmax(0,1fr));
+        gap: 13px;
+        margin-bottom: 18px;
+    }
+
+    .htcn-stat {
+        padding: 17px;
+        border: 1px solid #1F2A22;
+        border-radius: 13px;
+        background:
+            radial-gradient(
+                circle at 100% 0,
+                rgba(34,197,94,.08),
+                transparent 50%
+            ),
+            #101612;
+    }
+
+    .htcn-stat-label {
+        display: block;
+        margin-bottom: 7px;
+        color: #68766D;
+        font-size: 8px;
+        font-weight: 900;
+        letter-spacing: .8px;
+        text-transform: uppercase;
+    }
+
+    .htcn-stat-value {
+        color: #F1F5F2;
+        font-size: 25px;
+        font-weight: 900;
+    }
+
+    .htcn-alert {
+        margin-bottom: 16px;
+        padding: 12px 14px;
+        border-radius: 10px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .htcn-success {
+        border: 1px solid rgba(34,197,94,.22);
+        background: rgba(34,197,94,.08);
+        color: #86EFAC;
+    }
+
+    .htcn-danger {
+        border: 1px solid rgba(239,68,68,.22);
+        background: rgba(239,68,68,.08);
+        color: #FCA5A5;
+    }
+
+    .htcn-toolbar {
+        display: flex;
+        justify-content: flex-end;
+        gap: 7px;
+        margin-bottom: 15px;
+        padding: 11px;
+        border: 1px solid #1F2A22;
+        border-radius: 11px;
+        background: #101612;
+    }
+
+    .htcn-filter {
+        min-height: 36px;
+        padding: 0 12px;
+        border: 1px solid #26332A;
+        border-radius: 8px;
+        background: #0D130F;
+        color: #87948B;
+        font-size: 9px;
+        font-weight: 900;
+    }
+
+    .htcn-filter.active {
+        border-color: #285C39;
+        background: rgba(34,197,94,.12);
+        color: #4ADE80;
+    }
+
+    .htcn-list {
+        display: grid;
+        gap: 11px;
+    }
+
+    .htcn-item {
+        display: grid;
+        grid-template-columns: auto minmax(0,1fr) auto;
+        gap: 14px;
+        align-items: start;
+        padding: 17px;
+        border: 1px solid #1F2A22;
+        border-radius: 13px;
+        background: #101612;
+    }
+
+    .htcn-item.unread {
+        border-color: #285C39;
+        background:
+            radial-gradient(
+                circle at 100% 0,
+                rgba(34,197,94,.09),
+                transparent 45%
+            ),
+            #101612;
+    }
+
+    .htcn-bell {
+        display: flex;
+        width: 40px;
+        height: 40px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 11px;
+        background: rgba(34,197,94,.10);
+        color: #4ADE80;
+        font-size: 17px;
+    }
+
+    .htcn-title-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 5px;
+        flex-wrap: wrap;
+    }
+
+    .htcn-title {
+        color: #EDF3EF;
+        font-size: 13px;
+        font-weight: 900;
+    }
+
+    .htcn-new {
+        padding: 4px 7px;
+        border-radius: 999px;
+        background: rgba(34,197,94,.14);
+        color: #4ADE80;
+        font-size: 7px;
+        font-weight: 900;
+        text-transform: uppercase;
+    }
+
+    .htcn-type {
+        color: #6F7D74;
+        font-size: 8px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+    }
+
+    .htcn-message {
+        margin-bottom: 7px;
+        color: #B9C4BC;
+        font-size: 10px;
+        line-height: 1.6;
+    }
+
+    .htcn-time {
+        color: #69766D;
+        font-size: 8px;
+    }
+
+    .htcn-read-button {
+        min-height: 35px;
+        padding: 0 11px;
+        border: 1px solid #2A382E;
+        border-radius: 8px;
+        background: #121A14;
+        color: #C7D0CA;
+        font-size: 9px;
+        font-weight: 900;
+    }
+
+    .htcn-empty,
+    .htcn-no-results {
+        padding: 60px 25px;
+        border: 1px dashed #28352C;
+        border-radius: 14px;
+        background: #0E140F;
+        color: #758178;
+        text-align: center;
+    }
+
+    .htcn-empty strong {
+        display: block;
+        margin-bottom: 6px;
+        color: #E7EDE9;
+        font-size: 16px;
+    }
+
+    .htcn-no-results {
+        display: none;
+        margin-top: 12px;
+        padding: 30px;
+        font-size: 10px;
+    }
+
+    @@media (max-width: 700px) {
+        .htcn-hero {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .htcn-summary {
+            grid-template-columns: 1fr;
+        }
+
+        .htcn-item {
+            grid-template-columns: auto 1fr;
+        }
+
+        .htcn-item form {
+            grid-column: 2;
+        }
+    }
+</style>
+
+
+<div class="htcn-page">
+
+    <div class="htcn-hero">
+
+        <div class="htcn-heading">
+
+            <div class="htcn-icon">
+                &#128276;
+            </div>
+
+            <div>
+                <h2>My Notifications</h2>
+                <p>
+                    Appointment updates, reminders and
+                    important HealthTrack activity.
+                </p>
+            </div>
+
+        </div>
+
+
+        @if (Model.UnreadCount > 0)
+        {
+            <form
+                method="post"
+                action="@Url.Action(
+                    "MarkAllRead",
+                    "Notifications",
+                    new { area = "Client" })">
+
+                @Html.AntiForgeryToken()
+
+                <button
+                    type="submit"
+                    class="htcn-mark-all">
+                    Mark all read (@Model.UnreadCount)
+                </button>
+
+            </form>
+        }
+
+    </div>
+
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="htcn-alert htcn-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="htcn-alert htcn-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+
+    <div class="htcn-summary">
+
+        <div class="htcn-stat">
+            <span class="htcn-stat-label">
+                Total notifications
+            </span>
+            <span class="htcn-stat-value">
+                @totalCount
+            </span>
+        </div>
+
+        <div class="htcn-stat">
+            <span class="htcn-stat-label">
+                Unread
+            </span>
+            <span class="htcn-stat-value">
+                @Model.UnreadCount
+            </span>
+        </div>
+
+        <div class="htcn-stat">
+            <span class="htcn-stat-label">
+                Read
+            </span>
+            <span class="htcn-stat-value">
+                @readCount
+            </span>
+        </div>
+
+    </div>
+
+
+    @if (Model.Items.Count > 0)
+    {
+        <div class="htcn-toolbar">
+
+            <button
+                type="button"
+                class="htcn-filter active"
+                data-filter="all">
+                All
+            </button>
+
+            <button
+                type="button"
+                class="htcn-filter"
+                data-filter="unread">
+                Unread
+            </button>
+
+            <button
+                type="button"
+                class="htcn-filter"
+                data-filter="read">
+                Read
+            </button>
+
+        </div>
+    }
+
+
+    <div class="htcn-list">
+
+        @if (Model.Items.Count == 0)
+        {
+            <div class="htcn-empty">
+
+                <strong>
+                    You're all caught up
+                </strong>
+
+                New appointment updates and reminders
+                will appear here.
+
+            </div>
+        }
+        else
+        {
+            foreach (var item in Model.Items)
+            {
+                var state =
+                    item.IsRead
+                        ? "read"
+                        : "unread";
+
+                <article
+                    class="htcn-item @state"
+                    data-state="@state">
+
+                    <div class="htcn-bell">
+                        &#128276;
+                    </div>
+
+
+                    <div>
+
+                        <div class="htcn-title-row">
+
+                            <span class="htcn-title">
+                                @item.Title
+                            </span>
+
+                            @if (!item.IsRead)
+                            {
+                                <span class="htcn-new">
+                                    New
+                                </span>
+                            }
+
+                            <span class="htcn-type">
+                                @item.Type
+                            </span>
+
+                        </div>
+
+
+                        <div class="htcn-message">
+                            @item.Message
+                        </div>
+
+                        <div class="htcn-time">
+                            @item.CreatedAt
+                        </div>
+
+                    </div>
+
+
+                    @if (!item.IsRead)
+                    {
+                        <form
+                            method="post"
+                            action="@Url.Action(
+                                "MarkRead",
+                                "Notifications",
+                                new { area = "Client" })">
+
+                            @Html.AntiForgeryToken()
+
+                            <input
+                                type="hidden"
+                                name="id"
+                                value="@item.NotificationId" />
+
+                            <button
+                                type="submit"
+                                class="htcn-read-button">
+                                Mark read
+                            </button>
+
+                        </form>
+                    }
+
+                </article>
+            }
+        }
+
+    </div>
+
+
+    @if (Model.Items.Count > 0)
+    {
+        <div
+            id="htcnNoResults"
+            class="htcn-no-results">
+            No notifications match this filter.
+        </div>
+    }
+
+</div>
+
+
+<script>
+(function () {
+
+    "use strict";
+
+    var filters =
+        Array.prototype.slice.call(
+            document.querySelectorAll(
+                ".htcn-filter"
+            )
+        );
+
+    var items =
+        Array.prototype.slice.call(
+            document.querySelectorAll(
+                ".htcn-item"
+            )
+        );
+
+    var empty =
+        document.getElementById(
+            "htcnNoResults"
+        );
+
+
+    filters.forEach(function (button) {
+
+        button.addEventListener(
+            "click",
+            function () {
+
+                var filter =
+                    button.getAttribute(
+                        "data-filter"
+                    );
+
+                var visible = 0;
+
+                filters.forEach(
+                    function (item) {
+                        item.classList.remove(
+                            "active"
+                        );
+                    }
+                );
+
+                button.classList.add(
+                    "active"
+                );
+
+
+                items.forEach(function (item) {
+
+                    var state =
+                        item.getAttribute(
+                            "data-state"
+                        );
+
+                    var show =
+                        filter === "all" ||
+                        state === filter;
+
+                    item.style.display =
+                        show
+                            ? ""
+                            : "none";
+
+                    if (show) {
+                        visible++;
+                    }
+                });
+
+
+                if (empty) {
+                    empty.style.display =
+                        visible === 0
+                            ? "block"
+                            : "none";
+                }
+            }
+        );
+    });
+
+})();
+</script>

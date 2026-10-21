@@ -1,6 +1,1247 @@
+@model HealthTrackPro.Web.Areas.Trainer.Models.TrainerDashboardViewModel
+@using System.Linq
+
 @{
     ViewBag.Title = "Trainer Dashboard";
+
+    var progressJson =
+        Newtonsoft.Json.JsonConvert.SerializeObject(
+            Model.ClientProgress.Select(x => new
+            {
+                label = x.ClientName,
+                value = x.ProgressPercent
+            }).ToList()
+        );
+
+    var goalJson =
+        Newtonsoft.Json.JsonConvert.SerializeObject(
+            Model.GoalDistribution.Select(x => new
+            {
+                label = x.Goal,
+                value = x.Count
+            }).ToList()
+        );
 }
 
-<h2>Trainer Dashboard</h2>
-<p>Authenticated as Trainer.</p>
+<style>
+    .htt-dashboard {
+        max-width: 1500px;
+        margin: 0 auto;
+    }
+
+    .htt-hero {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 24px;
+        margin-bottom: 24px;
+        padding: 4px 2px;
+    }
+
+    .htt-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 7px;
+        color: #4ADE80;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+    }
+
+    .htt-eyebrow-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #22C55E;
+        box-shadow: 0 0 16px rgba(34,197,94,.75);
+    }
+
+    .htt-hero h2 {
+        margin: 0 0 7px;
+        font-size: 29px;
+        font-weight: 800;
+        letter-spacing: -.5px;
+    }
+
+    .htt-hero p {
+        margin: 0;
+        color: #8D9A91;
+        font-size: 13px;
+    }
+
+    .htt-date-box {
+        min-width: 220px;
+        padding: 13px 16px;
+        border: 1px solid #1F2A22;
+        border-radius: 12px;
+        background: linear-gradient(
+            145deg,
+            #111713,
+            #0C120E
+        );
+        text-align: right;
+    }
+
+    .htt-date-label {
+        display: block;
+        margin-bottom: 3px;
+        color: #657169;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: .9px;
+        text-transform: uppercase;
+    }
+
+    .htt-date-value {
+        color: #E9F0EB;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .htt-stats {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 14px;
+        margin-bottom: 18px;
+    }
+
+    .htt-stat {
+        position: relative;
+        overflow: hidden;
+        min-height: 126px;
+        padding: 18px;
+        border: 1px solid #1F2A22;
+        border-radius: 14px;
+        background:
+            radial-gradient(
+                circle at 100% 0,
+                rgba(34,197,94,.09),
+                transparent 46%
+            ),
+            #101612;
+        transition: .2s ease;
+    }
+
+    .htt-stat:hover {
+        transform: translateY(-2px);
+        border-color: #2B4934;
+        box-shadow: 0 14px 30px rgba(0,0,0,.16);
+    }
+
+    .htt-stat-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+    }
+
+    .htt-stat-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 11px;
+        background:
+            linear-gradient(
+                145deg,
+                rgba(34,197,94,.19),
+                rgba(34,197,94,.08)
+            );
+        color: #4ADE80;
+        box-shadow:
+            inset 0 0 0 1px rgba(74,222,128,.06),
+            0 8px 20px rgba(0,0,0,.12);
+    }
+
+    .htt-stat-icon svg {
+        width: 19px;
+        height: 19px;
+        fill: currentColor;
+    }
+
+    .htt-stat-mini {
+        color: #637068;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    .htt-stat-value {
+        margin-bottom: 4px;
+        color: #F4F7F5;
+        font-size: 30px;
+        line-height: 1;
+        font-weight: 800;
+    }
+
+    .htt-stat-label {
+        color: #9AA59D;
+        font-size: 11px;
+        font-weight: 700;
+        line-height: 1.4;
+    }
+
+    .htt-main-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 2fr) minmax(300px, .9fr);
+        gap: 18px;
+        margin-bottom: 18px;
+    }
+
+    .htt-panel {
+        border: 1px solid #1F2A22;
+        border-radius: 14px;
+        background: #101612;
+        overflow: hidden;
+    }
+
+    .htt-panel-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        padding: 18px 20px;
+        border-bottom: 1px solid #1B251E;
+    }
+
+    .htt-panel-head h3 {
+        margin: 0 0 4px;
+        font-size: 15px;
+        font-weight: 800;
+    }
+
+    .htt-panel-head p {
+        margin: 0;
+        color: #737F77;
+        font-size: 11px;
+    }
+
+    .htt-head-stat {
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(34,197,94,.1);
+        color: #4ADE80;
+        font-size: 11px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .htt-chart-wrap {
+        position: relative;
+        height: 320px;
+        padding: 20px;
+    }
+
+    .htt-donut-wrap {
+        position: relative;
+        height: 260px;
+        padding: 18px 28px 8px;
+    }
+
+    .htt-chart-empty {
+        display: flex;
+        height: 100%;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: #68746C;
+        font-size: 12px;
+    }
+
+    .htt-goal-summary {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        padding: 0 18px 18px;
+    }
+
+    .htt-goal-mini {
+        padding: 10px;
+        border: 1px solid #1D2820;
+        border-radius: 10px;
+        background: #0D130F;
+        text-align: center;
+    }
+
+    .htt-goal-mini strong {
+        display: block;
+        margin-bottom: 3px;
+        color: #F0F4F1;
+        font-size: 16px;
+    }
+
+    .htt-goal-mini span {
+        color: #727F76;
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: .4px;
+        text-transform: uppercase;
+    }
+
+    .htt-bottom-grid {
+        display: grid;
+        grid-template-columns:
+            minmax(0, 1.25fr)
+            minmax(0, 1fr)
+            minmax(0, 1fr);
+        gap: 18px;
+    }
+
+    .htt-list {
+        padding: 8px 18px 16px;
+    }
+
+    .htt-client {
+        display: grid;
+        grid-template-columns: 42px minmax(0,1fr);
+        gap: 12px;
+        padding: 13px 0;
+        border-bottom: 1px solid #1A241D;
+    }
+
+    .htt-client:last-child {
+        border-bottom: 0;
+    }
+
+    .htt-avatar {
+        display: flex;
+        width: 42px;
+        height: 42px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        background:
+            linear-gradient(
+                145deg,
+                #15351F,
+                #0E2114
+            );
+        color: #4ADE80;
+        font-size: 15px;
+        font-weight: 900;
+    }
+
+    .htt-client-name-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 3px;
+    }
+
+    .htt-client-name {
+        color: #EDF2EE !important;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .htt-client-goal {
+        color: #7E8B82;
+        font-size: 10px;
+    }
+
+    .htt-progress-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 8px;
+    }
+
+    .htt-progress-track {
+        flex: 1;
+        height: 5px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #1B241E;
+    }
+
+    .htt-progress-fill {
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(
+            90deg,
+            #16A34A,
+            #4ADE80
+        );
+    }
+
+    .htt-progress-text {
+        min-width: 34px;
+        color: #4ADE80;
+        font-size: 10px;
+        font-weight: 800;
+        text-align: right;
+    }
+
+    .htt-item {
+        padding: 13px 0;
+        border-bottom: 1px solid #1A241D;
+    }
+
+    .htt-item:last-child {
+        border-bottom: 0;
+    }
+
+    .htt-item-title {
+        margin-bottom: 4px;
+        color: #E7ECE8;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .htt-item-sub {
+        color: #77847B;
+        font-size: 10px;
+        line-height: 1.55;
+    }
+
+    .htt-status {
+        display: inline-block;
+        margin-top: 6px;
+        padding: 3px 8px;
+        border-radius: 999px;
+        font-size: 9px;
+        font-weight: 800;
+        text-transform: uppercase;
+    }
+
+    .htt-status-approved {
+        background: rgba(34,197,94,.12);
+        color: #4ADE80;
+    }
+
+    .htt-status-pending {
+        background: rgba(245,158,11,.12);
+        color: #FBBF24;
+    }
+
+    .htt-empty {
+        padding: 34px 14px;
+        text-align: center;
+        color: #6E7A72;
+        font-size: 11px;
+        line-height: 1.6;
+    }
+
+    .htt-empty-icon {
+        display: block;
+        margin-bottom: 8px;
+        color: #314439;
+        font-size: 25px;
+    }
+
+    .htt-view-link {
+        color: #4ADE80 !important;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: .4px;
+        text-transform: uppercase;
+    }
+
+    .htt-hidden-data {
+        display: none;
+    }
+
+    @@media (max-width: 1200px) {
+        .htt-stats {
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+        }
+
+        .htt-bottom-grid {
+            grid-template-columns:
+                1fr 1fr;
+        }
+
+        .htt-bottom-grid .htt-panel:first-child {
+            grid-column: 1 / -1;
+        }
+    }
+
+    @@media (max-width: 900px) {
+        .htt-main-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .htt-stats {
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @@media (max-width: 650px) {
+        .htt-hero {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .htt-date-box {
+            width: 100%;
+            text-align: left;
+        }
+
+        .htt-stats,
+        .htt-bottom-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .htt-bottom-grid .htt-panel:first-child {
+            grid-column: auto;
+        }
+    }
+</style>
+
+
+<div class="htt-dashboard">
+
+    <div class="htt-hero">
+
+        <div>
+
+            <div class="htt-eyebrow">
+                <span class="htt-eyebrow-dot"></span>
+                Trainer command center
+            </div>
+
+            <h2>Client performance overview</h2>
+
+            <p>
+                Monitor your clients, plans, appointments,
+                goals and updates from one place.
+            </p>
+
+        </div>
+
+        <div class="htt-date-box">
+
+            <span class="htt-date-label">
+                Today
+            </span>
+
+            <span class="htt-date-value">
+                @DateTime.Now.ToString("dddd, dd MMMM yyyy")
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="htt-stats">
+
+        <div class="htt-stat">
+
+            <div class="htt-stat-top">
+                <span class="htt-stat-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M16 11c1.66 0 3-1.79 3-4s-1.34-4-3-4-3 1.79-3 4 1.34 4 3 4Zm-8 0c1.66 0 3-1.79 3-4S9.66 3 8 3 5 4.79 5 7s1.34 4 3 4Zm0 2c-2.67 0-8 1.34-8 4v2h10v-2c0-.92.36-1.75 1-2.44C9.9 13.56 8.76 13 8 13Zm8 0c-.29 0-.62.02-.97.05 1.2.87 1.97 2.07 1.97 3.95v2h7v-2c0-2.66-5.33-4-8-4Z"/>
+</svg>
+                </span>
+                <span class="htt-stat-mini">CLIENTS</span>
+            </div>
+
+            <div class="htt-stat-value">
+                @Model.AssignedClientCount
+            </div>
+
+            <div class="htt-stat-label">
+                Assigned clients
+            </div>
+
+        </div>
+
+
+        <div class="htt-stat">
+
+            <div class="htt-stat-top">
+                <span class="htt-stat-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M7 2h2v2h6V2h2v2h3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h3V2Zm13 8H4v10h16V10ZM4 8h16V6H4v2Z"/>
+</svg>
+                </span>
+                <span class="htt-stat-mini">PENDING</span>
+            </div>
+
+            <div class="htt-stat-value">
+                @Model.PendingAppointmentCount
+            </div>
+
+            <div class="htt-stat-label">
+                Appointments awaiting action
+            </div>
+
+        </div>
+
+
+        <div class="htt-stat">
+
+            <div class="htt-stat-top">
+                <span class="htt-stat-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M13.5 2s.5 3-2 5.5C9 10 7.5 11.5 7.5 14a4.5 4.5 0 0 0 9 0c0-1.8-.8-3.3-2-4.7.1 1.7-.7 2.8-1.7 3.5.2-2.8-1-5.7.7-10.8ZM12 22a7 7 0 0 1-7-7c0-3.4 2-5.4 4.2-7.6C11.6 5 11.2 2 11.2 2c4.4 2.6 6.8 6.6 6.8 11.2A8.8 8.8 0 0 1 12 22Z"/>
+</svg>
+                </span>
+                <span class="htt-stat-mini">WORKOUT</span>
+            </div>
+
+            <div class="htt-stat-value">
+                @Model.ActiveWorkoutPlanCount
+            </div>
+
+            <div class="htt-stat-label">
+                Active workout plans
+            </div>
+
+        </div>
+
+
+        <div class="htt-stat">
+
+            <div class="htt-stat-top">
+                <span class="htt-stat-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M7 2v7H5V2H3v7a4 4 0 0 0 3 3.87V22h2v-9.13A4 4 0 0 0 11 9V2H9v7H7V2Zm9 0c-2.2 0-4 2.7-4 6 0 2.7 1.2 5 3 5.7V22h2v-8.3c1.8-.7 3-3 3-5.7 0-3.3-1.8-6-4-6Z"/>
+</svg>
+                </span>
+                <span class="htt-stat-mini">NUTRITION</span>
+            </div>
+
+            <div class="htt-stat-value">
+                @Model.ActiveDietPlanCount
+            </div>
+
+            <div class="htt-stat-label">
+                Active diet plans
+            </div>
+
+        </div>
+
+
+        <div class="htt-stat">
+
+            <div class="htt-stat-top">
+                <span class="htt-stat-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22Zm7-6v-5a7 7 0 0 0-5-6.71V3a2 2 0 0 0-4 0v1.29A7 7 0 0 0 5 11v5l-2 2v1h18v-1l-2-2Z"/>
+</svg>
+                </span>
+                <span class="htt-stat-mini">UPDATES</span>
+            </div>
+
+            <div class="htt-stat-value">
+                @Model.UnreadNotificationCount
+            </div>
+
+            <div class="htt-stat-label">
+                Unread notifications
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div
+        id="httDashboardChartData"
+        class="htt-hidden-data"
+        data-progress="@progressJson"
+        data-goals="@goalJson">
+    </div>
+
+
+    <div class="htt-main-grid">
+
+        <section class="htt-panel">
+
+            <div class="htt-panel-head">
+
+                <div>
+                    <h3>Client goal progress</h3>
+                    <p>
+                        Average progress of active and completed
+                        fitness goals by assigned client.
+                    </p>
+                </div>
+
+                <span class="htt-head-stat">
+                    @Model.AverageGoalProgressPercent.ToString("0.#")%
+                    overall
+                </span>
+
+            </div>
+
+            <div class="htt-chart-wrap">
+
+                @if (Model.ClientProgress.Count > 0)
+                {
+                    <canvas id="httProgressChart"></canvas>
+                }
+                else
+                {
+                    <div class="htt-chart-empty">
+                        Goal progress will appear here once your
+                        assigned clients create measurable goals.
+                    </div>
+                }
+
+            </div>
+
+        </section>
+
+
+        <section class="htt-panel">
+
+            <div class="htt-panel-head">
+
+                <div>
+                    <h3>Client goal distribution</h3>
+                    <p>
+                        Primary fitness goals across your clients.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="htt-donut-wrap">
+
+                @if (Model.GoalDistribution.Count > 0)
+                {
+                    <canvas id="httGoalChart"></canvas>
+                }
+                else
+                {
+                    <div class="htt-chart-empty">
+                        No client goal information available yet.
+                    </div>
+                }
+
+            </div>
+
+            <div class="htt-goal-summary">
+
+                <div class="htt-goal-mini">
+                    <strong>
+                        @Model.ActiveGoalCount
+                    </strong>
+                    <span>Active goals</span>
+                </div>
+
+                <div class="htt-goal-mini">
+                    <strong>
+                        @Model.CompletedGoalCount
+                    </strong>
+                    <span>Completed</span>
+                </div>
+
+                <div class="htt-goal-mini">
+                    <strong>
+                        @Model.AverageGoalProgressPercent.ToString("0.#")%
+                    </strong>
+                    <span>Average</span>
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <div class="htt-bottom-grid">
+
+        <section class="htt-panel">
+
+            <div class="htt-panel-head">
+
+                <div>
+                    <h3>Your clients</h3>
+                    <p>
+                        Quick progress overview of assigned clients.
+                    </p>
+                </div>
+
+                <a
+                    class="htt-view-link"
+                    href="@Url.Action(
+                        "Index",
+                        "Clients",
+                        new { area = "Trainer" })">
+                    View all
+                </a>
+
+            </div>
+
+            <div class="htt-list">
+
+                @if (Model.RecentClients.Count == 0)
+                {
+                    <div class="htt-empty">
+                        <span class="htt-empty-icon glyphicon glyphicon-user"></span>
+                        No clients have been assigned yet.
+                    </div>
+                }
+                else
+                {
+                    foreach (var client in Model.RecentClients)
+                    {
+                        var initial =
+                            string.IsNullOrWhiteSpace(client.FullName)
+                                ? "C"
+                                : client.FullName.Substring(0, 1).ToUpper();
+
+                        var percent =
+                            client.AverageGoalProgressPercent.HasValue
+                                ? client.AverageGoalProgressPercent.Value
+                                : 0m;
+
+                        var width =
+                            Math.Max(
+                                0m,
+                                Math.Min(
+                                    100m,
+                                    percent
+                                )
+                            );
+
+                        <div class="htt-client">
+
+                            <div class="htt-avatar">
+                                @initial
+                            </div>
+
+                            <div>
+
+                                <div class="htt-client-name-row">
+
+                                    <a
+                                        class="htt-client-name"
+                                        href="@Url.Action(
+                                            "Details",
+                                            "Clients",
+                                            new
+                                            {
+                                                area = "Trainer",
+                                                id = client.ClientUserId
+                                            })">
+                                        @client.FullName
+                                    </a>
+
+                                    <span class="htt-status htt-status-approved">
+                                        Active
+                                    </span>
+
+                                </div>
+
+                                <div class="htt-client-goal">
+                                    @client.PrimaryGoal
+                                    &nbsp;&bull;&nbsp;
+                                    @client.CompletedGoals /
+                                    @client.TotalGoals goals completed
+                                </div>
+
+                                <div class="htt-progress-row">
+
+                                    <div class="htt-progress-track">
+                                        <div
+                                            class="htt-progress-fill"
+                                            style="width:@width.ToString("0.#")%;">
+                                        </div>
+                                    </div>
+
+                                    <div class="htt-progress-text">
+                                        @if (client.AverageGoalProgressPercent.HasValue)
+                                        {
+                                            @client.AverageGoalProgressPercent.Value.ToString("0")<text>%</text>
+                                        }
+                                        else
+                                        {
+                                            <text>--</text>
+                                        }
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    }
+                }
+
+            </div>
+
+        </section>
+
+
+        <section class="htt-panel">
+
+            <div class="htt-panel-head">
+
+                <div>
+                    <h3>Upcoming appointments</h3>
+                    <p>
+                        Your next client consultations.
+                    </p>
+                </div>
+
+                <a
+                    class="htt-view-link"
+                    href="@Url.Action(
+                        "Index",
+                        "Appointments",
+                        new { area = "Trainer" })">
+                    View all
+                </a>
+
+            </div>
+
+            <div class="htt-list">
+
+                @if (Model.UpcomingAppointments.Count == 0)
+                {
+                    <div class="htt-empty">
+                        <span class="htt-empty-icon glyphicon glyphicon-calendar"></span>
+                        No upcoming appointments.<br />
+                        New bookings will appear here.
+                    </div>
+                }
+                else
+                {
+                    foreach (
+                        var appointment in
+                        Model.UpcomingAppointments)
+                    {
+                        var statusClass =
+                            appointment.Status == "Approved"
+                                ? "htt-status-approved"
+                                : "htt-status-pending";
+
+                        <div class="htt-item">
+
+                            <div class="htt-item-title">
+                                @appointment.ClientName
+                            </div>
+
+                            <div class="htt-item-sub">
+                                @appointment.When
+                            </div>
+
+                            <span class="htt-status @statusClass">
+                                @appointment.Status
+                            </span>
+
+                        </div>
+                    }
+                }
+
+            </div>
+
+        </section>
+
+
+        <section class="htt-panel">
+
+            <div class="htt-panel-head">
+
+                <div>
+                    <h3>Recent notifications</h3>
+                    <p>
+                        Latest updates requiring your attention.
+                    </p>
+                </div>
+
+                <a
+                    class="htt-view-link"
+                    href="@Url.Action(
+                        "Index",
+                        "Notifications",
+                        new { area = "Trainer" })">
+                    View all
+                </a>
+
+            </div>
+
+            <div class="htt-list">
+
+                @if (Model.RecentNotifications.Count == 0)
+                {
+                    <div class="htt-empty">
+                        <span class="htt-empty-icon glyphicon glyphicon-bell"></span>
+                        You're all caught up.<br />
+                        No unread notifications.
+                    </div>
+                }
+                else
+                {
+                    foreach (
+                        var notification in
+                        Model.RecentNotifications)
+                    {
+                        <div class="htt-item">
+
+                            <div class="htt-item-title">
+                                @notification.Title
+                            </div>
+
+                            <div class="htt-item-sub">
+                                @notification.Message
+                            </div>
+
+                            <div class="htt-item-sub"
+                                 style="margin-top:5px;">
+                                @notification.When
+                            </div>
+
+                        </div>
+                    }
+                }
+
+            </div>
+
+        </section>
+
+    </div>
+
+</div>
+
+
+@section scripts {
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+
+<script>
+(function () {
+
+    "use strict";
+
+    var dataNode =
+        document.getElementById(
+            "httDashboardChartData"
+        );
+
+    if (!dataNode) {
+        return;
+    }
+
+    var progressData = [];
+    var goalData = [];
+
+    try {
+
+        progressData =
+            JSON.parse(
+                dataNode.getAttribute(
+                    "data-progress"
+                ) || "[]"
+            );
+
+        goalData =
+            JSON.parse(
+                dataNode.getAttribute(
+                    "data-goals"
+                ) || "[]"
+            );
+
+    } catch (error) {
+
+        console.error(
+            "Unable to read Trainer dashboard chart data.",
+            error
+        );
+
+        return;
+    }
+
+    if (typeof Chart === "undefined") {
+        return;
+    }
+
+
+    var progressCanvas =
+        document.getElementById(
+            "httProgressChart"
+        );
+
+    if (
+        progressCanvas &&
+        progressData.length > 0
+    ) {
+
+        new Chart(
+            progressCanvas,
+            {
+                type: "bar",
+
+                data: {
+                    labels:
+                        progressData.map(
+                            function (item) {
+                                return item.label;
+                            }),
+
+                    datasets: [{
+                        label:
+                            "Average goal progress",
+
+                        data:
+                            progressData.map(
+                                function (item) {
+                                    return item.value;
+                                }),
+
+                        backgroundColor:
+                            "rgba(34,197,94,.32)",
+
+                        borderColor:
+                            "#22C55E",
+
+                        hoverBackgroundColor:
+                            "rgba(74,222,128,.48)",
+
+                        borderWidth: 1,
+                        borderRadius: 7,
+                        maxBarThickness: 52
+                    }]
+                },
+
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+
+                        tooltip: {
+                            callbacks: {
+                                label:
+                                    function (context) {
+                                        return (
+                                            context.raw +
+                                            "% goal progress"
+                                        );
+                                    }
+                            }
+                        }
+                    },
+
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+
+                            ticks: {
+                                color: "#7D8981",
+                                callback:
+                                    function (value) {
+                                        return value + "%";
+                                    }
+                            },
+
+                            grid: {
+                                color:
+                                    "rgba(80,100,87,.16)"
+                            }
+                        },
+
+                        x: {
+                            ticks: {
+                                color: "#87928B",
+                                maxRotation: 0,
+                                minRotation: 0
+                            },
+
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            }
+        );
+    }
+
+
+    var goalCanvas =
+        document.getElementById(
+            "httGoalChart"
+        );
+
+    if (
+        goalCanvas &&
+        goalData.length > 0
+    ) {
+
+        var goalColors = [
+            "#22C55E",
+            "#4ADE80",
+            "#15803D",
+            "#86EFAC",
+            "#166534",
+            "#A7F3D0"
+        ];
+
+        new Chart(
+            goalCanvas,
+            {
+                type: "doughnut",
+
+                data: {
+                    labels:
+                        goalData.map(
+                            function (item) {
+                                return item.label;
+                            }),
+
+                    datasets: [{
+                        data:
+                            goalData.map(
+                                function (item) {
+                                    return item.value;
+                                }),
+
+                        backgroundColor:
+                            goalColors,
+
+                        borderColor:
+                            "#101612",
+
+                        borderWidth: 4,
+                        hoverOffset: 5
+                    }]
+                },
+
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+
+                    cutout: "70%",
+
+                    plugins: {
+                        legend: {
+                            position: "bottom",
+
+                            labels: {
+                                color: "#9AA59D",
+                                boxWidth: 9,
+                                boxHeight: 9,
+                                usePointStyle: true,
+                                pointStyle: "circle",
+                                padding: 14,
+                                font: {
+                                    size: 10
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        );
+    }
+
+})();
+</script>
+
+}

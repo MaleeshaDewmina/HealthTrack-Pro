@@ -1,0 +1,1834 @@
+@model HealthTrackPro.Web.Areas.Trainer.Models.DietPlanCreateViewModel
+
+@{
+    ViewBag.Title = "Create Diet Plan";
+}
+
+<style>
+    .htd-create-page {
+        max-width: 1450px;
+        margin: 0 auto;
+    }
+
+    .htd-create-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 24px;
+    }
+
+    .htd-create-heading {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .htd-create-heading-icon {
+        display: flex;
+        width: 48px;
+        height: 48px;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 48px;
+        border: 1px solid rgba(74,222,128,.14);
+        border-radius: 14px;
+        background:
+            linear-gradient(
+                145deg,
+                rgba(34,197,94,.18),
+                rgba(34,197,94,.06)
+            );
+        color: #4ADE80;
+    }
+
+    .htd-create-heading-icon svg {
+        width: 24px;
+        height: 24px;
+        fill: currentColor;
+    }
+
+    .htd-create-header h2 {
+        margin: 0 0 5px;
+        color: #F4F7F5;
+        font-size: 27px;
+        font-weight: 800;
+        letter-spacing: -.4px;
+    }
+
+    .htd-create-header p {
+        margin: 0;
+        color: #849087;
+        font-size: 13px;
+    }
+
+    .htd-create-back {
+        display: inline-flex;
+        min-height: 42px;
+        align-items: center;
+        justify-content: center;
+        padding: 0 15px;
+        border: 1px solid #203026;
+        border-radius: 10px;
+        background: #101612;
+        color: #C8D1CB !important;
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none !important;
+    }
+
+    .htd-create-back:hover {
+        border-color: #31543B;
+        color: #4ADE80 !important;
+    }
+
+    .htd-create-grid {
+        display: grid;
+        grid-template-columns:
+            minmax(0, 1fr)
+            minmax(390px, .95fr);
+        gap: 20px;
+        align-items: start;
+    }
+
+    .htd-create-card {
+        overflow: hidden;
+        border: 1px solid #1F2A22;
+        border-radius: 15px;
+        background: #101612;
+    }
+
+    .htd-create-card-head {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 20px 22px;
+        border-bottom: 1px solid #1B251E;
+    }
+
+    .htd-create-card-icon {
+        display: flex;
+        width: 40px;
+        height: 40px;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 40px;
+        border-radius: 11px;
+        background: rgba(34,197,94,.12);
+        color: #4ADE80;
+    }
+
+    .htd-create-card-icon svg {
+        width: 20px;
+        height: 20px;
+        fill: currentColor;
+    }
+
+    .htd-create-card-head h3 {
+        margin: 0 0 3px;
+        font-size: 16px;
+        font-weight: 800;
+    }
+
+    .htd-create-card-head p {
+        margin: 0;
+        color: #77837A;
+        font-size: 11px;
+    }
+
+    .htd-create-form {
+        padding: 22px;
+    }
+
+    .htd-create-section-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 6px 0 15px;
+        color: #DDE5DF;
+        font-size: 12px;
+        font-weight: 900;
+    }
+
+    .htd-create-section-mark {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #22C55E;
+        box-shadow: 0 0 13px rgba(34,197,94,.5);
+    }
+
+    .htd-create-field {
+        margin-bottom: 19px;
+    }
+
+    .htd-create-label {
+        display: block;
+        margin-bottom: 7px;
+        color: #DCE4DE;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .htd-create-required {
+        color: #4ADE80;
+    }
+
+    .htd-create-help {
+        display: block;
+        margin-top: 6px;
+        color: #68746C;
+        font-size: 10px;
+        line-height: 1.45;
+    }
+
+    .htd-create-page .form-control {
+        width: 100%;
+        max-width: none;
+        height: 48px;
+        padding: 11px 13px;
+        border: 1px solid #26332A;
+        border-radius: 10px;
+        background: #0C120E;
+        color: #F1F4F2;
+        box-shadow: none;
+    }
+
+    .htd-create-page .form-control:focus {
+        border-color: #22C55E;
+        background: #0C120E;
+        box-shadow: 0 0 0 3px rgba(34,197,94,.10);
+    }
+
+    .htd-create-page textarea.form-control {
+        min-height: 112px;
+        height: auto;
+        resize: vertical;
+        line-height: 1.55;
+    }
+
+    .htd-create-page input[type="date"] {
+        color-scheme: dark;
+    }
+
+    .htd-create-page input[type="date"]::-webkit-calendar-picker-indicator {
+        cursor: pointer;
+        opacity: .8;
+        filter: invert(82%) sepia(18%) saturate(787%) hue-rotate(85deg);
+    }
+
+    .htd-create-two {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+
+    .htd-create-macros {
+        display: grid;
+        grid-template-columns: repeat(3,1fr);
+        gap: 12px;
+    }
+
+    .htd-create-input-wrap {
+        position: relative;
+    }
+
+    .htd-create-unit {
+        position: absolute;
+        right: 13px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #66736A;
+        font-size: 10px;
+        font-weight: 800;
+        pointer-events: none;
+    }
+
+    .htd-create-input-wrap .form-control {
+        padding-right: 52px;
+    }
+
+    .htd-create-char {
+        margin-top: 5px;
+        text-align: right;
+        color: #637068;
+        font-size: 9px;
+        font-weight: 700;
+    }
+
+    .htd-create-validation {
+        display: block;
+        margin-top: 6px;
+        color: #F87171;
+        font-size: 10px;
+    }
+
+    .htd-create-validation-summary {
+        margin-bottom: 18px;
+        padding: 12px 14px;
+        border: 1px solid rgba(239,68,68,.24);
+        border-radius: 10px;
+        background: rgba(239,68,68,.07);
+    }
+
+    .htd-create-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 7px;
+    }
+
+    .htd-create-submit {
+        display: inline-flex;
+        min-height: 46px;
+        align-items: center;
+        justify-content: center;
+        padding: 0 21px;
+        border: 0;
+        border-radius: 10px;
+        background: linear-gradient(135deg,#22C55E,#16A34A);
+        color: #061009;
+        font-size: 12px;
+        font-weight: 900;
+        box-shadow: 0 9px 25px rgba(34,197,94,.13);
+    }
+
+    .htd-create-submit:hover {
+        transform: translateY(-1px);
+    }
+
+    .htd-create-cancel {
+        display: inline-flex;
+        min-height: 46px;
+        align-items: center;
+        justify-content: center;
+        padding: 0 18px;
+        border: 1px solid #27342B;
+        border-radius: 10px;
+        background: #121A14;
+        color: #BEC8C1 !important;
+        font-size: 12px;
+        font-weight: 800;
+        text-decoration: none !important;
+    }
+
+    .htd-preview {
+        padding: 20px;
+    }
+
+    .htd-calorie-hero {
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 15px;
+        padding: 20px;
+        border: 1px solid #1E3526;
+        border-radius: 14px;
+        background:
+            radial-gradient(
+                circle at 100% 0,
+                rgba(34,197,94,.18),
+                transparent 52%
+            ),
+            linear-gradient(
+                145deg,
+                #10301C,
+                #0B1710
+            );
+    }
+
+    .htd-calorie-label {
+        display: block;
+        margin-bottom: 6px;
+        color: #8BDCA6;
+        font-size: 9px;
+        font-weight: 900;
+        letter-spacing: .8px;
+        text-transform: uppercase;
+    }
+
+    .htd-calorie-value {
+        display: flex;
+        align-items: baseline;
+        gap: 7px;
+    }
+
+    .htd-calorie-value strong {
+        color: #F6F9F7;
+        font-size: 32px;
+        line-height: 1;
+        font-weight: 900;
+    }
+
+    .htd-calorie-value span {
+        color: #9BC3A8;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .htd-calorie-sub {
+        display: block;
+        margin-top: 7px;
+        color: #779181;
+        font-size: 10px;
+    }
+
+    .htd-macro-panel {
+        margin-bottom: 15px;
+        padding: 18px;
+        border: 1px solid #1E2A21;
+        border-radius: 13px;
+        background: #0D130F;
+    }
+
+    .htd-macro-title {
+        margin: 0 0 15px;
+        font-size: 13px;
+        font-weight: 900;
+    }
+
+    .htd-macro-layout {
+        display: grid;
+        grid-template-columns: 150px minmax(0,1fr);
+        gap: 18px;
+        align-items: center;
+    }
+
+    .htd-macro-ring {
+        display: flex;
+        width: 140px;
+        height: 140px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background:
+            conic-gradient(
+                #22C55E 0deg var(--protein-end),
+                #3B82F6 var(--protein-end) var(--carb-end),
+                #F59E0B var(--carb-end) 360deg
+            );
+    }
+
+    .htd-macro-ring-inner {
+        display: flex;
+        width: 99px;
+        height: 99px;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        border-radius: 50%;
+        background: #0D130F;
+    }
+
+    .htd-macro-ring-inner strong {
+        color: #F3F7F4;
+        font-size: 20px;
+        font-weight: 900;
+    }
+
+    .htd-macro-ring-inner span {
+        color: #647168;
+        font-size: 8px;
+        font-weight: 900;
+        letter-spacing: .5px;
+        text-transform: uppercase;
+    }
+
+    .htd-macro-list {
+        display: grid;
+        gap: 9px;
+    }
+
+    .htd-macro-row {
+        display: grid;
+        grid-template-columns: 10px minmax(0,1fr) auto;
+        gap: 8px;
+        align-items: center;
+        padding: 9px 10px;
+        border: 1px solid #1B261E;
+        border-radius: 9px;
+        background: #0B110D;
+    }
+
+    .htd-macro-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+    }
+
+    .htd-protein { background: #22C55E; }
+    .htd-carbs { background: #3B82F6; }
+    .htd-fat { background: #F59E0B; }
+
+    .htd-macro-name {
+        color: #AEB9B1;
+        font-size: 10px;
+        font-weight: 800;
+    }
+
+    .htd-macro-number {
+        color: #EFF3F0;
+        font-size: 10px;
+        font-weight: 900;
+    }
+
+    .htd-balance-card {
+        margin-bottom: 15px;
+        padding: 18px;
+        border: 1px solid #1E2A21;
+        border-radius: 13px;
+        background: #0D130F;
+    }
+
+    .htd-balance-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 14px;
+    }
+
+    .htd-balance-head h4 {
+        margin: 0;
+        font-size: 13px;
+        font-weight: 900;
+    }
+
+    .htd-balance-head span {
+        color: #68756C;
+        font-size: 9px;
+    }
+
+    .htd-bars {
+        display: grid;
+        gap: 12px;
+    }
+
+    .htd-bar-label {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 5px;
+        color: #89968D;
+        font-size: 9px;
+        font-weight: 800;
+    }
+
+    .htd-bar-track {
+        height: 8px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #1A241D;
+    }
+
+    .htd-bar-fill {
+        height: 100%;
+        border-radius: inherit;
+        transition: width .2s ease;
+    }
+
+    .htd-preview-summary {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .htd-preview-item {
+        min-height: 87px;
+        padding: 13px;
+        border: 1px solid #1D2820;
+        border-radius: 10px;
+        background: #0C120E;
+    }
+
+    .htd-preview-label {
+        display: block;
+        margin-bottom: 7px;
+        color: #637168;
+        font-size: 8px;
+        font-weight: 900;
+        letter-spacing: .7px;
+        text-transform: uppercase;
+    }
+
+    .htd-preview-value {
+        display: block;
+        color: #E9EEEA;
+        font-size: 12px;
+        font-weight: 900;
+        line-height: 1.4;
+    }
+
+    .htd-preview-sub {
+        display: block;
+        margin-top: 4px;
+        color: #6E7B72;
+        font-size: 9px;
+        line-height: 1.4;
+    }
+
+    .htd-preview-wide {
+        grid-column: 1 / -1;
+    }
+
+    .htd-no-clients {
+        padding: 50px 24px;
+        text-align: center;
+    }
+
+    .htd-no-clients h3 {
+        margin: 0 0 7px;
+        font-size: 17px;
+    }
+
+    .htd-no-clients p {
+        margin: 0 auto 18px;
+        max-width: 440px;
+        color: #77847B;
+    }
+
+    @@media (max-width: 1100px) {
+        .htd-create-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 720px) {
+        .htd-create-header {
+            flex-direction: column;
+        }
+
+        .htd-create-back {
+            width: 100%;
+        }
+
+        .htd-create-two,
+        .htd-create-macros,
+        .htd-preview-summary,
+        .htd-macro-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .htd-preview-wide {
+            grid-column: auto;
+        }
+
+        .htd-macro-ring {
+            margin: 0 auto;
+        }
+
+        .htd-create-actions {
+            flex-direction: column;
+        }
+
+        .htd-create-submit,
+        .htd-create-cancel {
+            width: 100%;
+        }
+    }
+</style>
+
+
+<div class="htd-create-page">
+
+    <div class="htd-create-header">
+
+        <div class="htd-create-heading">
+
+            <div class="htd-create-heading-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M7 2v7H5V2H3v7a4 4 0 0 0 3 3.87V22h2v-9.13A4 4 0 0 0 11 9V2H9v7H7V2Zm9 0c-2.2 0-4 2.7-4 6 0 2.7 1.2 5 3 5.7V22h2v-8.3c1.8-.7 3-3 3-5.7 0-3.3-1.8-6-4-6Z"/>
+                </svg>
+            </div>
+
+            <div>
+                <h2>Create Diet Plan</h2>
+                <p>
+                    Build a personalized nutrition plan with
+                    calorie and macronutrient targets.
+                </p>
+            </div>
+
+        </div>
+
+        <a class="htd-create-back"
+           href="@Url.Action("Index", "DietPlans", new { area = "Trainer" })">
+            &larr; Back to diet plans
+        </a>
+
+    </div>
+
+
+    @if (Model.Clients.Count == 0)
+    {
+        <div class="htd-create-card">
+
+            <div class="htd-no-clients">
+
+                <h3>No assigned clients</h3>
+
+                <p>
+                    You need an assigned client before you can
+                    create a nutrition plan.
+                </p>
+
+                <a class="htd-create-cancel"
+                   href="@Url.Action("Index", "Clients", new { area = "Trainer" })">
+                    View assigned clients
+                </a>
+
+            </div>
+
+        </div>
+    }
+    else
+    {
+        using (Html.BeginForm(
+            "Create",
+            "DietPlans",
+            new { area = "Trainer" },
+            FormMethod.Post,
+            new { id = "htdCreateForm" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="htd-create-grid">
+
+
+                <section class="htd-create-card">
+
+                    <div class="htd-create-card-head">
+
+                        <div class="htd-create-card-icon">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M6 2h9l5 5v15H4V2h2Zm8 2H6v16h12V8h-4V4Zm-5 7h6v2H9v-2Zm0 4h6v2H9v-2Z"/>
+                            </svg>
+                        </div>
+
+                        <div>
+                            <h3>Plan information</h3>
+                            <p>
+                                Configure the client, nutrition targets
+                                and plan duration.
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="htd-create-form">
+
+                        @Html.ValidationSummary(
+                            true,
+                            "",
+                            new
+                            {
+                                @class =
+                                    "text-danger htd-create-validation-summary"
+                            })
+
+
+                        <div class="htd-create-field">
+
+                            <label
+                                class="htd-create-label"
+                                for="ClientUserId">
+
+                                Client
+                                <span class="htd-create-required">*</span>
+
+                            </label>
+
+                            @Html.DropDownListFor(
+                                m => m.ClientUserId,
+                                Model.Clients,
+                                "Select a client",
+                                new
+                                {
+                                    @class = "form-control",
+                                    id = "ClientUserId"
+                                })
+
+                            <span class="htd-create-help">
+                                Plans can only be assigned to your
+                                currently assigned clients.
+                            </span>
+
+                            @Html.ValidationMessageFor(
+                                m => m.ClientUserId,
+                                "",
+                                new
+                                {
+                                    @class =
+                                        "text-danger htd-create-validation"
+                                })
+
+                        </div>
+
+
+                        <div class="htd-create-field">
+
+                            <label
+                                class="htd-create-label"
+                                for="Name">
+
+                                Plan name
+                                <span class="htd-create-required">*</span>
+
+                            </label>
+
+                            @Html.TextBoxFor(
+                                m => m.Name,
+                                new
+                                {
+                                    @class = "form-control",
+                                    id = "Name",
+                                    maxlength = "150",
+                                    placeholder =
+                                        "e.g. Balanced Nutrition Plan"
+                                })
+
+                            <div class="htd-create-char">
+                                <span id="htdNameCount">0</span>/150
+                            </div>
+
+                            @Html.ValidationMessageFor(
+                                m => m.Name,
+                                "",
+                                new
+                                {
+                                    @class =
+                                        "text-danger htd-create-validation"
+                                })
+
+                        </div>
+
+
+                        <div class="htd-create-field">
+
+                            <label
+                                class="htd-create-label"
+                                for="Description">
+                                Description
+                            </label>
+
+                            @Html.TextAreaFor(
+                                m => m.Description,
+                                new
+                                {
+                                    @class = "form-control",
+                                    id = "Description",
+                                    maxlength = "1000",
+                                    placeholder =
+                                        "Describe the nutrition strategy, goals and guidance for this client..."
+                                })
+
+                            <div class="htd-create-char">
+                                <span id="htdDescriptionCount">0</span>/1000
+                            </div>
+
+                            @Html.ValidationMessageFor(
+                                m => m.Description,
+                                "",
+                                new
+                                {
+                                    @class =
+                                        "text-danger htd-create-validation"
+                                })
+
+                        </div>
+
+
+                        <div class="htd-create-section-title">
+                            <span class="htd-create-section-mark"></span>
+                            Nutrition targets
+                        </div>
+
+
+                        <div class="htd-create-field">
+
+                            <label
+                                class="htd-create-label"
+                                for="DailyCaloriesTarget">
+                                Daily calories
+                            </label>
+
+                            <div class="htd-create-input-wrap">
+
+                                @Html.TextBoxFor(
+                                    m => m.DailyCaloriesTarget,
+                                    new
+                                    {
+                                        @class = "form-control",
+                                        id = "DailyCaloriesTarget",
+                                        type = "number",
+                                        min = "500",
+                                        max = "10000",
+                                        placeholder = "e.g. 2200"
+                                    })
+
+                                <span class="htd-create-unit">
+                                    kcal
+                                </span>
+
+                            </div>
+
+                            <span class="htd-create-help">
+                                Optional target between 500 and
+                                10,000 calories per day.
+                            </span>
+
+                            @Html.ValidationMessageFor(
+                                m => m.DailyCaloriesTarget,
+                                "",
+                                new
+                                {
+                                    @class =
+                                        "text-danger htd-create-validation"
+                                })
+
+                        </div>
+
+
+                        <div class="htd-create-macros">
+
+                            <div class="htd-create-field">
+
+                                <label
+                                    class="htd-create-label"
+                                    for="ProteinTargetGrams">
+                                    Protein
+                                </label>
+
+                                <div class="htd-create-input-wrap">
+
+                                    @Html.TextBoxFor(
+                                        m => m.ProteinTargetGrams,
+                                        new
+                                        {
+                                            @class = "form-control",
+                                            id = "ProteinTargetGrams",
+                                            type = "number",
+                                            step = "0.1",
+                                            min = "0",
+                                            max = "1000",
+                                            placeholder = "120"
+                                        })
+
+                                    <span class="htd-create-unit">g</span>
+
+                                </div>
+
+                                @Html.ValidationMessageFor(
+                                    m => m.ProteinTargetGrams,
+                                    "",
+                                    new
+                                    {
+                                        @class =
+                                            "text-danger htd-create-validation"
+                                    })
+
+                            </div>
+
+
+                            <div class="htd-create-field">
+
+                                <label
+                                    class="htd-create-label"
+                                    for="CarbohydrateTargetGrams">
+                                    Carbohydrates
+                                </label>
+
+                                <div class="htd-create-input-wrap">
+
+                                    @Html.TextBoxFor(
+                                        m => m.CarbohydrateTargetGrams,
+                                        new
+                                        {
+                                            @class = "form-control",
+                                            id = "CarbohydrateTargetGrams",
+                                            type = "number",
+                                            step = "0.1",
+                                            min = "0",
+                                            max = "2000",
+                                            placeholder = "250"
+                                        })
+
+                                    <span class="htd-create-unit">g</span>
+
+                                </div>
+
+                                @Html.ValidationMessageFor(
+                                    m => m.CarbohydrateTargetGrams,
+                                    "",
+                                    new
+                                    {
+                                        @class =
+                                            "text-danger htd-create-validation"
+                                    })
+
+                            </div>
+
+
+                            <div class="htd-create-field">
+
+                                <label
+                                    class="htd-create-label"
+                                    for="FatTargetGrams">
+                                    Fat
+                                </label>
+
+                                <div class="htd-create-input-wrap">
+
+                                    @Html.TextBoxFor(
+                                        m => m.FatTargetGrams,
+                                        new
+                                        {
+                                            @class = "form-control",
+                                            id = "FatTargetGrams",
+                                            type = "number",
+                                            step = "0.1",
+                                            min = "0",
+                                            max = "1000",
+                                            placeholder = "70"
+                                        })
+
+                                    <span class="htd-create-unit">g</span>
+
+                                </div>
+
+                                @Html.ValidationMessageFor(
+                                    m => m.FatTargetGrams,
+                                    "",
+                                    new
+                                    {
+                                        @class =
+                                            "text-danger htd-create-validation"
+                                    })
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="htd-create-section-title">
+                            <span class="htd-create-section-mark"></span>
+                            Plan duration
+                        </div>
+
+
+                        <div class="htd-create-two">
+
+                            <div class="htd-create-field">
+
+                                <label
+                                    class="htd-create-label"
+                                    for="StartDate">
+
+                                    Start date
+                                    <span class="htd-create-required">*</span>
+
+                                </label>
+
+                                @Html.TextBoxFor(
+                                    m => m.StartDate,
+                                    "{0:yyyy-MM-dd}",
+                                    new
+                                    {
+                                        @class = "form-control",
+                                        id = "StartDate",
+                                        type = "date"
+                                    })
+
+                                @Html.ValidationMessageFor(
+                                    m => m.StartDate,
+                                    "",
+                                    new
+                                    {
+                                        @class =
+                                            "text-danger htd-create-validation"
+                                    })
+
+                            </div>
+
+
+                            <div class="htd-create-field">
+
+                                <label
+                                    class="htd-create-label"
+                                    for="EndDate">
+                                    End date
+                                </label>
+
+                                @Html.TextBoxFor(
+                                    m => m.EndDate,
+                                    "{0:yyyy-MM-dd}",
+                                    new
+                                    {
+                                        @class = "form-control",
+                                        id = "EndDate",
+                                        type = "date"
+                                    })
+
+                                @Html.ValidationMessageFor(
+                                    m => m.EndDate,
+                                    "",
+                                    new
+                                    {
+                                        @class =
+                                            "text-danger htd-create-validation"
+                                    })
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="htd-create-actions">
+
+                            <button
+                                type="submit"
+                                class="htd-create-submit">
+                                &#10003; Create diet plan
+                            </button>
+
+                            <a
+                                class="htd-create-cancel"
+                                href="@Url.Action("Index", "DietPlans", new { area = "Trainer" })">
+                                Cancel
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <aside class="htd-create-card">
+
+                    <div class="htd-create-card-head">
+
+                        <div class="htd-create-card-icon">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M4 19h16v2H2V3h2v16Zm3-3 4-5 3 3 5-7 2 1-7 10-3-3-2 3-2-2Z"/>
+                            </svg>
+                        </div>
+
+                        <div>
+                            <h3>Nutrition preview</h3>
+                            <p>
+                                Live calorie and macronutrient analysis.
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="htd-preview">
+
+                        <div class="htd-calorie-hero">
+
+                            <span class="htd-calorie-label">
+                                Daily calorie target
+                            </span>
+
+                            <div class="htd-calorie-value">
+
+                                <strong id="htdPreviewCalories">
+                                    --
+                                </strong>
+
+                                <span>kcal</span>
+
+                            </div>
+
+                            <span
+                                id="htdCalorieMessage"
+                                class="htd-calorie-sub">
+                                Enter a target to start the nutrition preview.
+                            </span>
+
+                        </div>
+
+
+                        <div class="htd-macro-panel">
+
+                            <h4 class="htd-macro-title">
+                                Macronutrient distribution
+                            </h4>
+
+                            <div class="htd-macro-layout">
+
+                                <div
+                                    id="htdMacroRing"
+                                    class="htd-macro-ring"
+                                    style="--protein-end:120deg;--carb-end:240deg;">
+
+                                    <div class="htd-macro-ring-inner">
+
+                                        <strong id="htdMacroCalories">
+                                            0
+                                        </strong>
+
+                                        <span>
+                                            Macro kcal
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="htd-macro-list">
+
+                                    <div class="htd-macro-row">
+
+                                        <span class="htd-macro-dot htd-protein"></span>
+
+                                        <span class="htd-macro-name">
+                                            Protein
+                                        </span>
+
+                                        <span
+                                            id="htdProteinPreview"
+                                            class="htd-macro-number">
+                                            0 g
+                                        </span>
+
+                                    </div>
+
+
+                                    <div class="htd-macro-row">
+
+                                        <span class="htd-macro-dot htd-carbs"></span>
+
+                                        <span class="htd-macro-name">
+                                            Carbohydrates
+                                        </span>
+
+                                        <span
+                                            id="htdCarbPreview"
+                                            class="htd-macro-number">
+                                            0 g
+                                        </span>
+
+                                    </div>
+
+
+                                    <div class="htd-macro-row">
+
+                                        <span class="htd-macro-dot htd-fat"></span>
+
+                                        <span class="htd-macro-name">
+                                            Fat
+                                        </span>
+
+                                        <span
+                                            id="htdFatPreview"
+                                            class="htd-macro-number">
+                                            0 g
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="htd-balance-card">
+
+                            <div class="htd-balance-head">
+
+                                <h4>Calorie contribution</h4>
+
+                                <span>
+                                    Estimated from macros
+                                </span>
+
+                            </div>
+
+
+                            <div class="htd-bars">
+
+                                <div>
+
+                                    <div class="htd-bar-label">
+                                        <span>Protein</span>
+                                        <span id="htdProteinPercent">0%</span>
+                                    </div>
+
+                                    <div class="htd-bar-track">
+                                        <div
+                                            id="htdProteinBar"
+                                            class="htd-bar-fill htd-protein"
+                                            style="width:0%;">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                                <div>
+
+                                    <div class="htd-bar-label">
+                                        <span>Carbohydrates</span>
+                                        <span id="htdCarbPercent">0%</span>
+                                    </div>
+
+                                    <div class="htd-bar-track">
+                                        <div
+                                            id="htdCarbBar"
+                                            class="htd-bar-fill htd-carbs"
+                                            style="width:0%;">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                                <div>
+
+                                    <div class="htd-bar-label">
+                                        <span>Fat</span>
+                                        <span id="htdFatPercent">0%</span>
+                                    </div>
+
+                                    <div class="htd-bar-track">
+                                        <div
+                                            id="htdFatBar"
+                                            class="htd-bar-fill htd-fat"
+                                            style="width:0%;">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="htd-preview-summary">
+
+                            <div class="htd-preview-item">
+
+                                <span class="htd-preview-label">
+                                    Client
+                                </span>
+
+                                <span
+                                    id="htdPreviewClient"
+                                    class="htd-preview-value">
+                                    Not selected
+                                </span>
+
+                                <span class="htd-preview-sub">
+                                    Assigned client
+                                </span>
+
+                            </div>
+
+
+                            <div class="htd-preview-item">
+
+                                <span class="htd-preview-label">
+                                    Duration
+                                </span>
+
+                                <span
+                                    id="htdPreviewDuration"
+                                    class="htd-preview-value">
+                                    Ongoing
+                                </span>
+
+                                <span
+                                    id="htdPreviewDates"
+                                    class="htd-preview-sub">
+                                    Select your dates
+                                </span>
+
+                            </div>
+
+
+                            <div class="htd-preview-item htd-preview-wide">
+
+                                <span class="htd-preview-label">
+                                    Plan
+                                </span>
+
+                                <span
+                                    id="htdPreviewName"
+                                    class="htd-preview-value">
+                                    Untitled diet plan
+                                </span>
+
+                                <span
+                                    id="htdPreviewDescription"
+                                    class="htd-preview-sub">
+                                    Add a description to summarize the
+                                    nutrition strategy.
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </aside>
+
+            </div>
+        }
+    }
+
+</div>
+
+
+@section scripts {
+
+<script>
+(function () {
+
+    "use strict";
+
+    var client =
+        document.getElementById("ClientUserId");
+
+    var name =
+        document.getElementById("Name");
+
+    var description =
+        document.getElementById("Description");
+
+    var calories =
+        document.getElementById("DailyCaloriesTarget");
+
+    var protein =
+        document.getElementById("ProteinTargetGrams");
+
+    var carbs =
+        document.getElementById("CarbohydrateTargetGrams");
+
+    var fat =
+        document.getElementById("FatTargetGrams");
+
+    var start =
+        document.getElementById("StartDate");
+
+    var end =
+        document.getElementById("EndDate");
+
+    if (!client || !name || !start) {
+        return;
+    }
+
+
+    function numberValue(element) {
+
+        if (!element || !element.value) {
+            return 0;
+        }
+
+        var value =
+            parseFloat(element.value);
+
+        return isNaN(value)
+            ? 0
+            : Math.max(0, value);
+    }
+
+
+    function formatDate(value) {
+
+        if (!value) {
+            return null;
+        }
+
+        var date =
+            new Date(value + "T00:00:00");
+
+        if (isNaN(date.getTime())) {
+            return null;
+        }
+
+        return date.toLocaleDateString(
+            undefined,
+            {
+                day: "numeric",
+                month: "short",
+                year: "numeric"
+            }
+        );
+    }
+
+
+    function updateMacros() {
+
+        var proteinGrams =
+            numberValue(protein);
+
+        var carbGrams =
+            numberValue(carbs);
+
+        var fatGrams =
+            numberValue(fat);
+
+        var proteinCalories =
+            proteinGrams * 4;
+
+        var carbCalories =
+            carbGrams * 4;
+
+        var fatCalories =
+            fatGrams * 9;
+
+        var macroCalories =
+            proteinCalories +
+            carbCalories +
+            fatCalories;
+
+
+        document.getElementById(
+            "htdProteinPreview"
+        ).textContent =
+            proteinGrams.toFixed(
+                proteinGrams % 1 ? 1 : 0
+            ) + " g";
+
+        document.getElementById(
+            "htdCarbPreview"
+        ).textContent =
+            carbGrams.toFixed(
+                carbGrams % 1 ? 1 : 0
+            ) + " g";
+
+        document.getElementById(
+            "htdFatPreview"
+        ).textContent =
+            fatGrams.toFixed(
+                fatGrams % 1 ? 1 : 0
+            ) + " g";
+
+        document.getElementById(
+            "htdMacroCalories"
+        ).textContent =
+            Math.round(macroCalories);
+
+
+        var proteinPercent = 0;
+        var carbPercent = 0;
+        var fatPercent = 0;
+
+        if (macroCalories > 0) {
+
+            proteinPercent =
+                proteinCalories /
+                macroCalories *
+                100;
+
+            carbPercent =
+                carbCalories /
+                macroCalories *
+                100;
+
+            fatPercent =
+                fatCalories /
+                macroCalories *
+                100;
+        }
+
+
+        document.getElementById(
+            "htdProteinPercent"
+        ).textContent =
+            Math.round(proteinPercent) + "%";
+
+        document.getElementById(
+            "htdCarbPercent"
+        ).textContent =
+            Math.round(carbPercent) + "%";
+
+        document.getElementById(
+            "htdFatPercent"
+        ).textContent =
+            Math.round(fatPercent) + "%";
+
+
+        document.getElementById(
+            "htdProteinBar"
+        ).style.width =
+            proteinPercent + "%";
+
+        document.getElementById(
+            "htdCarbBar"
+        ).style.width =
+            carbPercent + "%";
+
+        document.getElementById(
+            "htdFatBar"
+        ).style.width =
+            fatPercent + "%";
+
+
+        var proteinAngle =
+            proteinPercent /
+            100 *
+            360;
+
+        var carbAngle =
+            proteinAngle +
+            carbPercent /
+            100 *
+            360;
+
+        var ring =
+            document.getElementById(
+                "htdMacroRing"
+            );
+
+        if (macroCalories <= 0) {
+
+            ring.style.background =
+                "#1A251D";
+
+        } else {
+
+            ring.style.background =
+                "conic-gradient(" +
+                "#22C55E 0deg " +
+                proteinAngle + "deg," +
+                "#3B82F6 " +
+                proteinAngle + "deg " +
+                carbAngle + "deg," +
+                "#F59E0B " +
+                carbAngle + "deg 360deg)";
+        }
+
+
+        var targetCalories =
+            numberValue(calories);
+
+        var calorieValue =
+            document.getElementById(
+                "htdPreviewCalories"
+            );
+
+        var calorieMessage =
+            document.getElementById(
+                "htdCalorieMessage"
+            );
+
+        calorieValue.textContent =
+            targetCalories > 0
+                ? Math.round(targetCalories)
+                : "--";
+
+        if (
+            targetCalories > 0 &&
+            macroCalories > 0
+        ) {
+
+            var difference =
+                Math.round(
+                    macroCalories -
+                    targetCalories
+                );
+
+            if (Math.abs(difference) <= 50) {
+
+                calorieMessage.textContent =
+                    "Macro calories closely match your daily target.";
+
+            } else if (difference > 0) {
+
+                calorieMessage.textContent =
+                    "Macro targets estimate " +
+                    difference +
+                    " kcal above the daily target.";
+
+            } else {
+
+                calorieMessage.textContent =
+                    "Macro targets estimate " +
+                    Math.abs(difference) +
+                    " kcal below the daily target.";
+            }
+
+        } else if (targetCalories > 0) {
+
+            calorieMessage.textContent =
+                "Add macronutrient targets to visualize the calorie split.";
+
+        } else {
+
+            calorieMessage.textContent =
+                "Enter a target to start the nutrition preview.";
+        }
+    }
+
+
+    function updateDates() {
+
+        var duration =
+            document.getElementById(
+                "htdPreviewDuration"
+            );
+
+        var dates =
+            document.getElementById(
+                "htdPreviewDates"
+            );
+
+        if (!start.value) {
+
+            duration.textContent =
+                "Ongoing";
+
+            dates.textContent =
+                "Select your dates";
+
+            return;
+        }
+
+        var startDate =
+            new Date(
+                start.value +
+                "T00:00:00"
+            );
+
+        if (!end || !end.value) {
+
+            duration.textContent =
+                "Ongoing plan";
+
+            dates.textContent =
+                "Starts " +
+                formatDate(start.value);
+
+            return;
+        }
+
+        var endDate =
+            new Date(
+                end.value +
+                "T00:00:00"
+            );
+
+        var difference =
+            endDate.getTime() -
+            startDate.getTime();
+
+        var days =
+            Math.floor(
+                difference /
+                (1000 * 60 * 60 * 24)
+            ) + 1;
+
+        if (days < 1) {
+
+            duration.textContent =
+                "Invalid dates";
+
+            dates.textContent =
+                "End date must follow start date";
+
+            return;
+        }
+
+        var weeks =
+            Math.ceil(days / 7);
+
+        duration.textContent =
+            weeks === 1
+                ? "1 week"
+                : weeks + " weeks";
+
+        dates.textContent =
+            formatDate(start.value) +
+            " &ndash; " +
+            formatDate(end.value);
+    }
+
+
+    function updateSummary() {
+
+        var selected =
+            client.options[
+                client.selectedIndex
+            ];
+
+        document.getElementById(
+            "htdPreviewClient"
+        ).textContent =
+            client.value && selected
+                ? selected.text
+                : "Not selected";
+
+        document.getElementById(
+            "htdPreviewName"
+        ).textContent =
+            name.value.trim() ||
+            "Untitled diet plan";
+
+        document.getElementById(
+            "htdPreviewDescription"
+        ).textContent =
+            description &&
+            description.value.trim()
+                ? description.value.trim()
+                : "Add a description to summarize the nutrition strategy.";
+
+        document.getElementById(
+            "htdNameCount"
+        ).textContent =
+            name.value.length;
+
+        if (description) {
+
+            document.getElementById(
+                "htdDescriptionCount"
+            ).textContent =
+                description.value.length;
+        }
+
+        updateMacros();
+        updateDates();
+    }
+
+
+    [
+        client,
+        name,
+        description,
+        calories,
+        protein,
+        carbs,
+        fat,
+        start,
+        end
+    ].forEach(function (element) {
+
+        if (!element) {
+            return;
+        }
+
+        element.addEventListener(
+            element.tagName === "SELECT"
+                ? "change"
+                : "input",
+            updateSummary
+        );
+
+        element.addEventListener(
+            "change",
+            updateSummary
+        );
+    });
+
+
+    updateSummary();
+
+})();
+</script>
+
+}
