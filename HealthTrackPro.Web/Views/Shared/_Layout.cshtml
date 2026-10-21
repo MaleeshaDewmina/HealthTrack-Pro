@@ -336,6 +336,20 @@
                             &#128276;
                         </a>
                     }
+                    else if (User.IsInRole("Administrator"))
+                    {
+                        <a
+                            href="@Url.Action(
+                                "Index",
+                                "AuditLogs",
+                                new { area = "Admin" })"
+                            class="ht-notification-button"
+                            title="Administrative activity"
+                            aria-label="Open administrative activity"
+                            style="text-decoration:none;">
+                            &#128276;
+                        </a>
+                    }
                     else
                     {
                         <span

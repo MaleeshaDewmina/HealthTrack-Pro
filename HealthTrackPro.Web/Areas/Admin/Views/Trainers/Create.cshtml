@@ -1,4 +1,4 @@
-﻿@model HealthTrackPro.Web.Areas.Admin.Models.CreateTrainerViewModel
+@model HealthTrackPro.Web.Areas.Admin.Models.CreateTrainerViewModel
 
 @{
     ViewBag.Title = "Create Trainer";
@@ -244,3 +244,891 @@
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 }
+
+<style>
+    /* ADMIN-CREATE-TRAINER-POLISH-V1 */
+
+    .hat-create-grid {
+        display: grid;
+        grid-template-columns:
+            minmax(0, 1fr) 340px;
+        gap: 18px;
+        width: 100%;
+        max-width: 1400px;
+        margin: 0 auto;
+        align-items: start;
+    }
+
+    .hat-main-card {
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 26px !important;
+        border: 1px solid #203027 !important;
+        border-radius: 16px !important;
+
+        background:
+            radial-gradient(
+                circle at 100% 0,
+                rgba(34, 197, 94, .06),
+                transparent 34%
+            ),
+            #101712 !important;
+    }
+
+    .hat-main-card h2,
+    .hat-main-card h3,
+    .hat-main-card h4 {
+        color: #F2F6F3 !important;
+        font-weight: 900 !important;
+    }
+
+    .hat-main-card hr {
+        border-color: #1F2C23 !important;
+    }
+
+    .hat-main-card label {
+        display: block;
+        margin-bottom: 7px;
+        color: #E5ECE7 !important;
+        font-size: 10px;
+        font-weight: 800;
+    }
+
+    .hat-main-card input[type="text"],
+    .hat-main-card input[type="email"],
+    .hat-main-card input[type="password"],
+    .hat-main-card input[type="number"],
+    .hat-main-card input[type="tel"],
+    .hat-main-card select,
+    .hat-main-card textarea {
+        width: 100% !important;
+        min-height: 45px;
+        padding: 10px 13px !important;
+
+        border: 1px solid #26372C !important;
+        border-radius: 9px !important;
+        outline: none !important;
+
+        background: #0B120D !important;
+        color: #F3F6F4 !important;
+
+        box-shadow: none !important;
+
+        font-size: 11px !important;
+
+        transition:
+            border-color .15s ease,
+            box-shadow .15s ease,
+            background .15s ease;
+    }
+
+    .hat-main-card textarea {
+        min-height: 110px;
+        resize: vertical;
+    }
+
+    .hat-main-card input:focus,
+    .hat-main-card select:focus,
+    .hat-main-card textarea:focus {
+        border-color: #22C55E !important;
+
+        box-shadow:
+            0 0 0 3px
+            rgba(34, 197, 94, .10) !important;
+
+        background: #0D150F !important;
+    }
+
+    .hat-main-card input::placeholder,
+    .hat-main-card textarea::placeholder {
+        color: #637168 !important;
+        opacity: 1;
+    }
+
+    .hat-main-card .text-danger,
+    .hat-main-card .field-validation-error,
+    .hat-main-card .validation-summary-errors {
+        color: #F87171 !important;
+        font-size: 9px;
+    }
+
+    .hat-main-card .form-group {
+        margin-bottom: 14px !important;
+    }
+
+    .hat-main-card input[type="submit"],
+    .hat-main-card button[type="submit"],
+    .hat-main-card .btn-primary {
+        min-height: 42px;
+        padding: 0 18px !important;
+
+        border: 1px solid #22C55E !important;
+        border-radius: 9px !important;
+
+        background: #22C55E !important;
+        color: #061009 !important;
+
+        font-size: 10px !important;
+        font-weight: 900 !important;
+
+        box-shadow:
+            0 8px 24px
+            rgba(34, 197, 94, .13);
+
+        transition: .15s ease;
+    }
+
+    .hat-main-card input[type="submit"]:hover,
+    .hat-main-card button[type="submit"]:hover,
+    .hat-main-card .btn-primary:hover {
+        transform: translateY(-1px);
+        background: #4ADE80 !important;
+        border-color: #4ADE80 !important;
+    }
+
+    .hat-main-card .btn-default,
+    .hat-main-card a.btn:not(.btn-primary) {
+        min-height: 42px;
+        padding: 10px 16px !important;
+
+        border: 1px solid #2A392F !important;
+        border-radius: 9px !important;
+
+        background: #111913 !important;
+        color: #C8D2CB !important;
+
+        font-size: 10px !important;
+        font-weight: 800 !important;
+    }
+
+
+    /* RIGHT SIDE */
+
+    .hat-side {
+        display: grid;
+        gap: 14px;
+    }
+
+    .hat-side-card {
+        padding: 20px;
+
+        border: 1px solid #203027;
+        border-radius: 14px;
+
+        background:
+            radial-gradient(
+                circle at 100% 0,
+                rgba(34, 197, 94, .08),
+                transparent 42%
+            ),
+            #101712;
+    }
+
+    .hat-side-icon {
+        display: flex;
+
+        width: 42px;
+        height: 42px;
+
+        align-items: center;
+        justify-content: center;
+
+        margin-bottom: 14px;
+
+        border-radius: 11px;
+
+        background:
+            rgba(34, 197, 94, .10);
+
+        color: #4ADE80;
+
+        font-size: 18px;
+    }
+
+    .hat-side-card h3 {
+        margin: 0 0 7px;
+
+        color: #F0F5F1;
+
+        font-size: 13px;
+        font-weight: 900;
+    }
+
+    .hat-side-card > p {
+        margin: 0 0 15px;
+
+        color: #7F8C84;
+
+        font-size: 9px;
+        line-height: 1.65;
+    }
+
+    .hat-checks {
+        display: grid;
+        gap: 10px;
+    }
+
+    .hat-check {
+        display: grid;
+        grid-template-columns: 25px 1fr;
+        gap: 9px;
+        align-items: start;
+
+        padding: 9px 0;
+
+        border-bottom:
+            1px solid #1D2921;
+    }
+
+    .hat-check:last-child {
+        border-bottom: 0;
+    }
+
+    .hat-check-icon {
+        display: flex;
+
+        width: 24px;
+        height: 24px;
+
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 7px;
+
+        background:
+            rgba(34, 197, 94, .10);
+
+        color: #4ADE80;
+
+        font-size: 9px;
+        font-weight: 900;
+    }
+
+    .hat-check strong {
+        display: block;
+
+        margin-bottom: 3px;
+
+        color: #DDE6E0;
+
+        font-size: 9px;
+    }
+
+    .hat-check span {
+        display: block;
+
+        color: #748178;
+
+        font-size: 8px;
+        line-height: 1.5;
+    }
+
+    .hat-status-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+
+        padding: 10px 0;
+
+        border-bottom:
+            1px solid #1D2921;
+
+        color: #7E8B83;
+
+        font-size: 9px;
+    }
+
+    .hat-status-row:last-child {
+        border-bottom: 0;
+    }
+
+    .hat-status-row strong {
+        color: #4ADE80;
+    }
+
+    .hat-quick-links {
+        display: grid;
+        gap: 8px;
+    }
+
+    .hat-quick-link {
+        display: flex;
+
+        min-height: 39px;
+
+        align-items: center;
+        justify-content: space-between;
+
+        padding: 0 12px;
+
+        border:
+            1px solid #28382E;
+
+        border-radius: 8px;
+
+        background: #0D140F;
+
+        color: #CDD7D0 !important;
+
+        font-size: 9px;
+        font-weight: 800;
+
+        text-decoration: none !important;
+
+        transition: .15s ease;
+    }
+
+    .hat-quick-link:hover {
+        border-color: #2F6D45;
+
+        background:
+            rgba(34, 197, 94, .07);
+
+        color: #4ADE80 !important;
+    }
+
+
+    /* CHROME / EDGE AUTOFILL */
+
+    .hat-main-card input:-webkit-autofill,
+    .hat-main-card input:-webkit-autofill:hover,
+    .hat-main-card input:-webkit-autofill:focus,
+    .hat-main-card textarea:-webkit-autofill,
+    .hat-main-card select:-webkit-autofill {
+        -webkit-text-fill-color:
+            #F3F6F4 !important;
+
+        caret-color:
+            #F3F6F4 !important;
+
+        -webkit-box-shadow:
+            0 0 0 1000px
+            #0B120D inset !important;
+
+        box-shadow:
+            0 0 0 1000px
+            #0B120D inset !important;
+
+        border-color:
+            #26372C !important;
+
+        transition:
+            background-color
+            9999s ease-in-out 0s;
+    }
+
+
+    @@media (max-width: 1100px) {
+        .hat-create-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .hat-side {
+            grid-template-columns:
+                repeat(2, 1fr);
+        }
+    }
+
+    @@media (max-width: 700px) {
+        .hat-side {
+            grid-template-columns: 1fr;
+        }
+
+        .hat-main-card {
+            padding: 18px !important;
+        }
+    }
+</style>
+
+
+<script>
+(function () {
+
+    "use strict";
+
+    /*
+       Do not replace the existing MVC form.
+       We simply move the existing card into a
+       new visual grid and add supporting UI.
+    */
+
+    var cards =
+        document.querySelectorAll(
+            ".ht-card"
+        );
+
+    if (!cards || cards.length === 0) {
+        return;
+    }
+
+
+    var mainCard = cards[0];
+
+    if (
+        mainCard.classList.contains(
+            "hat-main-card"
+        )
+    ) {
+        return;
+    }
+
+
+    mainCard.classList.add(
+        "hat-main-card"
+    );
+
+
+    var grid =
+        document.createElement(
+            "div"
+        );
+
+    grid.className =
+        "hat-create-grid";
+
+
+    mainCard.parentNode.insertBefore(
+        grid,
+        mainCard
+    );
+
+    grid.appendChild(
+        mainCard
+    );
+
+
+    var side =
+        document.createElement(
+            "aside"
+        );
+
+    side.className =
+        "hat-side";
+
+
+    side.innerHTML =
+        '<section class="hat-side-card">' +
+
+            '<div class="hat-side-icon">' +
+                '&#10003;' +
+            '</div>' +
+
+            '<h3>Trainer Account Checklist</h3>' +
+
+            '<p>' +
+                'Creating this profile gives the Trainer ' +
+                'access to HealthTrack trainer workflows.' +
+            '</p>' +
+
+            '<div class="hat-checks">' +
+
+                '<div class="hat-check">' +
+                    '<div class="hat-check-icon">&#10003;</div>' +
+                    '<div>' +
+                        '<strong>Approved on creation</strong>' +
+                        '<span>' +
+                            'The account can be used once ' +
+                            'creation succeeds.' +
+                        '</span>' +
+                    '</div>' +
+                '</div>' +
+
+                '<div class="hat-check">' +
+                    '<div class="hat-check-icon">&#10003;</div>' +
+                    '<div>' +
+                        '<strong>Client assignments</strong>' +
+                        '<span>' +
+                            'The Trainer becomes available ' +
+                            'for Admin assignment workflows.' +
+                        '</span>' +
+                    '</div>' +
+                '</div>' +
+
+                '<div class="hat-check">' +
+                    '<div class="hat-check-icon">&#10003;</div>' +
+                    '<div>' +
+                        '<strong>Trainer dashboard access</strong>' +
+                        '<span>' +
+                            'Workout, diet, progress and ' +
+                            'appointment tools become available.' +
+                        '</span>' +
+                    '</div>' +
+                '</div>' +
+
+                '<div class="hat-check">' +
+                    '<div class="hat-check-icon">&#10003;</div>' +
+                    '<div>' +
+                        '<strong>Reporting integration</strong>' +
+                        '<span>' +
+                            'Trainer activity contributes to ' +
+                            'administrative analytics.' +
+                        '</span>' +
+                    '</div>' +
+                '</div>' +
+
+            '</div>' +
+
+        '</section>' +
+
+
+        '<section class="hat-side-card">' +
+
+            '<div class="hat-side-icon">' +
+                '&#128274;' +
+            '</div>' +
+
+            '<h3>Account Security</h3>' +
+
+            '<p>' +
+                'Use a unique password and verify the email ' +
+                'address before creating the account.' +
+            '</p>' +
+
+            '<div class="hat-status-row">' +
+                '<span>Assigned role</span>' +
+                '<strong>Trainer</strong>' +
+            '</div>' +
+
+            '<div class="hat-status-row">' +
+                '<span>Account status</span>' +
+                '<strong>Approved</strong>' +
+            '</div>' +
+
+            '<div class="hat-status-row">' +
+                '<span>Role protection</span>' +
+                '<strong>Enabled</strong>' +
+            '</div>' +
+
+        '</section>' +
+
+
+        '<section class="hat-side-card">' +
+
+            '<div class="hat-side-icon">' +
+                '&#8599;' +
+            '</div>' +
+
+            '<h3>Quick Administration</h3>' +
+
+            '<p>' +
+                'Jump back to related administration tools.' +
+            '</p>' +
+
+            '<div class="hat-quick-links">' +
+
+                '<a class="hat-quick-link" ' +
+                   'href="/Admin/Trainers">' +
+                    '<span>Trainer Management</span>' +
+                    '<span>&#8594;</span>' +
+                '</a>' +
+
+                '<a class="hat-quick-link" ' +
+                   'href="/Admin/Assignments">' +
+                    '<span>Client Assignments</span>' +
+                    '<span>&#8594;</span>' +
+                '</a>' +
+
+                '<a class="hat-quick-link" ' +
+                   'href="/Admin/Reports">' +
+                    '<span>Reports & Analytics</span>' +
+                    '<span>&#8594;</span>' +
+                '</a>' +
+
+            '</div>' +
+
+        '</section>';
+
+
+    grid.appendChild(
+        side
+    );
+
+})();
+</script>
+<style>
+    /* ADMIN-CREATE-TRAINER-SCALE-UP-V2 */
+
+    .hat-create-grid {
+        max-width: 1500px !important;
+
+        grid-template-columns:
+            minmax(0, 1fr) 390px !important;
+
+        gap: 22px !important;
+    }
+
+
+    /* MAIN FORM */
+
+    .hat-main-card {
+        padding: 32px !important;
+        border-radius: 18px !important;
+    }
+
+    .hat-main-card h2,
+    .hat-main-card h3,
+    .hat-main-card h4 {
+        font-size: 19px !important;
+        line-height: 1.3 !important;
+    }
+
+    .hat-main-card > p,
+    .hat-main-card .lead {
+        font-size: 14px !important;
+        line-height: 1.7 !important;
+    }
+
+    .hat-main-card label {
+        margin-bottom: 8px !important;
+
+        font-size: 12px !important;
+        font-weight: 800 !important;
+    }
+
+    .hat-main-card .form-group {
+        margin-bottom: 17px !important;
+    }
+
+    .hat-main-card input[type="text"],
+    .hat-main-card input[type="email"],
+    .hat-main-card input[type="password"],
+    .hat-main-card input[type="number"],
+    .hat-main-card input[type="tel"],
+    .hat-main-card select {
+        min-height: 52px !important;
+
+        padding:
+            12px 15px !important;
+
+        border-radius:
+            10px !important;
+
+        font-size:
+            14px !important;
+    }
+
+    .hat-main-card textarea {
+        min-height:
+            135px !important;
+
+        padding:
+            13px 15px !important;
+
+        font-size:
+            14px !important;
+
+        line-height:
+            1.6 !important;
+    }
+
+    .hat-main-card input::placeholder,
+    .hat-main-card textarea::placeholder {
+        font-size:
+            13px !important;
+    }
+
+    .hat-main-card .text-danger,
+    .hat-main-card .field-validation-error,
+    .hat-main-card .validation-summary-errors {
+        font-size:
+            10px !important;
+    }
+
+
+    /* BUTTONS */
+
+    .hat-main-card input[type="submit"],
+    .hat-main-card button[type="submit"],
+    .hat-main-card .btn-primary {
+        min-height:
+            48px !important;
+
+        padding:
+            0 21px !important;
+
+        border-radius:
+            10px !important;
+
+        font-size:
+            12px !important;
+    }
+
+    .hat-main-card .btn-default,
+    .hat-main-card a.btn:not(.btn-primary) {
+        min-height:
+            48px !important;
+
+        padding:
+            13px 19px !important;
+
+        font-size:
+            12px !important;
+    }
+
+
+    /* RIGHT SIDE */
+
+    .hat-side {
+        gap:
+            17px !important;
+    }
+
+    .hat-side-card {
+        padding:
+            24px !important;
+
+        border-radius:
+            16px !important;
+    }
+
+    .hat-side-icon {
+        width:
+            48px !important;
+
+        height:
+            48px !important;
+
+        margin-bottom:
+            16px !important;
+
+        border-radius:
+            12px !important;
+
+        font-size:
+            21px !important;
+    }
+
+    .hat-side-card h3 {
+        margin-bottom:
+            9px !important;
+
+        font-size:
+            15px !important;
+    }
+
+    .hat-side-card > p {
+        margin-bottom:
+            18px !important;
+
+        font-size:
+            10.5px !important;
+
+        line-height:
+            1.7 !important;
+    }
+
+    .hat-checks {
+        gap:
+            4px !important;
+    }
+
+    .hat-check {
+        grid-template-columns:
+            31px 1fr !important;
+
+        gap:
+            11px !important;
+
+        padding:
+            12px 0 !important;
+    }
+
+    .hat-check-icon {
+        width:
+            29px !important;
+
+        height:
+            29px !important;
+
+        font-size:
+            11px !important;
+    }
+
+    .hat-check strong {
+        margin-bottom:
+            4px !important;
+
+        font-size:
+            10.5px !important;
+    }
+
+    .hat-check span {
+        font-size:
+            9px !important;
+
+        line-height:
+            1.55 !important;
+    }
+
+    .hat-status-row {
+        padding:
+            13px 0 !important;
+
+        font-size:
+            10px !important;
+    }
+
+    .hat-quick-links {
+        gap:
+            10px !important;
+    }
+
+    .hat-quick-link {
+        min-height:
+            45px !important;
+
+        padding:
+            0 14px !important;
+
+        border-radius:
+            9px !important;
+
+        font-size:
+            10px !important;
+    }
+
+
+    /* GIVE FORM MORE VISUAL WIDTH */
+
+    .hat-main-card .form-control {
+        max-width:
+            none !important;
+    }
+
+    .hat-main-card .col-md-10,
+    .hat-main-card .col-sm-10,
+    .hat-main-card .col-md-8,
+    .hat-main-card .col-sm-8 {
+        width:
+            100% !important;
+
+        max-width:
+            none !important;
+    }
+
+
+    @@media (max-width: 1150px) {
+        .hat-create-grid {
+            grid-template-columns:
+                1fr !important;
+        }
+
+        .hat-side {
+            grid-template-columns:
+                repeat(2, 1fr) !important;
+        }
+    }
+
+    @@media (max-width: 760px) {
+        .hat-main-card {
+            padding:
+                22px !important;
+        }
+
+        .hat-side {
+            grid-template-columns:
+                1fr !important;
+        }
+    }
+</style>
