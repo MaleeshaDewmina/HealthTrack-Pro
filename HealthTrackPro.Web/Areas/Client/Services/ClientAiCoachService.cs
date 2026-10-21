@@ -1,4 +1,4 @@
-﻿
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,7 +42,7 @@ namespace HealthTrackPro.Web.Areas.Client.Services
         private static readonly HttpClient Client =
             new HttpClient
             {
-                Timeout = TimeSpan.FromSeconds(40)
+                Timeout = TimeSpan.FromSeconds(120)
             };
 
         public bool IsConfigured
@@ -68,6 +68,8 @@ namespace HealthTrackPro.Web.Areas.Client.Services
                     "Live AI is not configured. " +
                     "Please contact the application administrator.");
             }
+
+            apiKey = apiKey.Trim();
 
             if (history == null || history.Count == 0)
             {
@@ -114,6 +116,10 @@ namespace HealthTrackPro.Web.Areas.Client.Services
                 model = model.Trim(),
                 input = messages,
                 store = false,
+                reasoning = new
+                {
+                    effort = "low"
+                },
                 max_output_tokens = 700
             };
 
