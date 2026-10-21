@@ -1,0 +1,118 @@
+@model HealthTrackPro.Web.Areas.Trainer.Models.ClientDetailsViewModel
+
+@{
+    ViewBag.Title = "Client Details";
+}
+
+<div class="ht-card">
+    <h2 class="ht-card-title">@Model.FullName</h2>
+    <p>Primary goal: <strong>@Model.PrimaryGoal</strong></p>
+
+    <div class="row" style="margin-top:16px;">
+        <div class="col-md-3"><strong>Current weight</strong><br />
+            @(Model.CurrentWeightKg.HasValue ? Model.CurrentWeightKg.Value.ToString("0.0") + " kg" : "--")</div>
+        <div class="col-md-3"><strong>Height</strong><br />
+            @(Model.HeightCm.HasValue ? Model.HeightCm.Value.ToString("0") + " cm" : "--")</div>
+        <div class="col-md-3"><strong>BMI</strong><br />
+            @(Model.Bmi.HasValue ? Model.Bmi.Value.ToString("0.0") : "--")</div>
+    </div>
+</div>
+
+<div class="ht-card">
+    <h2 class="ht-card-title">Fitness goals</h2>
+    @if (Model.Goals.Count == 0)
+    {
+        <p class="text-muted">No goals set yet.</p>
+    }
+    else
+    {
+        <table class="table table-hover">
+            <thead><tr><th>Goal</th><th>Type</th><th>Current</th><th>Target</th><th>Progress</th><th>Status</th></tr></thead>
+            <tbody>
+            @foreach (var goal in Model.Goals)
+            {
+                <tr>
+                    <td>@goal.Title</td>
+                    <td>@goal.GoalType</td>
+                    <td>@(goal.CurrentValue.HasValue ? goal.CurrentValue.Value.ToString("0.#") : "--")</td>
+                    <td>@(goal.TargetValue.HasValue ? goal.TargetValue.Value.ToString("0.#") : "--")</td>
+                    <td>@goal.ProgressPercent%</td>
+                    <td>
+                        <span class="ht-status @(goal.IsCompleted ? "ht-status-success" : "ht-status-warning")">
+                            @(goal.IsCompleted ? "Completed" : "In progress")
+                        </span>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+</div>
+
+<div class="ht-card">
+    <h2 class="ht-card-title">Recent measurements</h2>
+    @if (Model.Measurements.Count == 0)
+    {
+        <p class="text-muted">No measurements recorded yet.</p>
+    }
+    else
+    {
+        <table class="table table-hover">
+            <thead><tr><th>Recorded</th><th>Weight</th><th>BMI</th><th>Steps</th></tr></thead>
+            <tbody>
+            @foreach (var m in Model.Measurements)
+            {
+                <tr>
+                    <td>@m.RecordedAt.ToString("MMM d, yyyy")</td>
+                    <td>@(m.WeightKg.HasValue ? m.WeightKg.Value.ToString("0.0") + " kg" : "--")</td>
+                    <td>@(m.Bmi.HasValue ? m.Bmi.Value.ToString("0.0") : "--")</td>
+                    <td>@(m.Steps.HasValue ? m.Steps.Value.ToString("N0") : "--")</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="ht-card">
+            <h2 class="ht-card-title">Workout plans you assigned</h2>
+            @if (Model.WorkoutPlans.Count == 0)
+            {
+                <p class="text-muted">No workout plans assigned yet.</p>
+            }
+            else
+            {
+                <ul>
+                @foreach (var p in Model.WorkoutPlans)
+                {
+                    <li><strong>@p.Name</strong> - @p.Detail @(p.IsActive ? "(active)" : "")</li>
+                }
+                </ul>
+            }
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="ht-card">
+            <h2 class="ht-card-title">Diet plans you assigned</h2>
+            @if (Model.DietPlans.Count == 0)
+            {
+                <p class="text-muted">No diet plans assigned yet.</p>
+            }
+            else
+            {
+                <ul>
+                @foreach (var p in Model.DietPlans)
+                {
+                    <li><strong>@p.Name</strong> - @p.Detail @(p.IsActive ? "(active)" : "")</li>
+                }
+                </ul>
+            }
+        </div>
+    </div>
+</div>
+
+<p>
+    <a href="@Url.Action("Index", "Clients", new { area = "Trainer" })">&larr; Back to Assigned Clients</a>
+</p>

@@ -1,0 +1,55 @@
+@model HealthTrackPro.Web.Areas.Trainer.Models.NotificationIndexViewModel
+
+@{
+    ViewBag.Title = "Notifications";
+}
+
+<div class="ht-card">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <h2 class="ht-card-title" style="margin:0;">Notifications</h2>
+        @if (Model.UnreadCount > 0)
+        {
+            <form method="post" action="@Url.Action("MarkAllRead", "Notifications", new { area = "Trainer" })">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-default">Mark all as read (@Model.UnreadCount unread)</button>
+            </form>
+        }
+    </div>
+
+    @if (TempData["SuccessMessage"] != null) { <div class="alert alert-success">@TempData["SuccessMessage"]</div> }
+@if (TempData["ErrorMessage"] != null) { <div class="alert alert-danger">@TempData["ErrorMessage"]</div> }
+
+    @if (Model.Items.Count == 0)
+    {
+        <p class="text-muted" style="margin-top:16px;">You have no notifications.</p>
+    }
+    else
+    {
+        <ul class="list-unstyled" style="margin-top:16px;">
+        @foreach (var item in Model.Items)
+        {
+            <li style="padding:12px 0;border-bottom:1px solid #eee;">
+                <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+                    <div>
+                        <strong>@item.Title</strong>
+                        @if (!item.IsRead)
+                        {
+                            <span class="ht-status ht-status-warning" style="margin-left:6px;">New</span>
+                        }
+                        <div>@item.Message</div>
+                        <small class="text-muted">@item.CreatedAt</small>
+                    </div>
+                    @if (!item.IsRead)
+                    {
+                        <form method="post" action="@Url.Action("MarkRead", "Notifications", new { area = "Trainer" })">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@item.NotificationId" />
+                            <button type="submit" class="btn btn-default btn-sm">Mark read</button>
+                        </form>
+                    }
+                </div>
+            </li>
+        }
+        </ul>
+    }
+</div>

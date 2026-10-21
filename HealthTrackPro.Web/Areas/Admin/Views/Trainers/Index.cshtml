@@ -1,0 +1,115 @@
+﻿@model IEnumerable<HealthTrackPro.Web.Areas.Admin.Models.TrainerListItemViewModel>
+
+@{
+    ViewBag.Title = "Trainer Management";
+}
+
+<div class="ht-card">
+
+    <div style="
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        margin-bottom:20px;">
+
+        <div>
+            <h2 class="ht-card-title"
+                style="margin-bottom:5px;">
+                Trainers
+            </h2>
+
+            <p style="margin:0;">
+                Manage HealthTrack trainer accounts.
+            </p>
+        </div>
+
+        @Html.ActionLink(
+            "Create Trainer",
+            "Create",
+            "Trainers",
+            new { area = "Admin" },
+            new { @class = "btn btn-primary" }
+        )
+
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div
+            class="alert alert-success"
+            style="
+                background:rgba(34,197,94,.12);
+                color:#4ADE80;
+                border-color:#1F5B32;">
+
+            @TempData["SuccessMessage"]
+
+        </div>
+    }
+
+    <div class="table-responsive">
+
+        <table class="table table-hover">
+
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Specialization</th>
+                    <th>Experience</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+            @if (!Model.Any())
+            {
+                <tr>
+                    <td colspan="5">
+                        No trainer accounts have been created yet.
+                    </td>
+                </tr>
+            }
+            else
+            {
+                foreach (var trainer in Model)
+                {
+                    <tr>
+                        <td>@trainer.FullName</td>
+
+                        <td>@trainer.Email</td>
+
+                        <td>@trainer.Specialization</td>
+
+                        <td>
+                            @trainer.YearsOfExperience years
+                        </td>
+
+                        <td>
+                            @if (trainer.IsApproved)
+                            {
+                                <span
+                                    class="ht-status ht-status-success">
+                                    Approved
+                                </span>
+                            }
+                            else
+                            {
+                                <span
+                                    class="ht-status ht-status-warning">
+                                    Pending
+                                </span>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>

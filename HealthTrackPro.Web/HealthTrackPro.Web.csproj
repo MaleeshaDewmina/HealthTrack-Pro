@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" />
@@ -168,6 +168,15 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="Areas\Client\Controllers\GoalsController.cs" />
+    <Compile Include="Areas\Client\Controllers\AiChatController.cs" />
+    <Compile Include="Areas\Client\Controllers\ProfileController.cs" />
+    <Compile Include="Areas\Client\Controllers\WorkoutController.cs" />
+    <Compile Include="Areas\Client\Models\ClientDashboardViewModel.cs" />
+    <Compile Include="Areas\Client\Models\ClientAiChatViewModel.cs" />
+    <Compile Include="Areas\Client\Models\ClientGoalsViewModel.cs" />
+    <Compile Include="Areas\Client\Models\ClientProfileViewModel.cs" />
+    <Compile Include="Areas\Client\Models\ClientWorkoutViewModel.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -212,7 +221,51 @@
     <Compile Include="Models\Administration\AuditLog.cs" />
     <Compile Include="Areas\Client\Controllers\DashboardController.cs" />
     <Compile Include="Areas\Trainer\Controllers\DashboardController.cs" />
+    <Compile Include="Areas\Trainer\Controllers\ClientsController.cs" />
+    <Compile Include="Areas\Trainer\Controllers\WorkoutPlansController.cs" />
+    <Compile Include="Areas\Trainer\Models\TrainerWorkoutViewModels.cs" />
+    <Compile Include="Areas\Trainer\Controllers\DietPlansController.cs" />
+    <Compile Include="Areas\Trainer\Models\TrainerDietViewModels.cs" />
+    <Compile Include="Areas\Trainer\Controllers\AppointmentsController.cs" />
+    <Compile Include="Areas\Trainer\Controllers\NotificationsController.cs" />
+    <Compile Include="Areas\Trainer\Models\TrainerAppointmentNotificationViewModels.cs" />
+    <Compile Include="Areas\Trainer\Models\TrainerMealViewModels.cs" />
+    <Compile Include="Areas\Trainer\Controllers\ProgressController.cs" />
+    <Compile Include="Areas\Trainer\Models\TrainerProgressViewModels.cs" />
+    <Compile Include="Areas\Trainer\Controllers\AvailabilityController.cs" />
+    <Compile Include="Areas\Trainer\Controllers\FeedbackController.cs" />
+    <Compile Include="Areas\Trainer\Models\TrainerAvailabilityFeedbackViewModels.cs" />
+    <Compile Include="Areas\Trainer\Models\TrainerClientViewModels.cs" />
     <Compile Include="Areas\Admin\Controllers\DashboardController.cs" />
+    <Compile Include="Areas\Admin\Models\TrainerViewModels.cs" />
+    <Compile Include="Areas\Admin\Controllers\TrainersController.cs" />
+    <Compile Include="Services\Interfaces\IClientService.cs" />
+    <Compile Include="Services\Interfaces\ITrainerService.cs" />
+    <Compile Include="Services\Implementations\ClientService.cs" />
+    <Compile Include="Services\Implementations\TrainerService.cs" />
+    <Compile Include="Services\Interfaces\IAppointmentService.cs" />
+    <Compile Include="Services\Interfaces\INotificationService.cs" />
+    <Compile Include="Services\Interfaces\IAuditService.cs" />
+    <Compile Include="Services\Implementations\AppointmentService.cs" />
+    <Compile Include="Services\Implementations\NotificationService.cs" />
+    <Compile Include="Services\Implementations\AuditService.cs" />
+    <Compile Include="Services\Interfaces\IWorkoutService.cs" />
+    <Compile Include="Services\Interfaces\IDietService.cs" />
+    <Compile Include="Services\Interfaces\IProgressService.cs" />
+    <Compile Include="Services\Implementations\WorkoutService.cs" />
+    <Compile Include="Services\Implementations\DietService.cs" />
+    <Compile Include="Services\Implementations\ProgressService.cs" />
+    <Compile Include="Areas\Admin\Models\AdminUserViewModels.cs" />
+    <Compile Include="Areas\Admin\Controllers\UsersController.cs" />
+    <Compile Include="Areas\Admin\Models\AssignmentViewModels.cs" />
+    <Compile Include="Areas\Admin\Controllers\AssignmentsController.cs" />
+    <Compile Include="Areas\Admin\Models\AppointmentViewModels.cs" />
+    <Compile Include="Areas\Admin\Controllers\AppointmentsController.cs" />
+    <Compile Include="Areas\Admin\Models\AuditLogViewModels.cs" />
+    <Compile Include="Areas\Admin\Controllers\AuditLogsController.cs" />
+    <Compile Include="Areas\Admin\Models\AdminReportsViewModel.cs" />
+    <Compile Include="Areas\Admin\Controllers\ReportsController.cs" />
+    <Compile Include="Areas\Admin\Models\AdminDashboardViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-grid.css" />
@@ -240,6 +293,10 @@
     <Content Include="Scripts\bootstrap.esm.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Areas\Client\Views\Profile\Index.cshtml" />
+    <Content Include="Areas\Client\Views\Goals\Index.cshtml" />
+    <Content Include="Areas\Client\Views\AiChat\Index.cshtml" />
+    <Content Include="Areas\Client\Views\Workout\Index.cshtml" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />
@@ -287,6 +344,19 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Areas\Client\Views\Dashboard\Index.cshtml" />
     <Content Include="Areas\Trainer\Views\Dashboard\Index.cshtml" />
+    <Content Include="Areas\Trainer\Views\Clients\Index.cshtml" />
+    <Content Include="Areas\Trainer\Views\Clients\Details.cshtml" />
+    <Content Include="Areas\Trainer\Views\WorkoutPlans\Index.cshtml" />
+    <Content Include="Areas\Trainer\Views\WorkoutPlans\Create.cshtml" />
+    <Content Include="Areas\Trainer\Views\DietPlans\Index.cshtml" />
+    <Content Include="Areas\Trainer\Views\DietPlans\Create.cshtml" />
+    <Content Include="Areas\Trainer\Views\Appointments\Index.cshtml" />
+    <Content Include="Areas\Trainer\Views\Notifications\Index.cshtml" />
+    <Content Include="Areas\Trainer\Views\DietPlans\Details.cshtml" />
+    <Content Include="Areas\Trainer\Views\Progress\Index.cshtml" />
+    <Content Include="Areas\Trainer\Views\Availability\Index.cshtml" />
+    <Content Include="Areas\Trainer\Views\Feedback\Index.cshtml" />
+    <Content Include="Areas\Trainer\Views\Feedback\Create.cshtml" />
     <Content Include="Areas\Admin\Views\Dashboard\Index.cshtml" />
     <Content Include="Areas\Client\Views\web.config" />
     <Content Include="Areas\Client\Views\_ViewStart.cshtml" />
@@ -295,6 +365,14 @@
     <Content Include="Areas\Admin\Views\web.config" />
     <Content Include="Areas\Admin\Views\_ViewStart.cshtml" />
     <Content Include="Content\healthtrack-theme.css" />
+    <Content Include="Areas\Admin\Views\Trainers\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Trainers\Create.cshtml" />
+    <Content Include="Areas\Admin\Views\Users\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Assignments\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Appointments\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Appointments\Details.cshtml" />
+    <Content Include="Areas\Admin\Views\AuditLogs\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Reports\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,0 +1,253 @@
+﻿@model HealthTrackPro.Web.Areas.Admin.Models.AdminAssignmentsIndexViewModel
+
+@{
+    ViewBag.Title = "Trainer Assignments";
+}
+
+<div class="ht-card">
+
+    <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:flex-start;
+        gap:20px;
+        margin-bottom:24px;">
+
+        <div>
+            <h2 class="ht-card-title">
+                Trainer & Client Assignments
+            </h2>
+
+            <p>
+                Assign, reassign or remove Trainers
+                from registered Clients.
+            </p>
+        </div>
+
+        <div>
+            <strong>
+                @Model.Clients.Count
+            </strong>
+            clients
+        </div>
+
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <div class="table-responsive">
+
+        <table class="table table-hover">
+
+            <thead>
+                <tr>
+                    <th>Client</th>
+                    <th>Current Trainer</th>
+                    <th>Assignment Status</th>
+                    <th style="min-width:330px;">
+                        Manage Assignment
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+            @if (!Model.Clients.Any())
+            {
+                <tr>
+                    <td colspan="4">
+                        No Client accounts found.
+                    </td>
+                </tr>
+            }
+            else
+            {
+                foreach (var client
+                    in Model.Clients)
+                {
+                    <tr>
+
+                        <td>
+                            <strong>
+                                @client.ClientName
+                            </strong>
+                        </td>
+
+                        <td>
+                            @if (client.HasTrainer)
+                            {
+                                @client.CurrentTrainerName
+                            }
+                            else
+                            {
+                                <span>
+                                    Not assigned
+                                </span>
+                            }
+                        </td>
+
+                        <td>
+                            @if (client.HasTrainer)
+                            {
+                                <span class="
+                                    ht-status
+                                    ht-status-success">
+                                    Assigned
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="
+                                    ht-status
+                                    ht-status-warning">
+                                    Unassigned
+                                </span>
+                            }
+                        </td>
+
+                        <td>
+
+                            <div style="
+                                display:flex;
+                                gap:8px;
+                                flex-wrap:wrap;
+                                align-items:center;">
+
+                                @using (Html.BeginForm(
+                                    "Assign",
+                                    "Assignments",
+                                    new
+                                    {
+                                        area = "Admin"
+                                    },
+                                    FormMethod.Post,
+                                    new
+                                    {
+                                        style =
+                                            "display:flex;" +
+                                            "gap:8px;" +
+                                            "align-items:center;" +
+                                            "margin:0;"
+                                    }))
+                                {
+                                    @Html.AntiForgeryToken()
+
+                                    <input
+                                        type="hidden"
+                                        name="clientUserId"
+                                        value="@client.ClientUserId" />
+
+                                    <select
+                                        name="trainerUserId"
+                                        class="form-control"
+                                        required
+                                        style="min-width:180px;">
+
+                                        <option value="">
+                                            Select Trainer
+                                        </option>
+
+                                        @foreach (
+                                            var trainer
+                                            in Model.Trainers)
+                                        {
+                                            if (
+                                                trainer.UserId ==
+                                                client.CurrentTrainerUserId)
+                                            {
+                                                <option
+                                                    value="@trainer.UserId"
+                                                    selected="selected">
+                                                    @trainer.FullName
+                                                </option>
+                                            }
+                                            else
+                                            {
+                                                <option
+                                                    value="@trainer.UserId">
+                                                    @trainer.FullName
+                                                </option>
+                                            }
+                                        }
+
+                                    </select>
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-primary btn-sm">
+
+                                        @(client.HasTrainer
+                                            ? "Reassign"
+                                            : "Assign")
+
+                                    </button>
+                                }
+
+                                @if (client.HasTrainer)
+                                {
+                                    using (Html.BeginForm(
+                                        "Unassign",
+                                        "Assignments",
+                                        new
+                                        {
+                                            area = "Admin"
+                                        },
+                                        FormMethod.Post,
+                                        new
+                                        {
+                                            style = "margin:0;"
+                                        }))
+                                    {
+                                        @Html.AntiForgeryToken()
+
+                                        <input
+                                            type="hidden"
+                                            name="clientUserId"
+                                            value="@client.ClientUserId" />
+
+                                        <input
+                                            type="hidden"
+                                            name="trainerUserId"
+                                            value="@client.CurrentTrainerUserId" />
+
+                                        <button
+                                            type="submit"
+                                            class="
+                                                btn
+                                                btn-danger
+                                                btn-sm"
+                                            onclick="
+                                                return confirm(
+                                                'Remove this Trainer assignment?');">
+                                            Unassign
+                                        </button>
+                                    }
+                                }
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+                }
+            }
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>

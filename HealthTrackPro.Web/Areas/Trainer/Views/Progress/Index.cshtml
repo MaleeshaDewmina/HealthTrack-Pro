@@ -1,0 +1,46 @@
+@model HealthTrackPro.Web.Areas.Trainer.Models.ProgressReportViewModel
+
+@{
+    ViewBag.Title = "Progress Report";
+}
+
+<div class="ht-card">
+    <h2 class="ht-card-title">Progress report</h2>
+    <p class="text-muted">Each row uses the client's latest recorded data. Generated @Model.GeneratedAt.ToString("MMM d, yyyy h:mm tt").</p>
+
+    @if (Model.Clients.Count == 0)
+    {
+        <p class="text-muted" style="margin-top:16px;">No assigned clients yet, so there is no progress to report.</p>
+    }
+    else
+    {
+        <div class="table-responsive" style="margin-top:16px;">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Client</th><th>Goal</th><th>Current weight</th><th>Last recorded</th>
+                        <th>BMI</th><th>Active goals</th><th>Completed goals</th><th>Average progress</th><th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var row in Model.Clients)
+                {
+                    <tr>
+                        <td>@row.ClientName</td>
+                        <td>@row.Goal</td>
+                        <td>@row.CurrentWeight</td>
+                        <td>@row.LastRecorded</td>
+                        <td>@row.Bmi</td>
+                        <td>@row.ActiveGoals</td>
+                        <td>@row.CompletedGoals</td>
+                        <td>@row.AverageGoalProgress</td>
+                        <td>
+                            <a class="btn btn-default btn-sm" href="@Url.Action("Details", "Clients", new { area = "Trainer", id = row.ClientUserId })">View client</a>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

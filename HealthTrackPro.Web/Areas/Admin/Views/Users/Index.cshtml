@@ -1,0 +1,287 @@
+﻿@model HealthTrackPro.Web.Areas.Admin.Models.AdminUsersIndexViewModel
+
+@{
+    ViewBag.Title = "User Management";
+}
+
+<div class="ht-card">
+
+    <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:flex-start;
+        gap:20px;
+        margin-bottom:24px;">
+
+        <div>
+            <h2 class="ht-card-title">
+                User Management
+            </h2>
+
+            <p>
+                Search, review and manage HealthTrack user accounts.
+            </p>
+        </div>
+
+        <div>
+            <strong>
+                @Model.Users.Count
+            </strong>
+            accounts shown
+        </div>
+
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    @using (Html.BeginForm(
+        "Index",
+        "Users",
+        new { area = "Admin" },
+        FormMethod.Get,
+        new
+        {
+            style =
+                "display:flex;" +
+                "gap:12px;" +
+                "flex-wrap:wrap;" +
+                "margin-bottom:24px;"
+        }))
+    {
+        <input
+            type="text"
+            name="search"
+            value="@Model.SearchTerm"
+            class="form-control"
+            placeholder="Search by email..."
+            style="max-width:300px;" />
+
+        <select
+            name="role"
+            class="form-control"
+            style="max-width:180px;">
+
+            <option value="">
+                All roles
+            </option>
+
+            <option
+                value="Client"
+                @(Model.RoleFilter == "Client"
+                    ? "selected"
+                    : "")>
+                Client
+            </option>
+
+            <option
+                value="Trainer"
+                @(Model.RoleFilter == "Trainer"
+                    ? "selected"
+                    : "")>
+                Trainer
+            </option>
+
+            <option
+                value="Administrator"
+                @(Model.RoleFilter == "Administrator"
+                    ? "selected"
+                    : "")>
+                Administrator
+            </option>
+
+        </select>
+
+        <select
+            name="status"
+            class="form-control"
+            style="max-width:180px;">
+
+            <option value="">
+                All statuses
+            </option>
+
+            <option
+                value="Active"
+                @(Model.StatusFilter == "Active"
+                    ? "selected"
+                    : "")>
+                Active
+            </option>
+
+            <option
+                value="Suspended"
+                @(Model.StatusFilter == "Suspended"
+                    ? "selected"
+                    : "")>
+                Suspended
+            </option>
+
+        </select>
+
+        <button
+            type="submit"
+            class="btn btn-primary">
+            Filter
+        </button>
+
+        @Html.ActionLink(
+            "Reset",
+            "Index",
+            "Users",
+            new { area = "Admin" },
+            new { @class = "btn btn-default" })
+    }
+
+    <div class="table-responsive">
+
+        <table class="table table-hover">
+
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th style="width:160px;">
+                        Action
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+            @if (!Model.Users.Any())
+            {
+                <tr>
+                    <td colspan="5">
+                        No matching users found.
+                    </td>
+                </tr>
+            }
+            else
+            {
+                foreach (var user
+                    in Model.Users)
+                {
+                    <tr>
+
+                        <td>
+                            @user.FullName
+                        </td>
+
+                        <td>
+                            @user.Email
+                        </td>
+
+                        <td>
+                            @user.Role
+                        </td>
+
+                        <td>
+                            @if (user.IsSuspended)
+                            {
+                                <span class="
+                                    ht-status
+                                    ht-status-warning">
+                                    Suspended
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="
+                                    ht-status
+                                    ht-status-success">
+                                    Active
+                                </span>
+                            }
+                        </td>
+
+                        <td>
+
+                            @if (user.IsSuspended)
+                            {
+                                using (Html.BeginForm(
+                                    "Reactivate",
+                                    "Users",
+                                    new
+                                    {
+                                        area = "Admin"
+                                    },
+                                    FormMethod.Post,
+                                    null))
+                                {
+                                    @Html.AntiForgeryToken()
+
+                                    <input
+                                        type="hidden"
+                                        name="id"
+                                        value="@user.UserId" />
+
+                                    <button
+                                        type="submit"
+                                        class="
+                                            btn
+                                            btn-success
+                                            btn-sm">
+                                        Reactivate
+                                    </button>
+                                }
+                            }
+                            else
+                            {
+                                using (Html.BeginForm(
+                                    "Suspend",
+                                    "Users",
+                                    new
+                                    {
+                                        area = "Admin"
+                                    },
+                                    FormMethod.Post,
+                                    null))
+                                {
+                                    @Html.AntiForgeryToken()
+
+                                    <input
+                                        type="hidden"
+                                        name="id"
+                                        value="@user.UserId" />
+
+                                    <button
+                                        type="submit"
+                                        class="
+                                            btn
+                                            btn-danger
+                                            btn-sm"
+                                        onclick="
+                                            return confirm(
+                                            'Suspend this user?');">
+                                        Suspend
+                                    </button>
+                                }
+                            }
+
+                        </td>
+
+                    </tr>
+                }
+            }
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>

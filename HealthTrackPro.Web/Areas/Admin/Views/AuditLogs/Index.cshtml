@@ -1,0 +1,200 @@
+﻿@model HealthTrackPro.Web.Areas.Admin.Models.AdminAuditLogsIndexViewModel
+
+@{
+    ViewBag.Title = "Audit Logs";
+}
+
+<div class="ht-card">
+
+    <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:flex-start;
+        gap:20px;
+        margin-bottom:24px;">
+
+        <div>
+            <h2 class="ht-card-title">
+                Audit Logs
+            </h2>
+
+            <p>
+                Review important administrative and system actions.
+            </p>
+        </div>
+
+        <div>
+            <strong>
+                @Model.Logs.Count
+            </strong>
+
+            @(Model.Logs.Count == 1
+                ? "record"
+                : "records")
+        </div>
+
+    </div>
+
+    @using (Html.BeginForm(
+        "Index",
+        "AuditLogs",
+        new { area = "Admin" },
+        FormMethod.Get,
+        new
+        {
+            style =
+                "display:flex;" +
+                "gap:12px;" +
+                "flex-wrap:wrap;" +
+                "margin-bottom:24px;"
+        }))
+    {
+        <input
+            type="text"
+            name="search"
+            value="@Model.SearchTerm"
+            class="form-control"
+            placeholder="Search user, action or description..."
+            style="max-width:330px;" />
+
+        <select
+            name="actionFilter"
+            class="form-control"
+            style="max-width:220px;">
+
+            <option value="">
+                All actions
+            </option>
+
+            @foreach (var item in Model.Actions)
+            {
+                if (
+                    string.Equals(
+                        item,
+                        Model.ActionFilter,
+                        StringComparison.OrdinalIgnoreCase))
+                {
+                    <option
+                        value="@item"
+                        selected="selected">
+                        @item
+                    </option>
+                }
+                else
+                {
+                    <option value="@item">
+                        @item
+                    </option>
+                }
+            }
+
+        </select>
+
+        <button
+            type="submit"
+            class="btn btn-primary">
+            Filter
+        </button>
+
+        @Html.ActionLink(
+            "Reset",
+            "Index",
+            "AuditLogs",
+            new { area = "Admin" },
+            new { @class = "btn btn-default" })
+    }
+
+    <div class="table-responsive">
+
+        <table class="table table-hover">
+
+            <thead>
+                <tr>
+                    <th>Date & Time</th>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Entity</th>
+                    <th>Description</th>
+                    <th>IP Address</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+            @if (!Model.Logs.Any())
+            {
+                <tr>
+                    <td colspan="6">
+                        No audit records found.
+                    </td>
+                </tr>
+            }
+            else
+            {
+                foreach (var log in Model.Logs)
+                {
+                    <tr>
+
+                        <td style="white-space:nowrap;">
+                            @(log.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, hh:mm tt"))
+                        </td>
+
+                        <td>
+                            @log.UserEmail
+                        </td>
+
+                        <td>
+                            <span class="
+                                ht-status
+                                ht-status-success">
+                                @log.Action
+                            </span>
+                        </td>
+
+                        <td>
+                            <strong>
+                                @(string.IsNullOrWhiteSpace(
+                                    log.EntityName)
+                                    ? "-"
+                                    : log.EntityName)
+                            </strong>
+
+                            @if (
+                                !string.IsNullOrWhiteSpace(
+                                    log.EntityId))
+                            {
+                                <div style="
+                                    opacity:.65;
+                                    font-size:12px;">
+                                    @log.EntityId
+                                </div>
+                            }
+                        </td>
+
+                        <td>
+                            @(string.IsNullOrWhiteSpace(
+                                log.Description)
+                                ? "-"
+                                : log.Description)
+                        </td>
+
+                        <td>
+                            @(string.IsNullOrWhiteSpace(
+                                log.IpAddress)
+                                ? "-"
+                                : log.IpAddress)
+                        </td>
+
+                    </tr>
+                }
+            }
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+

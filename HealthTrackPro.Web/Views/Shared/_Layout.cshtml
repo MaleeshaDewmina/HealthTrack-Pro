@@ -1,4 +1,4 @@
-﻿@{
+@{
     var pageTitle =
         string.IsNullOrWhiteSpace(ViewBag.Title as string)
         ? "HealthTrack Pro"
@@ -155,44 +155,54 @@
                     </li>
 
                     <li class="ht-nav-item">
-                        <a href="#" class="ht-nav-link ht-nav-pending">
+                        <a
+                            href="@Url.Action(
+                                "Index",
+                                "Clients",
+                                new { area = "Trainer" })"
+                            class="ht-nav-link @(controller == "Clients" ? "active" : "")">
                             Assigned Clients
                         </a>
                     </li>
 
                     <li class="ht-nav-item">
-                        <a href="#" class="ht-nav-link ht-nav-pending">
+                        <a href="@Url.Action("Index", "WorkoutPlans", new { area = "Trainer" })" class="ht-nav-link @(controller == "WorkoutPlans" ? "active" : "")">
                             Workout Plans
                         </a>
                     </li>
 
                     <li class="ht-nav-item">
-                        <a href="#" class="ht-nav-link ht-nav-pending">
+                        <a href="@Url.Action("Index", "DietPlans", new { area = "Trainer" })" class="ht-nav-link @(controller == "DietPlans" ? "active" : "")">
                             Diet Plans
                         </a>
                     </li>
 
                     <li class="ht-nav-item">
-                        <a href="#" class="ht-nav-link ht-nav-pending">
+                        <a href="@Url.Action("Index", "Appointments", new { area = "Trainer" })" class="ht-nav-link @(controller == "Appointments" ? "active" : "")">
                             Appointments
                         </a>
                     </li>
 
                     <li class="ht-nav-item">
-                        <a href="#" class="ht-nav-link ht-nav-pending">
+                        <a href="@Url.Action("Index", "Availability", new { area = "Trainer" })" class="ht-nav-link @(controller == "Availability" ? "active" : "")">
                             Availability
                         </a>
                     </li>
 
                     <li class="ht-nav-item">
-                        <a href="#" class="ht-nav-link ht-nav-pending">
+                        <a href="@Url.Action("Index", "Feedback", new { area = "Trainer" })" class="ht-nav-link @(controller == "Feedback" ? "active" : "")">
                             Feedback
                         </a>
                     </li>
 
                     <li class="ht-nav-item">
-                        <a href="#" class="ht-nav-link ht-nav-pending">
+                        <a href="@Url.Action("Index", "Notifications", new { area = "Trainer" })" class="ht-nav-link @(controller == "Notifications" ? "active" : "")">
                             Notifications
+                        </a>
+                    </li>
+                    <li class="ht-nav-item">
+                        <a href="@Url.Action("Index", "Progress", new { area = "Trainer" })" class="ht-nav-link @(controller == "Progress" ? "active" : "")">
+                            Progress Report
                         </a>
                     </li>
                 }
@@ -211,40 +221,70 @@
                     </li>
 
                     <li class="ht-nav-item">
-                        <a href="#" class="ht-nav-link ht-nav-pending">
-                            Users
-                        </a>
-                    </li>
+    <a
+        href="@Url.Action(
+            "Index",
+            "Users",
+            new { area = "Admin" })"
+        class="ht-nav-link @(controller == "Users" ? "active" : "")">
+        Users
+    </a>
+</li>
 
                     <li class="ht-nav-item">
-                        <a href="#" class="ht-nav-link ht-nav-pending">
-                            Trainers
-                        </a>
-                    </li>
+    <a
+        href="@Url.Action(
+            "Index",
+            "Trainers",
+            new { area = "Admin" })"
+        class="ht-nav-link @(controller == "Trainers" ? "active" : "")">
+        Trainers
+    </a>
+</li>
 
                     <li class="ht-nav-item">
-                        <a href="#" class="ht-nav-link ht-nav-pending">
-                            Assignments
-                        </a>
-                    </li>
+    <a
+        href="@Url.Action(
+            "Index",
+            "Assignments",
+            new { area = "Admin" })"
+        class="ht-nav-link @(controller == "Assignments" ? "active" : "")">
+        Assignments
+    </a>
+</li>
 
                     <li class="ht-nav-item">
-                        <a href="#" class="ht-nav-link ht-nav-pending">
-                            Appointments
-                        </a>
-                    </li>
+    <a
+        href="@Url.Action(
+            "Index",
+            "Appointments",
+            new { area = "Admin" })"
+        class="ht-nav-link @(controller == "Appointments" ? "active" : "")">
+        Appointments
+    </a>
+</li>
 
                     <li class="ht-nav-item">
-                        <a href="#" class="ht-nav-link ht-nav-pending">
-                            Reports
-                        </a>
-                    </li>
+    <a
+        href="@Url.Action(
+            "Index",
+            "Reports",
+            new { area = "Admin" })"
+        class="ht-nav-link @(controller == "Reports" ? "active" : "")">
+        Reports
+    </a>
+</li>
 
                     <li class="ht-nav-item">
-                        <a href="#" class="ht-nav-link ht-nav-pending">
-                            Audit Logs
-                        </a>
-                    </li>
+    <a
+        href="@Url.Action(
+            "Index",
+            "AuditLogs",
+            new { area = "Admin" })"
+        class="ht-nav-link @(controller == "AuditLogs" ? "active" : "")">
+        Audit Logs
+    </a>
+</li>
 
                     <li class="ht-nav-item">
                         <a href="#" class="ht-nav-link ht-nav-pending">
@@ -331,3 +371,9 @@ else
 
 </body>
 </html>
+
+
+
+
+
+
