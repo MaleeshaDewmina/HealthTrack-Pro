@@ -4,67 +4,1235 @@
     ViewBag.Title = "Create Workout Plan";
 }
 
-<div class="ht-card">
-    <h2 class="ht-card-title">Create workout plan</h2>
-    <p>You can only create plans for clients assigned to you.</p>
+<style>
+    .htw-page {
+        max-width: 1450px;
+        margin: 0 auto;
+    }
+
+    .htw-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 24px;
+    }
+
+    .htw-heading {
+        display: flex;
+        gap: 14px;
+        align-items: center;
+    }
+
+    .htw-heading-icon {
+        display: flex;
+        width: 48px;
+        height: 48px;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 48px;
+        border: 1px solid rgba(74,222,128,.14);
+        border-radius: 14px;
+        background:
+            linear-gradient(
+                145deg,
+                rgba(34,197,94,.18),
+                rgba(34,197,94,.06)
+            );
+        color: #4ADE80;
+    }
+
+    .htw-heading-icon svg {
+        width: 24px;
+        height: 24px;
+        fill: currentColor;
+    }
+
+    .htw-header h2 {
+        margin: 0 0 5px;
+        color: #F5F7F5;
+        font-size: 27px;
+        font-weight: 800;
+        letter-spacing: -.4px;
+    }
+
+    .htw-header p {
+        margin: 0;
+        color: #849087;
+        font-size: 13px;
+    }
+
+    .htw-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 42px;
+        padding: 0 15px;
+        border: 1px solid #203026;
+        border-radius: 10px;
+        background: #101612;
+        color: #C8D1CB !important;
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none !important;
+    }
+
+    .htw-back:hover {
+        border-color: #31543B;
+        color: #4ADE80 !important;
+    }
+
+    .htw-grid {
+        display: grid;
+        grid-template-columns:
+            minmax(0, 1fr)
+            minmax(360px, .9fr);
+        gap: 20px;
+        align-items: start;
+    }
+
+    .htw-card {
+        overflow: hidden;
+        border: 1px solid #1F2A22;
+        border-radius: 15px;
+        background: #101612;
+    }
+
+    .htw-card-header {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        padding: 20px 22px;
+        border-bottom: 1px solid #1B251E;
+    }
+
+    .htw-card-icon {
+        display: flex;
+        width: 39px;
+        height: 39px;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 39px;
+        border-radius: 11px;
+        background: rgba(34,197,94,.12);
+        color: #4ADE80;
+    }
+
+    .htw-card-icon svg {
+        width: 19px;
+        height: 19px;
+        fill: currentColor;
+    }
+
+    .htw-card-header h3 {
+        margin: 0 0 3px;
+        color: #F1F5F2;
+        font-size: 16px;
+        font-weight: 800;
+    }
+
+    .htw-card-header p {
+        margin: 0;
+        color: #768279;
+        font-size: 11px;
+    }
+
+    .htw-form-body {
+        padding: 22px;
+    }
+
+    .htw-field {
+        margin-bottom: 20px;
+    }
+
+    .htw-label {
+        display: block;
+        margin-bottom: 7px;
+        color: #DCE4DE;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .htw-required {
+        color: #4ADE80;
+    }
+
+    .htw-help {
+        display: block;
+        margin-top: 6px;
+        color: #67736B;
+        font-size: 10px;
+        line-height: 1.45;
+    }
+
+    .htw-page .form-control {
+        width: 100%;
+        max-width: none;
+        height: 48px;
+        padding: 11px 13px;
+        border: 1px solid #26332A;
+        border-radius: 10px;
+        background: #0C120E;
+        color: #F1F4F2;
+        box-shadow: none;
+    }
+
+    .htw-page .form-control:focus {
+        border-color: #22C55E;
+        background: #0C120E;
+        box-shadow: 0 0 0 3px rgba(34,197,94,.10);
+    }
+
+    .htw-page select.form-control {
+        cursor: pointer;
+    }
+
+    .htw-page textarea.form-control {
+        min-height: 118px;
+        height: auto;
+        resize: vertical;
+        line-height: 1.55;
+    }
+
+    .htw-page input[type="date"] {
+        color-scheme: dark;
+    }
+
+    .htw-page input[type="date"]::-webkit-calendar-picker-indicator {
+        cursor: pointer;
+        opacity: .78;
+        filter: invert(82%) sepia(18%) saturate(787%) hue-rotate(85deg);
+    }
+
+    .htw-date-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+
+    .htw-char-row {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 5px;
+        color: #657168;
+        font-size: 9px;
+        font-weight: 700;
+    }
+
+    .htw-validation {
+        margin-top: 6px;
+        color: #F87171;
+        font-size: 10px;
+    }
+
+    .htw-validation-summary {
+        margin-bottom: 18px;
+        padding: 12px 14px;
+        border: 1px solid rgba(239,68,68,.24);
+        border-radius: 10px;
+        background: rgba(239,68,68,.07);
+    }
+
+    .htw-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 5px;
+    }
+
+    .htw-submit {
+        display: inline-flex;
+        min-height: 46px;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        padding: 0 20px;
+        border: 0;
+        border-radius: 10px;
+        background:
+            linear-gradient(
+                135deg,
+                #22C55E,
+                #16A34A
+            );
+        color: #061009;
+        font-size: 12px;
+        font-weight: 900;
+        box-shadow: 0 9px 25px rgba(34,197,94,.13);
+    }
+
+    .htw-submit:hover,
+    .htw-submit:focus {
+        color: #061009;
+        transform: translateY(-1px);
+    }
+
+    .htw-cancel {
+        display: inline-flex;
+        min-height: 46px;
+        align-items: center;
+        justify-content: center;
+        padding: 0 18px;
+        border: 1px solid #27342B;
+        border-radius: 10px;
+        background: #121A14;
+        color: #BEC8C1 !important;
+        font-size: 12px;
+        font-weight: 800;
+        text-decoration: none !important;
+    }
+
+    .htw-preview-body {
+        padding: 20px;
+    }
+
+    .htw-completion {
+        display: grid;
+        grid-template-columns: 118px minmax(0,1fr);
+        gap: 18px;
+        align-items: center;
+        margin-bottom: 18px;
+        padding: 17px;
+        border: 1px solid #1E2B22;
+        border-radius: 13px;
+        background:
+            radial-gradient(
+                circle at 10% 0,
+                rgba(34,197,94,.10),
+                transparent 52%
+            ),
+            #0D130F;
+    }
+
+    .htw-ring {
+        display: flex;
+        width: 104px;
+        height: 104px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background:
+            conic-gradient(
+                #22C55E 0deg,
+                #22C55E var(--htw-completion-angle),
+                #1A251D var(--htw-completion-angle),
+                #1A251D 360deg
+            );
+    }
+
+    .htw-ring-inner {
+        display: flex;
+        width: 76px;
+        height: 76px;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        border-radius: 50%;
+        background: #0D130F;
+    }
+
+    .htw-ring-value {
+        color: #F2F6F3;
+        font-size: 21px;
+        font-weight: 900;
+    }
+
+    .htw-ring-label {
+        color: #68756C;
+        font-size: 8px;
+        font-weight: 800;
+        letter-spacing: .6px;
+        text-transform: uppercase;
+    }
+
+    .htw-completion-copy h4 {
+        margin: 0 0 5px;
+        font-size: 14px;
+        font-weight: 800;
+    }
+
+    .htw-completion-copy p {
+        margin: 0;
+        color: #77837A;
+        font-size: 10px;
+        line-height: 1.55;
+    }
+
+    .htw-preview-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 18px;
+    }
+
+    .htw-preview-item {
+        min-height: 95px;
+        padding: 14px;
+        border: 1px solid #1E2A21;
+        border-radius: 11px;
+        background: #0D130F;
+    }
+
+    .htw-preview-label {
+        display: block;
+        margin-bottom: 9px;
+        color: #647168;
+        font-size: 8px;
+        font-weight: 900;
+        letter-spacing: .8px;
+        text-transform: uppercase;
+    }
+
+    .htw-preview-value {
+        display: block;
+        overflow: hidden;
+        color: #E8EDE9;
+        font-size: 13px;
+        font-weight: 800;
+        line-height: 1.35;
+        text-overflow: ellipsis;
+    }
+
+    .htw-preview-sub {
+        display: block;
+        margin-top: 4px;
+        color: #748078;
+        font-size: 9px;
+        line-height: 1.4;
+    }
+
+    .htw-preview-wide {
+        grid-column: 1 / -1;
+    }
+
+    .htw-section-label {
+        margin: 3px 0 10px;
+        color: #77847B;
+        font-size: 9px;
+        font-weight: 900;
+        letter-spacing: .9px;
+        text-transform: uppercase;
+    }
+
+    .htw-insights {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 9px;
+    }
+
+    .htw-insight {
+        min-height: 96px;
+        padding: 13px;
+        border: 1px solid #1D2920;
+        border-radius: 10px;
+        background: #0C120E;
+    }
+
+    .htw-insight-icon {
+        display: flex;
+        width: 29px;
+        height: 29px;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 9px;
+        border-radius: 8px;
+        background: rgba(34,197,94,.10);
+        color: #4ADE80;
+        font-size: 13px;
+        font-weight: 900;
+    }
+
+    .htw-insight strong {
+        display: block;
+        margin-bottom: 4px;
+        color: #DEE6E0;
+        font-size: 10px;
+        font-weight: 800;
+    }
+
+    .htw-insight span {
+        display: block;
+        color: #6D7971;
+        font-size: 9px;
+        line-height: 1.45;
+    }
+
+    .htw-no-clients {
+        padding: 42px 24px;
+        text-align: center;
+    }
+
+    .htw-no-clients h3 {
+        margin: 0 0 7px;
+        font-size: 17px;
+    }
+
+    .htw-no-clients p {
+        max-width: 440px;
+        margin: 0 auto 18px;
+        color: #77847B;
+    }
+
+    @@media (max-width: 1050px) {
+        .htw-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 650px) {
+        .htw-header {
+            flex-direction: column;
+        }
+
+        .htw-back {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .htw-date-grid,
+        .htw-preview-grid,
+        .htw-insights {
+            grid-template-columns: 1fr;
+        }
+
+        .htw-preview-wide {
+            grid-column: auto;
+        }
+
+        .htw-completion {
+            grid-template-columns: 1fr;
+            justify-items: center;
+            text-align: center;
+        }
+
+        .htw-actions {
+            flex-direction: column;
+        }
+
+        .htw-submit,
+        .htw-cancel {
+            width: 100%;
+        }
+    }
+</style>
+
+
+<div class="htw-page">
+
+    <div class="htw-header">
+
+        <div class="htw-heading">
+
+            <div class="htw-heading-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M1 9h3V6h2v12H4v-3H1V9Zm5 2h3V7h2v10H9v-4H6v-2Zm7-4h2v4h3V9h2v6h-2v-2h-3v4h-2V7Zm7-1h2v3h1v6h-1v3h-2V6Z"/>
+                </svg>
+            </div>
+
+            <div>
+                <h2>Create Workout Plan</h2>
+                <p>
+                    Build a personalized training plan for one of
+                    your assigned clients.
+                </p>
+            </div>
+
+        </div>
+
+        <a class="htw-back"
+           href="@Url.Action("Index", "WorkoutPlans", new { area = "Trainer" })">
+            &larr; Back to workout plans
+        </a>
+
+    </div>
+
 
     @if (Model.Clients.Count == 0)
     {
-        <p class="text-muted">No assigned Clients found, so there is no one to create a plan for.</p>
+        <div class="htw-card">
+
+            <div class="htw-no-clients">
+
+                <h3>No assigned clients</h3>
+
+                <p>
+                    You need at least one assigned client before
+                    you can create a workout plan.
+                </p>
+
+                <a class="htw-cancel"
+                   href="@Url.Action("Index", "Clients", new { area = "Trainer" })">
+                    View assigned clients
+                </a>
+
+            </div>
+
+        </div>
     }
     else
     {
-        using (Html.BeginForm("Create", "WorkoutPlans", new { area = "Trainer" }, FormMethod.Post, new { @class = "form-horizontal" }))
+        using (Html.BeginForm(
+            "Create",
+            "WorkoutPlans",
+            new { area = "Trainer" },
+            FormMethod.Post,
+            new { id = "htwCreateForm" }))
         {
             @Html.AntiForgeryToken()
-            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-            <div class="form-group">
-                @Html.LabelFor(m => m.ClientUserId, new { @class = "col-md-3 control-label" })
-                <div class="col-md-9">
-                    @Html.DropDownListFor(m => m.ClientUserId, Model.Clients, "Select a client", new { @class = "form-control" })
-                    @Html.ValidationMessageFor(m => m.ClientUserId, "", new { @class = "text-danger" })
-                </div>
-            </div>
+            <div class="htw-grid">
 
-            <div class="form-group">
-                @Html.LabelFor(m => m.Name, new { @class = "col-md-3 control-label" })
-                <div class="col-md-9">
-                    @Html.TextBoxFor(m => m.Name, new { @class = "form-control", placeholder = "e.g. Upper Body Strength" })
-                    @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
-                </div>
-            </div>
+                <section class="htw-card">
 
-            <div class="form-group">
-                @Html.LabelFor(m => m.Description, new { @class = "col-md-3 control-label" })
-                <div class="col-md-9">
-                    @Html.TextAreaFor(m => m.Description, new { @class = "form-control", rows = 3 })
-                    @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
-                </div>
-            </div>
+                    <div class="htw-card-header">
 
-            <div class="form-group">
-                @Html.LabelFor(m => m.StartDate, new { @class = "col-md-3 control-label" })
-                <div class="col-md-9">
-                    @Html.TextBoxFor(m => m.StartDate, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
-                    @Html.ValidationMessageFor(m => m.StartDate, "", new { @class = "text-danger" })
-                </div>
-            </div>
+                        <div class="htw-card-icon">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M6 2h9l5 5v15H4V2h2Zm8 2H6v16h12V8h-4V4Zm-5 7h6v2H9v-2Zm0 4h6v2H9v-2Z"/>
+                            </svg>
+                        </div>
 
-            <div class="form-group">
-                @Html.LabelFor(m => m.EndDate, new { @class = "col-md-3 control-label" })
-                <div class="col-md-9">
-                    @Html.TextBoxFor(m => m.EndDate, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
-                    @Html.ValidationMessageFor(m => m.EndDate, "", new { @class = "text-danger" })
-                </div>
-            </div>
+                        <div>
+                            <h3>Plan details</h3>
+                            <p>
+                                Set the client, plan information and duration.
+                            </p>
+                        </div>
 
-            <div class="form-group">
-                <div class="col-md-offset-3 col-md-9">
-                    <button type="submit" class="btn btn-success">Create plan</button>
-                    <a class="btn btn-default" href="@Url.Action("Index", "WorkoutPlans", new { area = "Trainer" })">Cancel</a>
-                </div>
+                    </div>
+
+
+                    <div class="htw-form-body">
+
+                        @Html.ValidationSummary(
+                            true,
+                            "",
+                            new { @class = "text-danger htw-validation-summary" })
+
+
+                        <div class="htw-field">
+
+                            <label class="htw-label" for="ClientUserId">
+                                Client
+                                <span class="htw-required">*</span>
+                            </label>
+
+                            @Html.DropDownListFor(
+                                m => m.ClientUserId,
+                                Model.Clients,
+                                "Select a client",
+                                new
+                                {
+                                    @class = "form-control",
+                                    id = "ClientUserId"
+                                })
+
+                            <span class="htw-help">
+                                Only clients currently assigned to you can
+                                receive this plan.
+                            </span>
+
+                            @Html.ValidationMessageFor(
+                                m => m.ClientUserId,
+                                "",
+                                new { @class = "text-danger htw-validation" })
+
+                        </div>
+
+
+                        <div class="htw-field">
+
+                            <label class="htw-label" for="Name">
+                                Plan name
+                                <span class="htw-required">*</span>
+                            </label>
+
+                            @Html.TextBoxFor(
+                                m => m.Name,
+                                new
+                                {
+                                    @class = "form-control",
+                                    id = "Name",
+                                    maxlength = "100",
+                                    placeholder = "e.g. Beginner Strength Foundation"
+                                })
+
+                            <div class="htw-char-row">
+                                <span id="htwNameCount">0</span>/100
+                            </div>
+
+                            @Html.ValidationMessageFor(
+                                m => m.Name,
+                                "",
+                                new { @class = "text-danger htw-validation" })
+
+                        </div>
+
+
+                        <div class="htw-field">
+
+                            <label class="htw-label" for="Description">
+                                Description
+                            </label>
+
+                            @Html.TextAreaFor(
+                                m => m.Description,
+                                new
+                                {
+                                    @class = "form-control",
+                                    id = "Description",
+                                    maxlength = "500",
+                                    placeholder =
+                                        "Describe the training focus, goals and what the client should expect..."
+                                })
+
+                            <div class="htw-char-row">
+                                <span id="htwDescriptionCount">0</span>/500
+                            </div>
+
+                            @Html.ValidationMessageFor(
+                                m => m.Description,
+                                "",
+                                new { @class = "text-danger htw-validation" })
+
+                        </div>
+
+
+                        <div class="htw-date-grid">
+
+                            <div class="htw-field">
+
+                                <label class="htw-label" for="StartDate">
+                                    Start date
+                                    <span class="htw-required">*</span>
+                                </label>
+
+                                @Html.TextBoxFor(
+                                    m => m.StartDate,
+                                    "{0:yyyy-MM-dd}",
+                                    new
+                                    {
+                                        @class = "form-control",
+                                        id = "StartDate",
+                                        type = "date"
+                                    })
+
+                                <span class="htw-help">
+                                    The date this plan becomes active.
+                                </span>
+
+                                @Html.ValidationMessageFor(
+                                    m => m.StartDate,
+                                    "",
+                                    new { @class = "text-danger htw-validation" })
+
+                            </div>
+
+
+                            <div class="htw-field">
+
+                                <label class="htw-label" for="EndDate">
+                                    End date
+                                </label>
+
+                                @Html.TextBoxFor(
+                                    m => m.EndDate,
+                                    "{0:yyyy-MM-dd}",
+                                    new
+                                    {
+                                        @class = "form-control",
+                                        id = "EndDate",
+                                        type = "date"
+                                    })
+
+                                <span class="htw-help">
+                                    Leave blank for an ongoing plan.
+                                </span>
+
+                                @Html.ValidationMessageFor(
+                                    m => m.EndDate,
+                                    "",
+                                    new { @class = "text-danger htw-validation" })
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="htw-actions">
+
+                            <button type="submit" class="htw-submit">
+                                ✓ Create workout plan
+                            </button>
+
+                            <a class="htw-cancel"
+                               href="@Url.Action("Index", "WorkoutPlans", new { area = "Trainer" })">
+                                Cancel
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <aside class="htw-card">
+
+                    <div class="htw-card-header">
+
+                        <div class="htw-card-icon">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M4 19h16v2H2V3h2v16Zm3-3 4-5 3 3 5-7 2 1-7 10-3-3-2 3-2-2Z"/>
+                            </svg>
+                        </div>
+
+                        <div>
+                            <h3>Plan preview & insights</h3>
+                            <p>
+                                Preview updates automatically as you
+                                complete the form.
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="htw-preview-body">
+
+                        <div class="htw-completion">
+
+                            <div
+                                id="htwCompletionRing"
+                                class="htw-ring"
+                                style="--htw-completion-angle:0deg;">
+
+                                <div class="htw-ring-inner">
+
+                                    <span
+                                        id="htwCompletionValue"
+                                        class="htw-ring-value">
+                                        0%
+                                    </span>
+
+                                    <span class="htw-ring-label">
+                                        Complete
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                            <div class="htw-completion-copy">
+
+                                <h4>Plan setup progress</h4>
+
+                                <p id="htwCompletionText">
+                                    Complete the required fields to prepare
+                                    this workout plan.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="htw-preview-grid">
+
+                            <div class="htw-preview-item">
+
+                                <span class="htw-preview-label">
+                                    Client
+                                </span>
+
+                                <span
+                                    id="htwPreviewClient"
+                                    class="htw-preview-value">
+                                    Not selected
+                                </span>
+
+                                <span class="htw-preview-sub">
+                                    Assigned client
+                                </span>
+
+                            </div>
+
+
+                            <div class="htw-preview-item">
+
+                                <span class="htw-preview-label">
+                                    Duration
+                                </span>
+
+                                <span
+                                    id="htwPreviewDuration"
+                                    class="htw-preview-value">
+                                    Ongoing
+                                </span>
+
+                                <span
+                                    id="htwPreviewDates"
+                                    class="htw-preview-sub">
+                                    Choose your plan dates
+                                </span>
+
+                            </div>
+
+
+                            <div class="htw-preview-item htw-preview-wide">
+
+                                <span class="htw-preview-label">
+                                    Plan
+                                </span>
+
+                                <span
+                                    id="htwPreviewName"
+                                    class="htw-preview-value">
+                                    Untitled workout plan
+                                </span>
+
+                                <span
+                                    id="htwPreviewDescription"
+                                    class="htw-preview-sub">
+                                    Add a description to summarize the plan.
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="htw-section-label">
+                            What this plan supports
+                        </div>
+
+
+                        <div class="htw-insights">
+
+                            <div class="htw-insight">
+                                <div class="htw-insight-icon">01</div>
+                                <strong>Personalized planning</strong>
+                                <span>
+                                    Created specifically for the selected
+                                    assigned client.
+                                </span>
+                            </div>
+
+                            <div class="htw-insight">
+                                <div class="htw-insight-icon">02</div>
+                                <strong>Goal aligned</strong>
+                                <span>
+                                    A clear plan name and description help
+                                    communicate training intent.
+                                </span>
+                            </div>
+
+                            <div class="htw-insight">
+                                <div class="htw-insight-icon">03</div>
+                                <strong>Flexible duration</strong>
+                                <span>
+                                    Choose a defined end date or leave the
+                                    plan ongoing.
+                                </span>
+                            </div>
+
+                            <div class="htw-insight">
+                                <div class="htw-insight-icon">04</div>
+                                <strong>Trainer controlled</strong>
+                                <span>
+                                    Plans remain managed through your
+                                    Trainer workspace.
+                                </span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </aside>
+
             </div>
         }
     }
+
 </div>
+
+
+@section scripts {
+
+<script>
+(function () {
+
+    "use strict";
+
+    var client =
+        document.getElementById("ClientUserId");
+
+    var name =
+        document.getElementById("Name");
+
+    var description =
+        document.getElementById("Description");
+
+    var start =
+        document.getElementById("StartDate");
+
+    var end =
+        document.getElementById("EndDate");
+
+    if (!client || !name || !start) {
+        return;
+    }
+
+    var previewClient =
+        document.getElementById("htwPreviewClient");
+
+    var previewName =
+        document.getElementById("htwPreviewName");
+
+    var previewDescription =
+        document.getElementById("htwPreviewDescription");
+
+    var previewDuration =
+        document.getElementById("htwPreviewDuration");
+
+    var previewDates =
+        document.getElementById("htwPreviewDates");
+
+    var completionRing =
+        document.getElementById("htwCompletionRing");
+
+    var completionValue =
+        document.getElementById("htwCompletionValue");
+
+    var completionText =
+        document.getElementById("htwCompletionText");
+
+    var nameCount =
+        document.getElementById("htwNameCount");
+
+    var descriptionCount =
+        document.getElementById("htwDescriptionCount");
+
+
+    function formatDate(value) {
+
+        if (!value) {
+            return null;
+        }
+
+        var date =
+            new Date(value + "T00:00:00");
+
+        if (isNaN(date.getTime())) {
+            return null;
+        }
+
+        return date.toLocaleDateString(
+            undefined,
+            {
+                day: "numeric",
+                month: "short",
+                year: "numeric"
+            }
+        );
+    }
+
+
+    function calculateDuration() {
+
+        if (!start.value) {
+
+            previewDuration.textContent =
+                "Ongoing";
+
+            previewDates.textContent =
+                "Choose your plan dates";
+
+            return;
+        }
+
+        var startDate =
+            new Date(start.value + "T00:00:00");
+
+        var formattedStart =
+            formatDate(start.value);
+
+        if (!end.value) {
+
+            previewDuration.textContent =
+                "Ongoing plan";
+
+            previewDates.textContent =
+                "Starts " + formattedStart;
+
+            return;
+        }
+
+        var endDate =
+            new Date(end.value + "T00:00:00");
+
+        var difference =
+            endDate.getTime() -
+            startDate.getTime();
+
+        var days =
+            Math.floor(
+                difference /
+                (1000 * 60 * 60 * 24)
+            ) + 1;
+
+        if (days < 1) {
+
+            previewDuration.textContent =
+                "Invalid dates";
+
+            previewDates.textContent =
+                "End date must follow start date";
+
+            return;
+        }
+
+        var weeks =
+            Math.ceil(days / 7);
+
+        previewDuration.textContent =
+            weeks === 1
+                ? "1 week"
+                : weeks + " weeks";
+
+        previewDates.textContent =
+            formattedStart +
+            " – " +
+            formatDate(end.value);
+    }
+
+
+    function updatePreview() {
+
+        var selectedOption =
+            client.options[
+                client.selectedIndex
+            ];
+
+        previewClient.textContent =
+            client.value &&
+            selectedOption
+                ? selectedOption.text
+                : "Not selected";
+
+        previewName.textContent =
+            name.value.trim() ||
+            "Untitled workout plan";
+
+        previewDescription.textContent =
+            description &&
+            description.value.trim()
+                ? description.value.trim()
+                : "Add a description to summarize the plan.";
+
+        if (nameCount) {
+            nameCount.textContent =
+                name.value.length;
+        }
+
+        if (
+            descriptionCount &&
+            description
+        ) {
+            descriptionCount.textContent =
+                description.value.length;
+        }
+
+        calculateDuration();
+
+
+        var completed = 0;
+        var total = 3;
+
+        if (client.value) {
+            completed++;
+        }
+
+        if (name.value.trim()) {
+            completed++;
+        }
+
+        if (start.value) {
+            completed++;
+        }
+
+
+        var percent =
+            Math.round(
+                completed /
+                total *
+                100
+            );
+
+        var angle =
+            percent /
+            100 *
+            360;
+
+        completionRing.style.setProperty(
+            "--htw-completion-angle",
+            angle + "deg"
+        );
+
+        completionValue.textContent =
+            percent + "%";
+
+        if (percent === 100) {
+
+            completionText.textContent =
+                "Your plan details are complete and ready to submit.";
+
+        } else if (percent >= 60) {
+
+            completionText.textContent =
+                "Almost ready. Review the remaining plan details.";
+
+        } else {
+
+            completionText.textContent =
+                "Complete the plan information to prepare it for your client.";
+        }
+    }
+
+
+    client.addEventListener(
+        "change",
+        updatePreview
+    );
+
+    name.addEventListener(
+        "input",
+        updatePreview
+    );
+
+    if (description) {
+        description.addEventListener(
+            "input",
+            updatePreview
+        );
+    }
+
+    start.addEventListener(
+        "change",
+        updatePreview
+    );
+
+    if (end) {
+        end.addEventListener(
+            "change",
+            updatePreview
+        );
+    }
+
+
+    updatePreview();
+
+})();
+</script>
+
+}
