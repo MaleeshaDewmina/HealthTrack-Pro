@@ -99,21 +99,24 @@
                     </li>
 
                     <li class="ht-nav-item">
-                        <a href="#" class="ht-nav-link ht-nav-pending">
-                            Profile
-                        </a>
+                        <a href="@Url.Action("Index", "Profile", new { area = "Client" })"
+   class="ht-nav-link @(controller == "Profile" ? "active" : "")">
+    Profile
+</a>
                     </li>
 
                     <li class="ht-nav-item">
-                        <a href="#" class="ht-nav-link ht-nav-pending">
-                            Goals
-                        </a>
+                        <a href="@Url.Action("Index", "Goals", new { area = "Client" })"
+   class="ht-nav-link @(controller == "Goals" ? "active" : "")">
+    Goals
+</a>
                     </li>
 
                     <li class="ht-nav-item">
-                        <a href="#" class="ht-nav-link ht-nav-pending">
-                            Workout
-                        </a>
+                        <a href="@Url.Action("Index", "Workout", new { area = "Client" })"
+   class="ht-nav-link @(controller == "Workout" ? "active" : "")">
+    Workout
+</a>
                     </li>
 
                     <li class="ht-nav-item">
