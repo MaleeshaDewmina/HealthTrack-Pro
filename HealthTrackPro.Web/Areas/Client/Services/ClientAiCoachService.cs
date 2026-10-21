@@ -18,10 +18,10 @@ namespace HealthTrackPro.Web.Areas.Client.Services
     public class ClientAiCoachService
     {
         private const string ApiEndpoint =
-            "https://api.x.ai/v1/responses";
+            "https://api.groq.com/openai/v1/responses";
 
         private const string DefaultModel =
-            "grok-4.7";
+            "openai/gpt-oss-120b";
 
         private const string SystemInstructions =
             "You are HealthTrack AI Coach, a friendly fitness, " +
@@ -51,7 +51,7 @@ namespace HealthTrackPro.Web.Areas.Client.Services
             {
                 return !string.IsNullOrWhiteSpace(
                     Environment.GetEnvironmentVariable(
-                        "XAI_API_KEY"));
+                        "GROQ_API_KEY"));
             }
         }
 
@@ -60,7 +60,7 @@ namespace HealthTrackPro.Web.Areas.Client.Services
         {
             string apiKey =
                 Environment.GetEnvironmentVariable(
-                    "XAI_API_KEY");
+                    "GROQ_API_KEY");
 
             if (string.IsNullOrWhiteSpace(apiKey))
             {
@@ -79,7 +79,7 @@ namespace HealthTrackPro.Web.Areas.Client.Services
 
             string model =
                 Environment.GetEnvironmentVariable(
-                    "XAI_MODEL");
+                    "GROQ_MODEL");
 
             if (string.IsNullOrWhiteSpace(model))
             {
