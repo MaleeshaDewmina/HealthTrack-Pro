@@ -69,12 +69,28 @@ namespace HealthTrackPro.Web.Models
 
         public DbSet<TrainerFeedback> TrainerFeedbacks { get; set; }
 
+        public DbSet<AiConversation> AiConversations { get; set; }
+
+        public DbSet<AiMessage> AiMessages { get; set; }
+
         public DbSet<AuditLog> AuditLogs { get; set; }
 
         protected override void OnModelCreating(
             DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<AiConversation>()
+                .HasRequired(c => c.Client)
+                .WithMany()
+                .HasForeignKey(c => c.ClientUserId)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<AiMessage>()
+                .HasRequired(m => m.Conversation)
+                .WithMany(c => c.Messages)
+                .HasForeignKey(m => m.AiConversationId)
+                .WillCascadeOnDelete(true);
 
             // Prevent accidental cascading deletes across
             // HealthTrack's related domain entities.

@@ -163,6 +163,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Migrations\202610211754532_AddClientAiConversationHistory.cs" />
+    <Compile Include="Migrations\202610211754532_AddClientAiConversationHistory.Designer.cs">
+      <DependentUpon>202610211754532_AddClientAiConversationHistory.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Migrations\202610211754532_AddClientAiConversationHistory.resx">
+      <DependentUpon>202610211754532_AddClientAiConversationHistory.cs</DependentUpon>
+    </EmbeddedResource>
+    <Compile Include="Models\Communication\AiConversation.cs" />
+    <Compile Include="Models\Communication\AiMessage.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\IdentityConfig.cs" />
@@ -185,6 +194,7 @@
     <Compile Include="Areas\Client\Models\ClientProfileViewModel.cs" />
     <Compile Include="Areas\Client\Models\ClientProgressViewModel.cs" />
     <Compile Include="Areas\Client\Models\ClientWorkoutViewModel.cs" />
+    <Compile Include="Areas\Client\Services\ClientAiCoachService.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
