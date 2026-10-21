@@ -744,7 +744,7 @@
                 <span class="htai-connection enabled"
                       title="Groq API key configured; live connection available when the service responds">
                     <span class="htai-dot"></span>
-                    AI Configured
+                    Online
                 </span>
             }
             else
@@ -752,7 +752,7 @@
                 <span class="htai-connection disabled"
                       title="AI service is not configured">
                     <span class="htai-dot"></span>
-                    AI Unavailable
+                    Offline
                 </span>
             }
 
@@ -1213,3 +1213,390 @@
 
     })();
 </script>
+
+<style>
+    /* PRO-AI-COACH-POLISH-V1 */
+
+    /*
+       Give the AI area one contained product surface
+       instead of a large empty developer-style canvas.
+    */
+    .htai {
+        max-width: 1180px;
+        margin: 22px auto 28px;
+        min-height: 650px;
+        background: #090D0A;
+        border: 1px solid #1C2A20;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow:
+            0 18px 50px rgba(0, 0, 0, .22);
+    }
+
+
+    /* ============================
+       COMPACT PRODUCT HEADER
+       ============================ */
+
+    .htai-header {
+        min-height: 64px;
+        padding: 12px 18px;
+        background: #0C120E;
+        border: 0;
+        border-bottom: 1px solid #1C2A20;
+        border-radius: 0;
+    }
+
+    .htai-brand {
+        gap: 11px;
+    }
+
+    .htai-brand-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+    }
+
+    .htai-brand-icon .htai-icon {
+        width: 18px;
+        height: 18px;
+    }
+
+    .htai-brand-title {
+        font-size: 14px;
+        font-weight: 800;
+        letter-spacing: -.15px;
+    }
+
+    .htai-brand-subtitle {
+        margin-top: 2px;
+        font-size: 10px;
+    }
+
+    .htai-header-actions {
+        gap: 9px;
+    }
+
+    .htai-connection {
+        padding: 6px 10px;
+        font-size: 10px;
+        border-color: #244B31;
+        background: rgba(34, 197, 94, .07);
+    }
+
+    .htai-new-chat {
+        min-height: 36px;
+        padding: 8px 13px;
+        border-radius: 9px;
+        background: #111913;
+        font-size: 11px;
+    }
+
+
+    /* ============================
+       WORKSPACE
+       ============================ */
+
+    .htai-workspace {
+        background: #080C09;
+    }
+
+    .htai-history-sidebar {
+        width: 215px;
+        min-width: 215px;
+        padding: 17px 11px;
+        background: #0B110D;
+        border-right: 1px solid #19261D;
+    }
+
+    .htai-history-title {
+        margin-bottom: 11px;
+        padding: 0 7px;
+        color: #6F8175;
+        font-size: 10px;
+        letter-spacing: .8px;
+    }
+
+    .htai-history-item {
+        margin-bottom: 6px;
+        padding: 3px;
+        background: transparent;
+        border: 1px solid transparent;
+        border-radius: 9px;
+    }
+
+    .htai-history-item:hover {
+        background: #101812;
+        border-color: #1C2C21;
+    }
+
+    .htai-history-item.active {
+        background: rgba(34, 197, 94, .10);
+        border-color: #245B35;
+    }
+
+    .htai-history-link {
+        padding: 9px 7px;
+        font-size: 11px;
+    }
+
+
+    /* ============================
+       MAIN CHAT
+       ============================ */
+
+    .htai-chat-main {
+        background: #080C09;
+    }
+
+    .htai-chat-area {
+        padding: 22px 28px 16px;
+        background: #080C09;
+    }
+
+
+    /* ============================
+       WELCOME STATE
+       ============================ */
+
+    .htai-welcome {
+        width: 100%;
+        max-width: 760px;
+        min-height: 100%;
+        margin: 0 auto;
+        padding: 50px 28px;
+        background: transparent;
+        border: 0;
+    }
+
+    .htai-welcome-icon {
+        width: 54px;
+        height: 54px;
+        margin-bottom: 20px;
+        border-radius: 16px;
+        background: rgba(34, 197, 94, .10);
+        border: 1px solid #245B35;
+    }
+
+    .htai-welcome h1 {
+        margin-bottom: 9px;
+        font-size: 27px;
+        font-weight: 800;
+        letter-spacing: -.6px;
+    }
+
+    .htai-welcome-description {
+        max-width: 520px;
+        margin-left: auto;
+        margin-right: auto;
+        color: #91A096;
+        font-size: 13px;
+        line-height: 1.65;
+    }
+
+
+    /* ============================
+       SUGGESTIONS
+       ============================ */
+
+    .htai-suggestions {
+        max-width: 650px;
+        margin-top: 27px;
+        gap: 10px;
+    }
+
+    .htai-suggestion {
+        min-height: 54px;
+        padding: 13px 15px;
+        background: #0F1711;
+        border: 1px solid #213126;
+        border-radius: 11px;
+        font-size: 12px;
+        transition:
+            border-color .16s ease,
+            background .16s ease;
+    }
+
+    .htai-suggestion:hover {
+        background: #121E16;
+        border-color: #2D7041;
+        transform: none;
+    }
+
+    .htai-suggestion-icon {
+        width: 20px;
+    }
+
+
+    /* ============================
+       MESSAGES
+       ============================ */
+
+    .htai-thread {
+        max-width: 860px;
+        margin: 0 auto;
+    }
+
+    .htai-message-bubble {
+        max-width: 78%;
+        border-radius: 15px;
+        line-height: 1.65;
+    }
+
+    .htai-message-row.user .htai-message-bubble {
+        background: #17472B;
+        border-color: #246B3F;
+    }
+
+    .htai-message-row.assistant .htai-message-bubble {
+        background: #101812;
+        border-color: #223128;
+    }
+
+    .htai-message-role {
+        font-size: 10px;
+        letter-spacing: .6px;
+    }
+
+    .htai-message-content {
+        font-size: 13px;
+        line-height: 1.7;
+    }
+
+
+    /* ============================
+       COMPOSER
+       ============================ */
+
+    .htai-bottom {
+        padding: 14px 20px 12px;
+        background: #0B100C;
+        border-top: 1px solid #19261D;
+    }
+
+    .htai-form {
+        max-width: 850px;
+        margin: 0 auto;
+    }
+
+    .htai-composer {
+        min-height: 58px;
+        background: #111914;
+        border: 1px solid #29392E;
+        border-radius: 16px;
+        box-shadow:
+            0 7px 20px rgba(0, 0, 0, .14);
+    }
+
+    .htai-composer:focus-within {
+        border-color: #2E8F4A;
+        box-shadow:
+            0 0 0 3px rgba(34, 197, 94, .08);
+    }
+
+    .htai-send {
+        width: 42px;
+        height: 42px;
+        background: #238445;
+        color: #F4FFF7;
+    }
+
+    .htai-send:hover:not(:disabled) {
+        background: #2DAE59;
+    }
+
+    .htai-hint {
+        max-width: 850px;
+        margin: 9px auto 0;
+        color: #66746A;
+        font-size: 9px;
+    }
+
+
+    /* ============================
+       RESPONSIVE
+       ============================ */
+
+    @@media (max-width: 900px) {
+        .htai {
+            margin: 12px;
+            border-radius: 14px;
+        }
+
+        .htai-history-sidebar {
+            width: 185px;
+            min-width: 185px;
+        }
+    }
+
+    @@media (max-width: 520px) {
+        .htai {
+            margin: 6px;
+            min-height: 620px;
+        }
+
+        .htai-history-sidebar {
+            width: 100%;
+            min-width: 0;
+            max-height: 115px;
+        }
+
+        .htai-chat-area {
+            padding: 17px 14px 10px;
+        }
+
+        .htai-welcome {
+            padding: 34px 15px;
+        }
+
+        .htai-welcome h1 {
+            font-size: 23px;
+        }
+
+        .htai-message-bubble {
+            max-width: 92%;
+        }
+    }
+</style>
+<style>
+    /* AI-FINAL-POLISH-V1 */
+
+    .htai {
+        min-height: 600px;
+    }
+
+    .htai-brand-title {
+        font-size: 13px;
+    }
+
+    .htai-chat-area {
+        min-height: 390px;
+    }
+
+    .htai-welcome {
+        padding-top: 38px;
+        padding-bottom: 32px;
+    }
+
+    .htai-bottom {
+        padding-bottom: 16px;
+    }
+
+    .htai-hint {
+        color: #7D8C82;
+        font-size: 10px;
+        line-height: 1.5;
+    }
+
+    .htai-history-sidebar {
+        background: #0A0F0C;
+    }
+
+    .htai-history-link {
+        color: #B9C4BC;
+    }
+
+    .htai-message-content {
+        color: #E6ECE8;
+    }
+</style>
