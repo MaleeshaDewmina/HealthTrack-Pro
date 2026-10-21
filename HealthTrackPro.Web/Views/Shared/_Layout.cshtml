@@ -129,7 +129,8 @@
                     </li>
 
                     <li class="ht-nav-item">
-                        <a href="#" class="ht-nav-link ht-nav-pending">
+                        <a href="@Url.Action("Index", "Appointments", new { area = "Client" })"
+                           class="ht-nav-link @(controller == "Appointments" ? "active" : "")">
                             Appointments
                         </a>
                     </li>
