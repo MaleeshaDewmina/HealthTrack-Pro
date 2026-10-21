@@ -238,6 +238,8 @@
     <Compile Include="Areas\Trainer\Controllers\NotificationsController.cs" />
     <Compile Include="Areas\Trainer\Models\TrainerAppointmentNotificationViewModels.cs" />
     <Compile Include="Areas\Trainer\Models\TrainerMealViewModels.cs" />
+    <Compile Include="Areas\Trainer\Controllers\ProgressController.cs" />
+    <Compile Include="Areas\Trainer\Models\TrainerProgressViewModels.cs" />
     <Compile Include="Areas\Trainer\Models\TrainerClientViewModels.cs" />
     <Compile Include="Areas\Admin\Controllers\DashboardController.cs" />
     <Compile Include="Areas\Admin\Models\TrainerViewModels.cs" />
@@ -361,6 +363,7 @@
     <Content Include="Areas\Trainer\Views\Appointments\Index.cshtml" />
     <Content Include="Areas\Trainer\Views\Notifications\Index.cshtml" />
     <Content Include="Areas\Trainer\Views\DietPlans\Details.cshtml" />
+    <Content Include="Areas\Trainer\Views\Progress\Index.cshtml" />
     <Content Include="Areas\Admin\Views\Dashboard\Index.cshtml" />
     <Content Include="Areas\Client\Views\web.config" />
     <Content Include="Areas\Client\Views\_ViewStart.cshtml" />

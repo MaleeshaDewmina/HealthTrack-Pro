@@ -201,6 +201,11 @@
                             Notifications
                         </a>
                     </li>
+                    <li class="ht-nav-item">
+                        <a href="@Url.Action("Index", "Progress", new { area = "Trainer" })" class="ht-nav-link @(controller == "Progress" ? "active" : "")">
+                            Progress Report
+                        </a>
+                    </li>
                 }
 
                 @if (isAdministrator)
