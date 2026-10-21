@@ -1,9 +1,45 @@
-﻿@model HealthTrackPro.Web.Models.LoginViewModel
+@model HealthTrackPro.Web.Models.LoginViewModel
 
 @{
     ViewBag.Title = "Sign In";
 }
 
+
+<style>
+    /* PASSWORD-EYE-V1 */
+
+    .ht-password-field {
+        position: relative;
+    }
+
+    .ht-password-field .form-control {
+        padding-right: 52px;
+    }
+
+    .ht-password-toggle {
+        position: absolute;
+        top: 50%;
+        right: 8px;
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        border: 0;
+        border-radius: 8px;
+        background: transparent;
+        color: #64748B;
+        font-size: 18px;
+        line-height: 1;
+        transform: translateY(-50%);
+        cursor: pointer;
+    }
+
+    .ht-password-toggle:hover,
+    .ht-password-toggle:focus {
+        background: rgba(34,197,94,.10);
+        color: #22C55E;
+        outline: none;
+    }
+</style>
 <div class="ht-auth-grid">
 
     <section class="ht-auth-intro">
@@ -93,7 +129,8 @@
                     {
                         @class = "form-control",
                         placeholder = "Enter your password",
-                        autocomplete = "current-password"
+                        autocomplete = "current-password",
+                        id = "htLoginPassword"
                     }
                 )
 
@@ -151,4 +188,77 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        (function () {
+            "use strict";
+
+            var input =
+                document.getElementById(
+                    "htLoginPassword");
+
+            if (!input ||
+                document.getElementById(
+                    "htTogglePassword")) {
+                return;
+            }
+
+            var wrapper =
+                document.createElement("div");
+
+            wrapper.className =
+                "ht-password-field";
+
+            input.parentNode.insertBefore(
+                wrapper,
+                input);
+
+            wrapper.appendChild(input);
+
+            var button =
+                document.createElement("button");
+
+            button.id =
+                "htTogglePassword";
+
+            button.className =
+                "ht-password-toggle";
+
+            button.type =
+                "button";
+
+            button.title =
+                "Show password";
+
+            button.setAttribute(
+                "aria-label",
+                "Show password");
+
+            button.innerHTML =
+                "&#128065;";
+
+            wrapper.appendChild(button);
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    var visible =
+                        input.type === "text";
+
+                    input.type =
+                        visible
+                            ? "password"
+                            : "text";
+
+                    button.title =
+                        visible
+                            ? "Show password"
+                            : "Hide password";
+
+                    button.setAttribute(
+                        "aria-label",
+                        button.title);
+                });
+        })();
+    </script>
 }

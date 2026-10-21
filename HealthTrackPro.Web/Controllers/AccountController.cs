@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
@@ -107,6 +107,40 @@ namespace HealthTrackPro.Web.Controllers
                         );
 
                         return View(model);
+                    }
+
+                    // TEMPORARY-PASSWORD-REDIRECT-V1
+                    var passwordClaims =
+                        await UserManager.GetClaimsAsync(
+                            user.Id);
+
+                    bool mustChangePassword =
+                        false;
+
+                    foreach (var claim in passwordClaims)
+                    {
+                        if (
+                            claim.Type ==
+                                "MustChangePassword" &&
+                            claim.Value ==
+                                "true")
+                        {
+                            mustChangePassword =
+                                true;
+
+                            break;
+                        }
+                    }
+
+                    if (mustChangePassword)
+                    {
+                        return RedirectToAction(
+                            "ChangePassword",
+                            "Manage",
+                            new
+                            {
+                                required = true
+                            });
                     }
 
                     return await RedirectToRoleDashboardAsync(user);
@@ -287,30 +321,44 @@ namespace HealthTrackPro.Web.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        public async Task<ActionResult> ForgotPassword(
+            ForgotPasswordViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var user = await UserManager.FindByNameAsync(model.Email);
-                if (user == null || !(await UserManager.IsEmailConfirmedAsync(user.Id)))
-                {
-                    // Don't reveal that the user does not exist or is not confirmed
-                    return View("ForgotPasswordConfirmation");
-                }
-
-                // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
-                // Send an email with this link
-                // string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                // var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);		
-                // await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
-                // return RedirectToAction("ForgotPasswordConfirmation", "Account");
+                return View(model);
             }
 
-            // If we got this far, something failed, redisplay form
-            return View(model);
+            var user =
+                await UserManager.FindByEmailAsync(
+                    model.Email);
+
+            // Always return the same confirmation page so the
+            // application never reveals whether an account exists.
+            if (user != null)
+            {
+                using (
+                    var audit =
+                        new HealthTrackPro.Web.Services
+                            .Implementations.AuditService())
+                {
+                    await audit.LogAsync(
+                        user.Id,
+                        "Password Reset Requested",
+                        "ApplicationUser",
+                        user.Id,
+                        "Password reset requested for " +
+                            user.Email +
+                            " through the Forgot Password page.",
+                        Request.UserHostAddress);
+                }
+            }
+
+            return RedirectToAction(
+                "ForgotPasswordConfirmation",
+                "Account");
         }
 
-        //
         // GET: /Account/ForgotPasswordConfirmation
         [AllowAnonymous]
         public ActionResult ForgotPasswordConfirmation()

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -219,6 +219,120 @@ namespace HealthTrackPro.Web.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        public async Task<ActionResult>
+            IssueTemporaryPassword(
+                string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                TempData["ErrorMessage"] =
+                    "Enter the user's email address.";
+
+                return RedirectToAction("Index");
+            }
+
+            var user =
+                await UserManager.FindByEmailAsync(
+                    email.Trim());
+
+            if (user == null)
+            {
+                TempData["ErrorMessage"] =
+                    "User account was not found.";
+
+                return RedirectToAction("Index");
+            }
+
+            var currentUserId =
+                User.Identity.GetUserId();
+
+            if (user.Id == currentUserId)
+            {
+                TempData["ErrorMessage"] =
+                    "For safety, use the normal Change Password " +
+                    "page for your own Administrator account.";
+
+                return RedirectToAction("Index");
+            }
+
+            string temporaryPassword =
+                GenerateTemporaryPassword();
+
+            var resetToken =
+                await UserManager
+                    .GeneratePasswordResetTokenAsync(
+                        user.Id);
+
+            var result =
+                await UserManager
+                    .ResetPasswordAsync(
+                        user.Id,
+                        resetToken,
+                        temporaryPassword);
+
+            if (!result.Succeeded)
+            {
+                TempData["ErrorMessage"] =
+                    "Password reset failed: " +
+                    string.Join(
+                        "; ",
+                        result.Errors);
+
+                return RedirectToAction("Index");
+            }
+
+            // Clear old copies of the flag if present.
+            var claims =
+                await UserManager
+                    .GetClaimsAsync(
+                        user.Id);
+
+            foreach (var claim in claims)
+            {
+                if (claim.Type ==
+                    "MustChangePassword")
+                {
+                    await UserManager
+                        .RemoveClaimAsync(
+                            user.Id,
+                            claim);
+                }
+            }
+
+            await UserManager
+                .AddClaimAsync(
+                    user.Id,
+                    new System.Security.Claims.Claim(
+                        "MustChangePassword",
+                        "true"));
+
+            await auditService.LogAsync(
+                currentUserId,
+                "Password Reset Issued",
+                "ApplicationUser",
+                user.Id,
+                "Administrator issued a temporary " +
+                    "password for " +
+                    user.Email +
+                    ". Existing password was not viewed.",
+                Request.UserHostAddress);
+
+            TempData["SuccessMessage"] =
+                "Temporary password generated successfully.";
+
+            TempData["TemporaryPasswordEmail"] =
+                user.Email;
+
+            // Intentionally displayed only once.
+            // It is never written to the database or audit log.
+            TempData["TemporaryPassword"] =
+                temporaryPassword;
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> Reactivate(
             string id)
         {
@@ -257,6 +371,99 @@ namespace HealthTrackPro.Web.Areas.Admin.Controllers
                 "User reactivated successfully.";
 
             return RedirectToAction("Index");
+        }
+
+        private static string
+            GenerateTemporaryPassword()
+        {
+            const string upper =
+                "ABCDEFGHJKLMNPQRSTUVWXYZ";
+
+            const string lower =
+                "abcdefghijkmnopqrstuvwxyz";
+
+            const string digits =
+                "23456789";
+
+            const string special =
+                "!@$%";
+
+            const string all =
+                upper +
+                lower +
+                digits +
+                special;
+
+            var chars =
+                new char[12];
+
+            var bytes =
+                new byte[24];
+
+            using (
+                var rng =
+                    System.Security.Cryptography
+                        .RandomNumberGenerator
+                        .Create())
+            {
+                rng.GetBytes(bytes);
+            }
+
+            chars[0] =
+                upper[
+                    bytes[0] %
+                    upper.Length];
+
+            chars[1] =
+                lower[
+                    bytes[1] %
+                    lower.Length];
+
+            chars[2] =
+                digits[
+                    bytes[2] %
+                    digits.Length];
+
+            chars[3] =
+                special[
+                    bytes[3] %
+                    special.Length];
+
+            for (
+                int i = 4;
+                i < chars.Length;
+                i++)
+            {
+                chars[i] =
+                    all[
+                        bytes[i] %
+                        all.Length];
+            }
+
+            int shuffleByte =
+                12;
+
+            for (
+                int i =
+                    chars.Length - 1;
+                i > 0;
+                i--)
+            {
+                int j =
+                    bytes[shuffleByte++] %
+                    (i + 1);
+
+                char temporary =
+                    chars[i];
+
+                chars[i] =
+                    chars[j];
+
+                chars[j] =
+                    temporary;
+            }
+
+            return new string(chars);
         }
 
         protected override void Dispose(

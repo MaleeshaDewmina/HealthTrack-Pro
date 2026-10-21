@@ -46,6 +46,112 @@
         </div>
     }
 
+    <!-- ADMIN-PASSWORD-RESET-V1 -->
+
+    @if (TempData["TemporaryPassword"] != null)
+    {
+        <div style="
+            margin-bottom:20px;
+            padding:18px;
+            border:1px solid rgba(34,197,94,.35);
+            border-radius:12px;
+            background:rgba(34,197,94,.08);">
+
+            <strong style="
+                display:block;
+                margin-bottom:8px;
+                color:#4ADE80;">
+                Temporary password generated
+            </strong>
+
+            <div style="margin-bottom:8px;">
+                Account:
+                <strong>
+                    @TempData["TemporaryPasswordEmail"]
+                </strong>
+            </div>
+
+            <div style="
+                padding:12px;
+                border-radius:8px;
+                background:#08110B;
+                font-family:Consolas,monospace;
+                font-size:16px;
+                letter-spacing:1px;">
+                @TempData["TemporaryPassword"]
+            </div>
+
+            <small style="
+                display:block;
+                margin-top:10px;
+                color:#94A3B8;">
+                Copy this password now and send it to the
+                user through a trusted channel. It will not
+                be stored or shown again.
+            </small>
+
+        </div>
+    }
+
+
+    <div style="
+        margin-bottom:22px;
+        padding:18px;
+        border:1px solid #1F2A22;
+        border-radius:12px;
+        background:#101612;">
+
+        <strong style="
+            display:block;
+            margin-bottom:6px;">
+            Password Reset Assistance
+        </strong>
+
+        <p style="
+            margin:0 0 14px;
+            color:#849087;
+            font-size:12px;">
+            Reset requests appear in Audit Logs.
+            Enter the requested account email to issue a
+            one-time temporary password.
+        </p>
+
+        @using (Html.BeginForm(
+            "IssueTemporaryPassword",
+            "Users",
+            new { area = "Admin" },
+            FormMethod.Post,
+            new
+            {
+                style =
+                    "display:flex;" +
+                    "gap:10px;" +
+                    "flex-wrap:wrap;"
+            }))
+        {
+            @Html.AntiForgeryToken()
+
+            <input
+                type="email"
+                name="email"
+                class="form-control"
+                required
+                autocomplete="off"
+                placeholder="User email address"
+                style="max-width:340px;" />
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+                onclick="
+                    return confirm(
+                    'Issue a new temporary password for this account?');">
+                Issue Temporary Password
+            </button>
+        }
+
+    </div>
+
     @using (Html.BeginForm(
         "Index",
         "Users",
