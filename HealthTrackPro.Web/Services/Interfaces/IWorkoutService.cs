@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -25,6 +25,8 @@ namespace HealthTrackPro.Web.Services.Interfaces
             DateTime startDate,
             DateTime? endDate);
 
+        Task<List<Exercise>> GetAvailableExercisesAsync();
+
         Task<bool> AddExerciseAsync(
             int workoutPlanId,
             string trainerUserId,
@@ -35,6 +37,10 @@ namespace HealthTrackPro.Web.Services.Interfaces
             int? durationMinutes,
             int displayOrder,
             string notes);
+
+        Task<bool> RemoveExerciseAsync(
+            int workoutExerciseId,
+            string trainerUserId);
 
         Task<bool> SetPlanActiveAsync(
             int workoutPlanId,

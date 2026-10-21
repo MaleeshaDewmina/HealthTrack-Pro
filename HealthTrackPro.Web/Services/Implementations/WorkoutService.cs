@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -166,6 +166,15 @@ namespace HealthTrackPro.Web.Services.Implementations
             return plan;
         }
 
+        public async Task<List<Exercise>>
+            GetAvailableExercisesAsync()
+        {
+            return await db.Exercises
+                .Where(e => e.IsActive)
+                .OrderBy(e => e.Name)
+                .ToListAsync();
+        }
+
         public async Task<bool> AddExerciseAsync(
             int workoutPlanId,
             string trainerUserId,
@@ -220,6 +229,36 @@ namespace HealthTrackPro.Web.Services.Implementations
                 };
 
             db.WorkoutExercises.Add(item);
+
+            await db.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<bool> RemoveExerciseAsync(
+            int workoutExerciseId,
+            string trainerUserId)
+        {
+            if (string.IsNullOrWhiteSpace(trainerUserId))
+            {
+                return false;
+            }
+
+            var item =
+                await db.WorkoutExercises
+                    .Include(we => we.WorkoutPlan)
+                    .FirstOrDefaultAsync(we =>
+                        we.WorkoutExerciseId ==
+                            workoutExerciseId &&
+                        we.WorkoutPlan.TrainerUserId ==
+                            trainerUserId);
+
+            if (item == null)
+            {
+                return false;
+            }
+
+            db.WorkoutExercises.Remove(item);
 
             await db.SaveChangesAsync();
 

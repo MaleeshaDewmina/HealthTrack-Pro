@@ -365,6 +365,7 @@
     <Content Include="Areas\Trainer\Views\Clients\Details.cshtml" />
     <Content Include="Areas\Trainer\Views\WorkoutPlans\Index.cshtml" />
     <Content Include="Areas\Trainer\Views\WorkoutPlans\Create.cshtml" />
+    <Content Include="Areas\Trainer\Views\WorkoutPlans\ManageExercises.cshtml" />
     <Content Include="Areas\Trainer\Views\DietPlans\Index.cshtml" />
     <Content Include="Areas\Trainer\Views\DietPlans\Create.cshtml" />
     <Content Include="Areas\Trainer\Views\Appointments\Index.cshtml" />

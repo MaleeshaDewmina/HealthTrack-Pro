@@ -58,4 +58,106 @@ namespace HealthTrackPro.Web.Areas.Trainer.Models
 
         public List<SelectListItem> Clients { get; set; }
     }
+
+    public class WorkoutExerciseCreateViewModel
+    {
+        public WorkoutExerciseCreateViewModel()
+        {
+            Sets = 3;
+            Repetitions = 10;
+            RestSeconds = 60;
+            DisplayOrder = 1;
+        }
+
+        public int WorkoutPlanId { get; set; }
+
+        [Required(ErrorMessage = "Choose an exercise.")]
+        [Display(Name = "Exercise")]
+        public int? ExerciseId { get; set; }
+
+        [Range(1, 20)]
+        public int Sets { get; set; }
+
+        [Range(1, 100)]
+        public int Repetitions { get; set; }
+
+        [Range(0, 300)]
+        [Display(Name = "Rest seconds")]
+        public int RestSeconds { get; set; }
+
+        [Range(0, 300)]
+        [Display(Name = "Duration minutes")]
+        public int? DurationMinutes { get; set; }
+
+        [Range(1, 100)]
+        [Display(Name = "Display order")]
+        public int DisplayOrder { get; set; }
+
+        [StringLength(500)]
+        public string Notes { get; set; }
+    }
+
+
+    public class WorkoutExerciseRowViewModel
+    {
+        public int WorkoutExerciseId { get; set; }
+
+        public string ExerciseName { get; set; }
+
+        public string MuscleGroup { get; set; }
+
+        public int Sets { get; set; }
+
+        public int Repetitions { get; set; }
+
+        public int RestSeconds { get; set; }
+
+        public int? DurationMinutes { get; set; }
+
+        public int DisplayOrder { get; set; }
+
+        public string Notes { get; set; }
+    }
+
+
+    public class WorkoutExerciseManageViewModel
+    {
+        public WorkoutExerciseManageViewModel()
+        {
+            Exercises =
+                new List<WorkoutExerciseRowViewModel>();
+
+            ExerciseOptions =
+                new List<SelectListItem>();
+
+            Form =
+                new WorkoutExerciseCreateViewModel();
+        }
+
+        public int WorkoutPlanId { get; set; }
+
+        public string PlanName { get; set; }
+
+        public string ClientName { get; set; }
+
+        public bool IsActive { get; set; }
+
+        public WorkoutExerciseCreateViewModel Form
+        {
+            get;
+            set;
+        }
+
+        public List<SelectListItem> ExerciseOptions
+        {
+            get;
+            set;
+        }
+
+        public List<WorkoutExerciseRowViewModel> Exercises
+        {
+            get;
+            set;
+        }
+    }
 }

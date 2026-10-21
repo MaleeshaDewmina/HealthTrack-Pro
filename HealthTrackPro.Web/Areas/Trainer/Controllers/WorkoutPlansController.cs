@@ -97,6 +97,104 @@ namespace HealthTrackPro.Web.Areas.Trainer.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpGet]
+        public async Task<ActionResult> ManageExercises(int id)
+        {
+            var model =
+                await BuildExerciseManagerAsync(
+                    id,
+                    null);
+
+            if (model == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(model);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> AddExercise(
+            WorkoutExerciseCreateViewModel model)
+        {
+            if (!ModelState.IsValid ||
+                !model.ExerciseId.HasValue)
+            {
+                var invalidModel =
+                    await BuildExerciseManagerAsync(
+                        model.WorkoutPlanId,
+                        model);
+
+                if (invalidModel == null)
+                {
+                    return HttpNotFound();
+                }
+
+                return View(
+                    "ManageExercises",
+                    invalidModel);
+            }
+
+            bool added =
+                await _workoutService
+                    .AddExerciseAsync(
+                        model.WorkoutPlanId,
+                        User.Identity.GetUserId(),
+                        model.ExerciseId.Value,
+                        model.Sets,
+                        model.Repetitions,
+                        model.RestSeconds,
+                        model.DurationMinutes,
+                        model.DisplayOrder,
+                        model.Notes);
+
+            TempData[
+                added
+                    ? "SuccessMessage"
+                    : "ErrorMessage"] =
+                added
+                    ? "Exercise added to the workout plan."
+                    : "Exercise could not be added. It may already exist in this plan.";
+
+            return RedirectToAction(
+                "ManageExercises",
+                new
+                {
+                    id = model.WorkoutPlanId
+                });
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> RemoveExercise(
+            int id,
+            int workoutPlanId)
+        {
+            bool removed =
+                await _workoutService
+                    .RemoveExerciseAsync(
+                        id,
+                        User.Identity.GetUserId());
+
+            TempData[
+                removed
+                    ? "SuccessMessage"
+                    : "ErrorMessage"] =
+                removed
+                    ? "Exercise removed from the workout plan."
+                    : "Exercise could not be removed.";
+
+            return RedirectToAction(
+                "ManageExercises",
+                new
+                {
+                    id = workoutPlanId
+                });
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> SetActive(int id, bool isActive)
@@ -111,6 +209,122 @@ namespace HealthTrackPro.Web.Areas.Trainer.Controllers
                 : "That plan could not be updated.";
 
             return RedirectToAction("Index");
+        }
+
+        private async Task<WorkoutExerciseManageViewModel>
+            BuildExerciseManagerAsync(
+                int workoutPlanId,
+                WorkoutExerciseCreateViewModel form)
+        {
+            string trainerUserId =
+                User.Identity.GetUserId();
+
+            var plans =
+                await _workoutService
+                    .GetTrainerPlansAsync(
+                        trainerUserId);
+
+            var plan =
+                plans.FirstOrDefault(p =>
+                    p.WorkoutPlanId ==
+                        workoutPlanId);
+
+            if (plan == null)
+            {
+                return null;
+            }
+
+            var catalogue =
+                await _workoutService
+                    .GetAvailableExercisesAsync();
+
+            var model =
+                new WorkoutExerciseManageViewModel
+                {
+                    WorkoutPlanId =
+                        plan.WorkoutPlanId,
+
+                    PlanName =
+                        plan.Name,
+
+                    ClientName =
+                        plan.Client != null
+                            ? plan.Client.FullName
+                            : "Assigned client",
+
+                    IsActive =
+                        plan.IsActive,
+
+                    Form =
+                        form ??
+                        new WorkoutExerciseCreateViewModel()
+                };
+
+            model.Form.WorkoutPlanId =
+                plan.WorkoutPlanId;
+
+            model.ExerciseOptions =
+                catalogue
+                    .Select(e =>
+                        new SelectListItem
+                        {
+                            Value =
+                                e.ExerciseId
+                                    .ToString(),
+
+                            Text =
+                                string.IsNullOrWhiteSpace(
+                                    e.MuscleGroup)
+                                    ? e.Name
+                                    : e.Name +
+                                      " - " +
+                                      e.MuscleGroup
+                        })
+                    .ToList();
+
+            model.Exercises =
+                plan.WorkoutExercises
+                    .OrderBy(we =>
+                        we.DisplayOrder)
+                    .ThenBy(we =>
+                        we.WorkoutExerciseId)
+                    .Select(we =>
+                        new WorkoutExerciseRowViewModel
+                        {
+                            WorkoutExerciseId =
+                                we.WorkoutExerciseId,
+
+                            ExerciseName =
+                                we.Exercise != null
+                                    ? we.Exercise.Name
+                                    : "Exercise",
+
+                            MuscleGroup =
+                                we.Exercise != null
+                                    ? we.Exercise.MuscleGroup
+                                    : null,
+
+                            Sets =
+                                we.Sets,
+
+                            Repetitions =
+                                we.Repetitions,
+
+                            RestSeconds =
+                                we.RestSeconds,
+
+                            DurationMinutes =
+                                we.DurationMinutes,
+
+                            DisplayOrder =
+                                we.DisplayOrder,
+
+                            Notes =
+                                we.Notes
+                        })
+                    .ToList();
+
+            return model;
         }
 
         private async Task LoadClientsAsync(WorkoutPlanCreateViewModel model)
