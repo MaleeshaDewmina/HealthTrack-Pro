@@ -1,4 +1,4 @@
-﻿@model HealthTrackPro.Web.Areas.Admin.Models.AdminUsersIndexViewModel
+@model HealthTrackPro.Web.Areas.Admin.Models.AdminUsersIndexViewModel
 
 @{
     ViewBag.Title = "User Management";
@@ -285,3 +285,44 @@
     </div>
 
 </div>
+
+<style>
+    /* ADMIN-TABLE-HOVER-FORCE-FIX */
+
+    .ht-main table tbody tr:hover {
+        background: rgba(34, 197, 94, 0.07) !important;
+        color: #E7EFEA !important;
+    }
+
+    .ht-main table tbody tr:hover > td,
+    .ht-main table tbody tr:hover > th {
+        background: rgba(34, 197, 94, 0.07) !important;
+        color: #E7EFEA !important;
+    }
+
+    .ht-main table tbody tr:hover td > strong,
+    .ht-main table tbody tr:hover th > strong {
+        color: #F4F7F5 !important;
+    }
+
+    .ht-main table tbody tr:hover td > a:not(.btn),
+    .ht-main table tbody tr:hover th > a:not(.btn) {
+        color: #E7EFEA !important;
+    }
+
+    .ht-main table tbody tr:hover .ht-status-success {
+        color: #4ADE80 !important;
+    }
+
+    .ht-main table tbody tr:hover .ht-status-warning {
+        color: #FBBF24 !important;
+    }
+
+    .ht-main table tbody tr:hover .ht-status-danger {
+        color: #F87171 !important;
+    }
+
+    .ht-main table tbody tr:hover .btn {
+        color: inherit;
+    }
+</style>

@@ -289,7 +289,12 @@
 </li>
 
                     <li class="ht-nav-item">
-                        <a href="#" class="ht-nav-link ht-nav-pending">
+                        <a
+                            href="@Url.Action(
+                                "Index",
+                                "Settings",
+                                new { area = "Admin" })"
+                            class="ht-nav-link @(controller == "Settings" ? "active" : "")">
                             Settings
                         </a>
                     </li>
@@ -327,6 +332,20 @@
                             class="ht-notification-button"
                             title="Notifications"
                             aria-label="Open notifications"
+                            style="text-decoration:none;">
+                            &#128276;
+                        </a>
+                    }
+                    else if (User.IsInRole("Administrator"))
+                    {
+                        <a
+                            href="@Url.Action(
+                                "Index",
+                                "AuditLogs",
+                                new { area = "Admin" })"
+                            class="ht-notification-button"
+                            title="Administrative activity"
+                            aria-label="Open administrative activity"
                             style="text-decoration:none;">
                             &#128276;
                         </a>

@@ -1,4 +1,4 @@
-﻿@model HealthTrackPro.Web.Areas.Admin.Models.AdminAppointmentListItemViewModel
+@model HealthTrackPro.Web.Areas.Admin.Models.AdminAppointmentListItemViewModel
 
 @{
     ViewBag.Title = "Appointment Details";
@@ -52,8 +52,7 @@
         <div class="ht-card">
             <small>DATE & TIME</small>
             <h4>
-                @Model.AppointmentDateTime
-                    .ToString("dd MMM yyyy, hh:mm tt")
+                @(Model.AppointmentDateTime.ToString("dd MMM yyyy, hh:mm tt"))
             </h4>
         </div>
 
@@ -101,8 +100,7 @@
         <div>
             <small>CREATED</small>
             <div>
-                @Model.CreatedAt
-                    .ToString("dd MMM yyyy, hh:mm tt")
+                @(Model.CreatedAt.ToString("dd MMM yyyy, hh:mm tt"))
             </div>
         </div>
 

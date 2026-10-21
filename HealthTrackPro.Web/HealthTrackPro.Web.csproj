@@ -275,6 +275,7 @@
     <Compile Include="Areas\Admin\Controllers\AuditLogsController.cs" />
     <Compile Include="Areas\Admin\Models\AdminReportsViewModel.cs" />
     <Compile Include="Areas\Admin\Controllers\ReportsController.cs" />
+    <Compile Include="Areas\Admin\Controllers\SettingsController.cs" />
     <Compile Include="Areas\Admin\Models\AdminDashboardViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -389,6 +390,7 @@
     <Content Include="Areas\Admin\Views\Appointments\Details.cshtml" />
     <Content Include="Areas\Admin\Views\AuditLogs\Index.cshtml" />
     <Content Include="Areas\Admin\Views\Reports\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Settings\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
