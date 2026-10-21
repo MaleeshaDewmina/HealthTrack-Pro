@@ -1,0 +1,65 @@
+@model HealthTrackPro.Web.Areas.Trainer.Models.FeedbackCreateViewModel
+
+@{
+    ViewBag.Title = "Give Feedback";
+}
+
+<div class="ht-card">
+    <h2 class="ht-card-title">Give feedback</h2>
+    <p>You can only give feedback to clients assigned to you.</p>
+
+    @if (Model.Clients.Count == 0)
+    {
+        <p class="text-muted">No assigned clients found, so there is no one to give feedback to.</p>
+    }
+    else
+    {
+        using (Html.BeginForm("Create", "Feedback", new { area = "Trainer" }, FormMethod.Post, new { @class = "form-horizontal" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.ClientUserId, new { @class = "col-md-3 control-label" })
+                <div class="col-md-9">
+                    @Html.DropDownListFor(m => m.ClientUserId, Model.Clients, "Select a client", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.ClientUserId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.RelatedArea, new { @class = "col-md-3 control-label" })
+                <div class="col-md-9">
+                    @Html.TextBoxFor(m => m.RelatedArea, new { @class = "form-control", placeholder = "e.g. Workout, Diet, Progress" })
+                    @Html.ValidationMessageFor(m => m.RelatedArea, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.FeedbackText, new { @class = "col-md-3 control-label" })
+                <div class="col-md-9">
+                    @Html.TextAreaFor(m => m.FeedbackText, new { @class = "form-control", rows = 4 })
+                    @Html.ValidationMessageFor(m => m.FeedbackText, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.Rating, new { @class = "col-md-3 control-label" })
+                <div class="col-md-9">
+                    @Html.TextBoxFor(m => m.Rating, new { @class = "form-control", type = "number", min = 1, max = 5 })
+                    @Html.ValidationMessageFor(m => m.Rating, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.NextFocus, new { @class = "col-md-3 control-label" })
+                <div class="col-md-9">
+                    @Html.TextAreaFor(m => m.NextFocus, new { @class = "form-control", rows = 2 })
+                    @Html.ValidationMessageFor(m => m.NextFocus, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-offset-3 col-md-9">
+                    <button type="submit" class="btn btn-success">Send feedback</button>
+                    <a class="btn btn-default" href="@Url.Action("Index", "Feedback", new { area = "Trainer" })">Cancel</a>
+                </div>
+            </div>
+        }
+    }
+</div>
