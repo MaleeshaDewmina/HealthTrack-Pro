@@ -1,4 +1,4 @@
-﻿:root {
+:root {
     --ht-bg: #080B09;
     --ht-sidebar: #050705;
     --ht-surface: #111713;
@@ -919,3 +919,80 @@ label {
     text-decoration: none !important;
 }
 
+
+/* ===== HEALTHTRACK DARK TABLE HOVER + AUTOFILL FIX ===== */
+
+/*
+   Keep text readable when hovering table rows.
+   Bootstrap/default browser hover styles can otherwise
+   apply dark text inside the dark HealthTrack theme.
+*/
+.table > tbody > tr:hover,
+.table-hover > tbody > tr:hover,
+table tbody tr:hover {
+    background-color: rgba(34, 197, 94, 0.055) !important;
+}
+
+.table > tbody > tr:hover > td,
+.table > tbody > tr:hover > th,
+.table-hover > tbody > tr:hover > td,
+.table-hover > tbody > tr:hover > th,
+table tbody tr:hover td,
+table tbody tr:hover th {
+    color: #E5EDE8 !important;
+}
+
+table tbody tr:hover td strong,
+table tbody tr:hover th strong {
+    color: #F4F7F5 !important;
+}
+
+table tbody tr:hover td a:not(.btn),
+table tbody tr:hover th a:not(.btn) {
+    color: #DCE7DF !important;
+}
+
+/*
+   Preserve HealthTrack status colours while hovering.
+*/
+table tbody tr:hover .ht-status-success {
+    color: #4ADE80 !important;
+}
+
+table tbody tr:hover .ht-status-warning {
+    color: #FBBF24 !important;
+}
+
+table tbody tr:hover .ht-status-danger {
+    color: #F87171 !important;
+}
+
+
+/*
+   Chrome / Edge autofill dark-theme fix.
+   Prevents email/password fields from turning white.
+*/
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+    -webkit-text-fill-color: #F3F6F4 !important;
+    caret-color: #F3F6F4 !important;
+
+    -webkit-box-shadow:
+        0 0 0 1000px #0C120E inset !important;
+
+    box-shadow:
+        0 0 0 1000px #0C120E inset !important;
+
+    border-color: #26372C !important;
+
+    transition:
+        background-color 9999s ease-in-out 0s;
+}

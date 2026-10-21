@@ -1,0 +1,307 @@
+@{
+    ViewBag.Title = "Administrator Settings";
+}
+
+<style>
+    .has-page {
+        max-width: 1250px;
+        margin: 0 auto;
+    }
+
+    .has-hero {
+        margin-bottom: 18px;
+        padding: 25px;
+        border: 1px solid #203027;
+        border-radius: 17px;
+        background:
+            radial-gradient(
+                circle at 90% 10%,
+                rgba(34,197,94,.13),
+                transparent 34%
+            ),
+            #101712;
+    }
+
+    .has-hero h1 {
+        margin: 0 0 7px;
+        color: #f3f6f4;
+        font-size: 29px;
+        font-weight: 900;
+    }
+
+    .has-hero p {
+        margin: 0;
+        color: #819087;
+        font-size: 11px;
+    }
+
+    .has-grid {
+        display: grid;
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .has-card {
+        padding: 21px;
+        border: 1px solid #1f2d24;
+        border-radius: 14px;
+        background: #101712;
+    }
+
+    .has-icon {
+        display: flex;
+        width: 43px;
+        height: 43px;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 14px;
+        border-radius: 11px;
+        background: rgba(34,197,94,.10);
+        font-size: 17px;
+    }
+
+    .has-card h3 {
+        margin: 0 0 7px;
+        color: #edf3ef;
+        font-size: 14px;
+        font-weight: 900;
+    }
+
+    .has-card p {
+        margin: 0 0 17px;
+        color: #7f8c84;
+        font-size: 9px;
+        line-height: 1.65;
+    }
+
+    .has-btn {
+        display: inline-flex;
+        min-height: 38px;
+        align-items: center;
+        justify-content: center;
+        padding: 0 13px;
+        border: 1px solid #2f6d45;
+        border-radius: 8px;
+        background: rgba(34,197,94,.10);
+        color: #4ade80 !important;
+        font-size: 9px;
+        font-weight: 900;
+        text-decoration: none !important;
+    }
+
+    .has-status {
+        display: grid;
+        gap: 8px;
+    }
+
+    .has-status-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+        padding: 10px 0;
+        border-bottom: 1px solid #1d2921;
+        color: #819087;
+        font-size: 9px;
+    }
+
+    .has-status-row:last-child {
+        border-bottom: 0;
+    }
+
+    .has-status-row strong {
+        color: #4ade80;
+    }
+
+    @@media (max-width: 800px) {
+        .has-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+
+<div class="has-page">
+
+    <section class="has-hero">
+
+        <h1>Administrator Settings</h1>
+
+        <p>
+            Manage account security and access HealthTrack
+            administrative configuration tools.
+        </p>
+
+    </section>
+
+
+    <section class="has-grid">
+
+        <article class="has-card">
+
+            <div class="has-icon">
+                &#128274;
+            </div>
+
+            <h3>Account & Security</h3>
+
+            <p>
+                Review your administrator account and update
+                password or authentication settings.
+            </p>
+
+            <a
+                class="has-btn"
+                href="@Url.Action(
+                    "Index",
+                    "Manage",
+                    new { area = "" })">
+                Open account settings
+            </a>
+
+        </article>
+
+
+        <article class="has-card">
+
+            <div class="has-icon">
+                &#128101;
+            </div>
+
+            <h3>User Access Control</h3>
+
+            <p>
+                Review user roles, account status and
+                suspension controls.
+            </p>
+
+            <a
+                class="has-btn"
+                href="@Url.Action(
+                    "Index",
+                    "Users",
+                    new { area = "Admin" })">
+                Manage users
+            </a>
+
+        </article>
+
+
+        <article class="has-card">
+
+            <div class="has-icon">
+                &#128202;
+            </div>
+
+            <h3>System Analytics</h3>
+
+            <p>
+                Review live database metrics, workload
+                statistics and platform activity.
+            </p>
+
+            <a
+                class="has-btn"
+                href="@Url.Action(
+                    "Index",
+                    "Reports",
+                    new { area = "Admin" })">
+                Open analytics
+            </a>
+
+        </article>
+
+
+        <article class="has-card">
+
+            <div class="has-icon">
+                &#128203;
+            </div>
+
+            <h3>Security Audit</h3>
+
+            <p>
+                Inspect administrative actions and security
+                activity recorded by HealthTrack.
+            </p>
+
+            <a
+                class="has-btn"
+                href="@Url.Action(
+                    "Index",
+                    "AuditLogs",
+                    new { area = "Admin" })">
+                View audit logs
+            </a>
+
+        </article>
+
+
+        <article class="has-card">
+
+            <div class="has-icon">
+                &#9881;
+            </div>
+
+            <h3>System Configuration</h3>
+
+            <div class="has-status">
+
+                <div class="has-status-row">
+                    <span>Role-based authorization</span>
+                    <strong>Enabled</strong>
+                </div>
+
+                <div class="has-status-row">
+                    <span>Audit logging</span>
+                    <strong>Enabled</strong>
+                </div>
+
+                <div class="has-status-row">
+                    <span>Account lockout protection</span>
+                    <strong>Enabled</strong>
+                </div>
+
+                <div class="has-status-row">
+                    <span>Secure authentication cookies</span>
+                    <strong>Enabled</strong>
+                </div>
+
+            </div>
+
+        </article>
+
+
+        <article class="has-card">
+
+            <div class="has-icon">
+                &#128737;
+            </div>
+
+            <h3>Administrative Scope</h3>
+
+            <p>
+                HealthTrack Administrator access is restricted
+                to authorized accounts and system-management
+                workflows.
+            </p>
+
+            <div class="has-status">
+
+                <div class="has-status-row">
+                    <span>Current role</span>
+                    <strong>Administrator</strong>
+                </div>
+
+                <div class="has-status-row">
+                    <span>Application</span>
+                    <strong>HealthTrack Pro</strong>
+                </div>
+
+            </div>
+
+        </article>
+
+    </section>
+
+</div>

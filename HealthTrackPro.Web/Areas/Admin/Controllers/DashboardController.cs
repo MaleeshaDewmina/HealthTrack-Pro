@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
@@ -78,6 +78,26 @@ namespace HealthTrackPro.Web.Areas.Admin.Controllers
                         await db.Appointments.CountAsync(a =>
                             a.Status ==
                             AppointmentStatus.Pending),
+
+                    ApprovedAppointments =
+                        await db.Appointments.CountAsync(a =>
+                            a.Status ==
+                            AppointmentStatus.Approved),
+
+                    CompletedAppointments =
+                        await db.Appointments.CountAsync(a =>
+                            a.Status ==
+                            AppointmentStatus.Completed),
+
+                    CancelledAppointments =
+                        await db.Appointments.CountAsync(a =>
+                            a.Status ==
+                            AppointmentStatus.Cancelled),
+
+                    RejectedAppointments =
+                        await db.Appointments.CountAsync(a =>
+                            a.Status ==
+                            AppointmentStatus.Rejected),
 
                     SuspendedUsers =
                         await db.Users.CountAsync(u =>

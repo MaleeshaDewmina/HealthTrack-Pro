@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using HealthTrackPro.Web.Enums;
 
@@ -46,6 +46,14 @@ namespace HealthTrackPro.Web.Areas.Admin.Models
         public int ActiveAssignments { get; set; }
 
         public int PendingAppointments { get; set; }
+
+        public int ApprovedAppointments { get; set; }
+
+        public int CompletedAppointments { get; set; }
+
+        public int CancelledAppointments { get; set; }
+
+        public int RejectedAppointments { get; set; }
 
         public int SuspendedUsers { get; set; }
 
