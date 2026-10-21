@@ -131,7 +131,13 @@
                         </a>
                     </li>
 
-                    <li class="ht-nav-item">
+                                        <li class="ht-nav-item">
+                        <a href="@Url.Action("Index", "AiChat", new { area = "Client" })"
+                           class="ht-nav-link @(controller == "AiChat" ? "active" : "")">
+                            AI Coach
+                        </a>
+                    </li>
+<li class="ht-nav-item">
                         <a href="@Url.Action("Index", "Appointments", new { area = "Client" })"
                            class="ht-nav-link @(controller == "Appointments" ? "active" : "")">
                             Appointments
