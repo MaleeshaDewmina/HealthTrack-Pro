@@ -133,7 +133,9 @@ namespace HealthTrackPro.Web.Areas.Trainer.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> AddMeal(DietPlanMealCreateViewModel form)
+        public async Task<ActionResult> AddMeal(
+            [Bind(Prefix = "MealForm")]
+            DietPlanMealCreateViewModel form)
         {
             if (!ModelState.IsValid)
             {
