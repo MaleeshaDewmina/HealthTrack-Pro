@@ -1,0 +1,102 @@
+@model HealthTrackPro.Web.Areas.Trainer.Models.DietPlanCreateViewModel
+
+@{
+    ViewBag.Title = "Create Diet Plan";
+}
+
+<div class="ht-card">
+    <h2 class="ht-card-title">Create diet plan</h2>
+    <p>You can only create plans for clients assigned to you. Targets are optional.</p>
+
+    @if (Model.Clients.Count == 0)
+    {
+        <p class="text-muted">No assigned Clients found, so there is no one to create a plan for.</p>
+    }
+    else
+    {
+        using (Html.BeginForm("Create", "DietPlans", new { area = "Trainer" }, FormMethod.Post, new { @class = "form-horizontal" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.ClientUserId, new { @class = "col-md-3 control-label" })
+                <div class="col-md-9">
+                    @Html.DropDownListFor(m => m.ClientUserId, Model.Clients, "Select a client", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.ClientUserId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Name, new { @class = "col-md-3 control-label" })
+                <div class="col-md-9">
+                    @Html.TextBoxFor(m => m.Name, new { @class = "form-control", placeholder = "e.g. Lean Bulk Phase 1" })
+                    @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Description, new { @class = "col-md-3 control-label" })
+                <div class="col-md-9">
+                    @Html.TextAreaFor(m => m.Description, new { @class = "form-control", rows = 3 })
+                    @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.DailyCaloriesTarget, new { @class = "col-md-3 control-label" })
+                <div class="col-md-9">
+                    @Html.TextBoxFor(m => m.DailyCaloriesTarget, new { @class = "form-control", type = "number", min = 500, max = 10000 })
+                    @Html.ValidationMessageFor(m => m.DailyCaloriesTarget, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.ProteinTargetGrams, new { @class = "col-md-3 control-label" })
+                <div class="col-md-9">
+                    @Html.TextBoxFor(m => m.ProteinTargetGrams, new { @class = "form-control", type = "number", step = "0.1", min = 0 })
+                    @Html.ValidationMessageFor(m => m.ProteinTargetGrams, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.CarbohydrateTargetGrams, new { @class = "col-md-3 control-label" })
+                <div class="col-md-9">
+                    @Html.TextBoxFor(m => m.CarbohydrateTargetGrams, new { @class = "form-control", type = "number", step = "0.1", min = 0 })
+                    @Html.ValidationMessageFor(m => m.CarbohydrateTargetGrams, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.FatTargetGrams, new { @class = "col-md-3 control-label" })
+                <div class="col-md-9">
+                    @Html.TextBoxFor(m => m.FatTargetGrams, new { @class = "form-control", type = "number", step = "0.1", min = 0 })
+                    @Html.ValidationMessageFor(m => m.FatTargetGrams, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.StartDate, new { @class = "col-md-3 control-label" })
+                <div class="col-md-9">
+                    @Html.TextBoxFor(m => m.StartDate, new { @class = "form-control", type = "date" })
+                    @Html.ValidationMessageFor(m => m.StartDate, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.EndDate, new { @class = "col-md-3 control-label" })
+                <div class="col-md-9">
+                    @Html.TextBoxFor(m => m.EndDate, new { @class = "form-control", type = "date" })
+                    @Html.ValidationMessageFor(m => m.EndDate, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-3 col-md-9">
+                    <button type="submit" class="btn btn-success">Create plan</button>
+                    <a class="btn btn-default" href="@Url.Action("Index", "DietPlans", new { area = "Trainer" })">Cancel</a>
+                </div>
+            </div>
+        }
+    }
+</div>

@@ -1,0 +1,55 @@
+@model HealthTrackPro.Web.Areas.Trainer.Models.WorkoutPlanIndexViewModel
+
+@{
+    ViewBag.Title = "Workout Plans";
+}
+
+<div class="ht-card">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <h2 class="ht-card-title" style="margin:0;">Workout plans</h2>
+        <a class="btn btn-success" href="@Url.Action("Create", "WorkoutPlans", new { area = "Trainer" })">Create workout plan</a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null) { <div class="alert alert-success">@TempData["SuccessMessage"]</div> }
+    @if (TempData["ErrorMessage"] != null) { <div class="alert alert-danger">@TempData["ErrorMessage"]</div> }
+
+    @if (Model.Plans.Count == 0)
+    {
+        <p class="text-muted" style="margin-top:16px;">No workout plans yet.</p>
+    }
+    else
+    {
+        <div class="table-responsive" style="margin-top:16px;">
+            <table class="table table-hover">
+                <thead>
+                    <tr><th>Client</th><th>Plan</th><th>Dates</th><th>Status</th><th></th></tr>
+                </thead>
+                <tbody>
+                @foreach (var plan in Model.Plans)
+                {
+                    <tr>
+                        <td>@plan.ClientName</td>
+                        <td>@plan.PlanName</td>
+                        <td>@plan.Dates</td>
+                        <td>
+                            <span class="ht-status @(plan.IsActive ? "ht-status-success" : "ht-status-warning")">
+                                @(plan.IsActive ? "Active" : "Inactive")
+                            </span>
+                        </td>
+                        <td>
+                            <form method="post" action="@Url.Action("SetActive", "WorkoutPlans", new { area = "Trainer" })">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@plan.WorkoutPlanId" />
+                                <input type="hidden" name="isActive" value="@(!plan.IsActive)" />
+                                <button type="submit" class="btn btn-default btn-sm">
+                                    @(plan.IsActive ? "Deactivate" : "Activate")
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

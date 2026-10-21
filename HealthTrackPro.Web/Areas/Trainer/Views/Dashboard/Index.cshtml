@@ -1,6 +1,100 @@
+@model HealthTrackPro.Web.Areas.Trainer.Models.TrainerDashboardViewModel
+
 @{
     ViewBag.Title = "Trainer Dashboard";
 }
 
-<h2>Trainer Dashboard</h2>
-<p>Authenticated as Trainer.</p>
+<div class="ht-stat-grid">
+    <div class="ht-stat-card">
+        <div class="ht-stat-label">Assigned clients</div>
+        <div class="ht-stat-value">@Model.AssignedClientCount</div>
+    </div>
+    <div class="ht-stat-card">
+        <div class="ht-stat-label">Pending appointments</div>
+        <div class="ht-stat-value">@Model.PendingAppointmentCount</div>
+    </div>
+    <div class="ht-stat-card">
+        <div class="ht-stat-label">Active workout plans</div>
+        <div class="ht-stat-value">@Model.ActiveWorkoutPlanCount</div>
+    </div>
+    <div class="ht-stat-card">
+        <div class="ht-stat-label">Active diet plans</div>
+        <div class="ht-stat-value">@Model.ActiveDietPlanCount</div>
+    </div>
+    <div class="ht-stat-card">
+        <div class="ht-stat-label">Unread notifications</div>
+        <div class="ht-stat-value">@Model.UnreadNotificationCount</div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="ht-card">
+            <h2 class="ht-card-title">Your clients</h2>
+            @if (Model.RecentClients.Count == 0)
+            {
+                <p class="text-muted">No assigned Clients found.</p>
+            }
+            else
+            {
+                <table class="table table-hover">
+                    <thead><tr><th>Client</th><th>Primary goal</th></tr></thead>
+                    <tbody>
+                    @foreach (var client in Model.RecentClients)
+                    {
+                        <tr>
+                            <td>
+                                <a href="@Url.Action("Details", "Clients", new { area = "Trainer", id = client.ClientUserId })">@client.FullName</a>
+                            </td>
+                            <td>@client.PrimaryGoal</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+                <a href="@Url.Action("Index", "Clients", new { area = "Trainer" })">View all clients</a>
+            }
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="ht-card">
+            <h2 class="ht-card-title">Upcoming appointments</h2>
+            @if (Model.UpcomingAppointments.Count == 0)
+            {
+                <p class="text-muted">No upcoming appointments.</p>
+            }
+            else
+            {
+                <ul>
+                @foreach (var appointment in Model.UpcomingAppointments)
+                {
+                    <li>
+                        <strong>@appointment.When</strong> - @appointment.ClientName
+                        <span class="ht-status @(appointment.Status == "Approved" ? "ht-status-success" : "ht-status-warning")">@appointment.Status</span>
+                    </li>
+                }
+                </ul>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="ht-card">
+    <h2 class="ht-card-title">Unread notifications</h2>
+    @if (Model.RecentNotifications.Count == 0)
+    {
+        <p class="text-muted">You're all caught up.</p>
+    }
+    else
+    {
+        <ul>
+        @foreach (var notification in Model.RecentNotifications)
+        {
+            <li>
+                <strong>@notification.Title</strong> - @notification.Message
+                <small class="text-muted">(@notification.When)</small>
+            </li>
+        }
+        </ul>
+    }
+</div>

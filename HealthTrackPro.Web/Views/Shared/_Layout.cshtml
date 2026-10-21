@@ -1,4 +1,4 @@
-﻿@{
+@{
     var pageTitle =
         string.IsNullOrWhiteSpace(ViewBag.Title as string)
         ? "HealthTrack Pro"
@@ -99,19 +99,19 @@
                     </li>
 
                     <li class="ht-nav-item">
-                        <a href="@Url.Action("Index", "Profile", new { area = "Client" })" class="ht-nav-link @(controller == "Profile" ? "active" : "")">
+                        <a href="#" class="ht-nav-link ht-nav-pending">
                             Profile
                         </a>
                     </li>
 
                     <li class="ht-nav-item">
-                        <a href="@Url.Action("Index", "Goals", new { area = "Client" })" class="ht-nav-link @(controller == "Goals" ? "active" : "")">
+                        <a href="#" class="ht-nav-link ht-nav-pending">
                             Goals
                         </a>
                     </li>
 
                     <li class="ht-nav-item">
-                        <a href="@Url.Action("Index", "Workout", new { area = "Client" })" class="ht-nav-link @(controller == "Workout" ? "active" : "")">
+                        <a href="#" class="ht-nav-link ht-nav-pending">
                             Workout
                         </a>
                     </li>
@@ -155,25 +155,30 @@
                     </li>
 
                     <li class="ht-nav-item">
-                        <a href="#" class="ht-nav-link ht-nav-pending">
+                        <a
+                            href="@Url.Action(
+                                "Index",
+                                "Clients",
+                                new { area = "Trainer" })"
+                            class="ht-nav-link @(controller == "Clients" ? "active" : "")">
                             Assigned Clients
                         </a>
                     </li>
 
                     <li class="ht-nav-item">
-                        <a href="#" class="ht-nav-link ht-nav-pending">
+                        <a href="@Url.Action("Index", "WorkoutPlans", new { area = "Trainer" })" class="ht-nav-link @(controller == "WorkoutPlans" ? "active" : "")">
                             Workout Plans
                         </a>
                     </li>
 
                     <li class="ht-nav-item">
-                        <a href="#" class="ht-nav-link ht-nav-pending">
+                        <a href="@Url.Action("Index", "DietPlans", new { area = "Trainer" })" class="ht-nav-link @(controller == "DietPlans" ? "active" : "")">
                             Diet Plans
                         </a>
                     </li>
 
                     <li class="ht-nav-item">
-                        <a href="#" class="ht-nav-link ht-nav-pending">
+                        <a href="@Url.Action("Index", "Appointments", new { area = "Trainer" })" class="ht-nav-link @(controller == "Appointments" ? "active" : "")">
                             Appointments
                         </a>
                     </li>
@@ -191,7 +196,7 @@
                     </li>
 
                     <li class="ht-nav-item">
-                        <a href="#" class="ht-nav-link ht-nav-pending">
+                        <a href="@Url.Action("Index", "Notifications", new { area = "Trainer" })" class="ht-nav-link @(controller == "Notifications" ? "active" : "")">
                             Notifications
                         </a>
                     </li>
