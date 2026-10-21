@@ -10,6 +10,9 @@
         <a class="btn btn-success" href="@Url.Action("Create", "DietPlans", new { area = "Trainer" })">Create diet plan</a>
     </div>
 
+    @if (TempData["SuccessMessage"] != null) { <div class="alert alert-success">@TempData["SuccessMessage"]</div> }
+@if (TempData["ErrorMessage"] != null) { <div class="alert alert-danger">@TempData["ErrorMessage"]</div> }
+
     @if (Model.Plans.Count == 0)
     {
         <p class="text-muted" style="margin-top:16px;">No diet plans yet.</p>
@@ -19,7 +22,7 @@
         <div class="table-responsive" style="margin-top:16px;">
             <table class="table table-hover">
                 <thead>
-                    <tr><th>Client</th><th>Plan</th><th>Dates</th><th>Target</th><th>Status</th><th></th></tr>
+                    <tr><th>Client</th><th>Plan</th><th>Dates</th><th>Target</th><th>Status</th><th>Actions</th></tr>
                 </thead>
                 <tbody>
                 @foreach (var plan in Model.Plans)
@@ -35,7 +38,8 @@
                             </span>
                         </td>
                         <td>
-                            <form method="post" action="@Url.Action("SetActive", "DietPlans", new { area = "Trainer" })">
+                            <a class="btn btn-default btn-sm" href="@Url.Action("Details", "DietPlans", new { area = "Trainer", id = plan.DietPlanId })">View</a>
+                            <form method="post" action="@Url.Action("SetActive", "DietPlans", new { area = "Trainer" })" style="display:inline;">
                                 @Html.AntiForgeryToken()
                                 <input type="hidden" name="id" value="@plan.DietPlanId" />
                                 <input type="hidden" name="isActive" value="@(!plan.IsActive)" />

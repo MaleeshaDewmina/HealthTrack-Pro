@@ -1,0 +1,74 @@
+@model HealthTrackPro.Web.Areas.Trainer.Models.AppointmentIndexViewModel
+
+@{
+    ViewBag.Title = "Appointments";
+}
+
+<div class="ht-card">
+    <h2 class="ht-card-title">Appointments</h2>
+    <p class="text-muted">Approve, reject, reschedule or complete appointments with your assigned clients.</p>
+
+    @if (TempData["SuccessMessage"] != null) { <div class="alert alert-success">@TempData["SuccessMessage"]</div> }
+@if (TempData["ErrorMessage"] != null) { <div class="alert alert-danger">@TempData["ErrorMessage"]</div> }
+
+    @if (Model.Appointments.Count == 0)
+    {
+        <p class="text-muted" style="margin-top:16px;">No appointments yet.</p>
+    }
+    else
+    {
+        <div class="table-responsive" style="margin-top:16px;">
+            <table class="table table-hover">
+                <thead>
+                    <tr><th>When</th><th>Client</th><th>Reason</th><th>Length</th><th>Status</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                @foreach (var row in Model.Appointments)
+                {
+                    <tr>
+                        <td>@row.When</td>
+                        <td>@row.ClientName</td>
+                        <td>@row.Reason</td>
+                        <td>@row.DurationMinutes min</td>
+                        <td>
+                            <span class="ht-status @(row.IsApproved ? "ht-status-success" : "ht-status-warning")">@row.Status</span>
+                        </td>
+                        <td>
+                            @if (row.IsPending)
+                            {
+                                <form method="post" action="@Url.Action("Approve", "Appointments", new { area = "Trainer" })" style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@row.AppointmentId" />
+                                    <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                                </form>
+                                <form method="post" action="@Url.Action("Reject", "Appointments", new { area = "Trainer" })" style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@row.AppointmentId" />
+                                    <button type="submit" class="btn btn-default btn-sm">Reject</button>
+                                </form>
+                            }
+                            @if (row.IsApproved)
+                            {
+                                <form method="post" action="@Url.Action("Complete", "Appointments", new { area = "Trainer" })" style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@row.AppointmentId" />
+                                    <button type="submit" class="btn btn-default btn-sm">Mark completed</button>
+                                </form>
+                            }
+                            @if (row.CanReschedule)
+                            {
+                                <form method="post" action="@Url.Action("Reschedule", "Appointments", new { area = "Trainer" })" style="display:inline-flex;gap:4px;margin-top:6px;">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@row.AppointmentId" />
+                                    <input type="datetime-local" name="newDateTime" required class="form-control input-sm" style="width:210px;" />
+                                    <button type="submit" class="btn btn-default btn-sm">Reschedule</button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
