@@ -1,132 +1,1126 @@
 @model HealthTrackPro.Web.Areas.Trainer.Models.DietPlanDetailsViewModel
+@using System.Linq
 
 @{
     ViewBag.Title = "Diet Plan Details";
+
+    var totalCalories = Model.Meals.Sum(m => m.Calories);
+    var totalProtein = Model.Meals.Sum(m => m.ProteinGrams ?? 0m);
+    var totalCarbs = Model.Meals.Sum(m => m.CarbohydrateGrams ?? 0m);
+    var totalFat = Model.Meals.Sum(m => m.FatGrams ?? 0m);
+
+    var proteinCalories = totalProtein * 4m;
+    var carbCalories = totalCarbs * 4m;
+    var fatCalories = totalFat * 9m;
+
+    var macroCalories =
+        proteinCalories +
+        carbCalories +
+        fatCalories;
+
+    var proteinPercent =
+        macroCalories > 0
+            ? proteinCalories / macroCalories * 100m
+            : 0m;
+
+    var carbPercent =
+        macroCalories > 0
+            ? carbCalories / macroCalories * 100m
+            : 0m;
+
+    var fatPercent =
+        macroCalories > 0
+            ? fatCalories / macroCalories * 100m
+            : 0m;
 }
 
-<div class="ht-card">
-    <a href="@Url.Action("Index", "DietPlans", new { area = "Trainer" })">&larr; Back to diet plans</a>
-    <h2 class="ht-card-title" style="margin-top:12px;">@Model.PlanName</h2>
-    <p>
-        <strong>Client:</strong> @Model.ClientName<br />
-        <strong>Dates:</strong> @Model.Dates<br />
-        <strong>Target:</strong> @Model.Targets<br />
-        <strong>Status:</strong> @(Model.IsActive ? "Active" : "Inactive")
-    </p>
-
-    @if (TempData["SuccessMessage"] != null) { <div class="alert alert-success">@TempData["SuccessMessage"]</div> }
-@if (TempData["ErrorMessage"] != null) { <div class="alert alert-danger">@TempData["ErrorMessage"]</div> }
-</div>
-
-<div class="ht-card">
-    <h3 class="ht-card-title">Meals</h3>
-    @if (Model.Meals.Count == 0)
-    {
-        <p class="text-muted">No meals added yet.</p>
+<style>
+    .htdd-page {
+        max-width: 1450px;
+        margin: 0 auto;
     }
-    else
+
+    .htdd-back {
+        display: inline-flex;
+        min-height: 40px;
+        align-items: center;
+        padding: 0 13px;
+        margin-bottom: 17px;
+        border: 1px solid #203026;
+        border-radius: 9px;
+        background: #101612;
+        color: #BFCAC2 !important;
+        font-size: 11px;
+        font-weight: 800;
+        text-decoration: none !important;
+    }
+
+    .htdd-back:hover {
+        border-color: #31543B;
+        color: #4ADE80 !important;
+    }
+
+    .htdd-hero {
+        display: grid;
+        grid-template-columns:
+            minmax(0,1.5fr)
+            minmax(320px,.7fr);
+        gap: 18px;
+        margin-bottom: 18px;
+    }
+
+    .htdd-card {
+        border: 1px solid #1F2A22;
+        border-radius: 14px;
+        background: #101612;
+    }
+
+    .htdd-main-summary {
+        position: relative;
+        overflow: hidden;
+        padding: 23px;
+        background:
+            radial-gradient(
+                circle at 100% 0,
+                rgba(34,197,94,.12),
+                transparent 46%
+            ),
+            #101612;
+    }
+
+    .htdd-plan-label {
+        display: block;
+        margin-bottom: 7px;
+        color: #4ADE80;
+        font-size: 9px;
+        font-weight: 900;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .htdd-plan-title {
+        margin: 0 0 9px;
+        color: #F5F8F6;
+        font-size: 27px;
+        font-weight: 900;
+        letter-spacing: -.4px;
+    }
+
+    .htdd-plan-sub {
+        margin: 0;
+        color: #819087;
+        font-size: 12px;
+    }
+
+    .htdd-plan-meta {
+        display: grid;
+        grid-template-columns:
+            repeat(3,minmax(0,1fr));
+        gap: 10px;
+        margin-top: 19px;
+    }
+
+    .htdd-meta-box {
+        padding: 12px;
+        border: 1px solid #1D2920;
+        border-radius: 10px;
+        background: #0D130F;
+    }
+
+    .htdd-meta-label {
+        display: block;
+        margin-bottom: 5px;
+        color: #647168;
+        font-size: 8px;
+        font-weight: 900;
+        letter-spacing: .7px;
+        text-transform: uppercase;
+    }
+
+    .htdd-meta-value {
+        color: #E8EDE9;
+        font-size: 11px;
+        font-weight: 800;
+        line-height: 1.45;
+    }
+
+    .htdd-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 8px;
+        border-radius: 999px;
+        font-size: 8px;
+        font-weight: 900;
+        text-transform: uppercase;
+    }
+
+    .htdd-status-active {
+        background: rgba(34,197,94,.12);
+        color: #4ADE80;
+    }
+
+    .htdd-status-inactive {
+        background: rgba(245,158,11,.10);
+        color: #FBBF24;
+    }
+
+    .htdd-status-dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .htdd-target {
+        display: flex;
+        min-height: 100%;
+        flex-direction: column;
+        justify-content: center;
+        padding: 23px;
+        background:
+            linear-gradient(
+                145deg,
+                #10301C,
+                #0C1710
+            );
+    }
+
+    .htdd-target-label {
+        display: block;
+        margin-bottom: 7px;
+        color: #82CB9A;
+        font-size: 9px;
+        font-weight: 900;
+        letter-spacing: .8px;
+        text-transform: uppercase;
+    }
+
+    .htdd-target-value {
+        color: #F5F8F6;
+        font-size: 28px;
+        font-weight: 900;
+    }
+
+    .htdd-stats {
+        display: grid;
+        grid-template-columns:
+            repeat(5,minmax(0,1fr));
+        gap: 11px;
+        margin-bottom: 18px;
+    }
+
+    .htdd-stat {
+        padding: 15px;
+        border: 1px solid #1F2A22;
+        border-radius: 11px;
+        background: #101612;
+    }
+
+    .htdd-stat-label {
+        display: block;
+        margin-bottom: 7px;
+        color: #68756C;
+        font-size: 8px;
+        font-weight: 900;
+        letter-spacing: .7px;
+        text-transform: uppercase;
+    }
+
+    .htdd-stat-value {
+        color: #F1F5F2;
+        font-size: 20px;
+        font-weight: 900;
+    }
+
+    .htdd-content-grid {
+        display: grid;
+        grid-template-columns:
+            minmax(0,1.2fr)
+            minmax(360px,.8fr);
+        gap: 18px;
+        align-items: start;
+    }
+
+    .htdd-section-head {
+        padding: 18px 20px;
+        border-bottom: 1px solid #1B251E;
+    }
+
+    .htdd-section-head h3 {
+        margin: 0 0 4px;
+        font-size: 15px;
+        font-weight: 900;
+    }
+
+    .htdd-section-head p {
+        margin: 0;
+        color: #748078;
+        font-size: 10px;
+    }
+
+    .htdd-meals {
+        padding: 16px;
+    }
+
+    .htdd-meal {
+        margin-bottom: 11px;
+        padding: 15px;
+        border: 1px solid #1D2820;
+        border-radius: 11px;
+        background:
+            linear-gradient(
+                145deg,
+                #0E1510,
+                #0C120E
+            );
+    }
+
+    .htdd-meal:last-child {
+        margin-bottom: 0;
+    }
+
+    .htdd-meal-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 12px;
+    }
+
+    .htdd-meal-type {
+        display: inline-block;
+        margin-bottom: 5px;
+        color: #4ADE80;
+        font-size: 8px;
+        font-weight: 900;
+        letter-spacing: .7px;
+        text-transform: uppercase;
+    }
+
+    .htdd-meal-name {
+        margin: 0;
+        color: #EDF2EE;
+        font-size: 14px;
+        font-weight: 900;
+    }
+
+    .htdd-meal-order {
+        min-width: 29px;
+        height: 29px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        background: rgba(34,197,94,.10);
+        color: #4ADE80;
+        font-size: 10px;
+        font-weight: 900;
+    }
+
+    .htdd-meal-description {
+        margin: 0 0 12px;
+        color: #748178;
+        font-size: 10px;
+        line-height: 1.55;
+    }
+
+    .htdd-macro-grid {
+        display: grid;
+        grid-template-columns:
+            repeat(4,minmax(0,1fr));
+        gap: 8px;
+    }
+
+    .htdd-macro-box {
+        padding: 9px;
+        border: 1px solid #1A251D;
+        border-radius: 8px;
+        background: #0A100C;
+    }
+
+    .htdd-macro-box span {
+        display: block;
+    }
+
+    .htdd-macro-label {
+        margin-bottom: 3px;
+        color: #606D64;
+        font-size: 7px;
+        font-weight: 900;
+        text-transform: uppercase;
+    }
+
+    .htdd-macro-value {
+        color: #E2E9E4;
+        font-size: 10px;
+        font-weight: 900;
+    }
+
+    .htdd-empty {
+        padding: 50px 20px;
+        text-align: center;
+        color: #718077;
+        font-size: 11px;
+    }
+
+    .htdd-form {
+        padding: 18px;
+    }
+
+    .htdd-field {
+        margin-bottom: 15px;
+    }
+
+    .htdd-label {
+        display: block;
+        margin-bottom: 6px;
+        color: #DCE5DE;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .htdd-required {
+        color: #4ADE80;
+    }
+
+    .htdd-page .form-control {
+        width: 100%;
+        max-width: none;
+        height: 44px;
+        padding: 10px 12px;
+        border: 1px solid #26332A;
+        border-radius: 9px;
+        background: #0C120E;
+        color: #F0F4F1;
+        box-shadow: none;
+    }
+
+    .htdd-page .form-control:focus {
+        border-color: #22C55E;
+        background: #0C120E;
+        box-shadow:
+            0 0 0 3px
+            rgba(34,197,94,.10);
+    }
+
+    .htdd-page textarea.form-control {
+        min-height: 90px;
+        height: auto;
+        resize: vertical;
+    }
+
+    .htdd-two {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .htdd-three {
+        display: grid;
+        grid-template-columns:
+            repeat(3,1fr);
+        gap: 10px;
+    }
+
+    .htdd-validation {
+        display: block;
+        margin-top: 5px;
+        color: #F87171;
+        font-size: 9px;
+    }
+
+    .htdd-submit {
+        width: 100%;
+        min-height: 44px;
+        border: 0;
+        border-radius: 9px;
+        background:
+            linear-gradient(
+                135deg,
+                #22C55E,
+                #16A34A
+            );
+        color: #061009;
+        font-size: 11px;
+        font-weight: 900;
+    }
+
+    .htdd-alert {
+        margin-bottom: 16px;
+        padding: 12px 14px;
+        border-radius: 10px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .htdd-alert-success {
+        border: 1px solid rgba(34,197,94,.22);
+        background: rgba(34,197,94,.08);
+        color: #86EFAC;
+    }
+
+    .htdd-alert-danger {
+        border: 1px solid rgba(239,68,68,.22);
+        background: rgba(239,68,68,.08);
+        color: #FCA5A5;
+    }
+
+    .htdd-balance {
+        margin-bottom: 18px;
+        padding: 16px;
+        border: 1px solid #1F2A22;
+        border-radius: 12px;
+        background: #101612;
+    }
+
+    .htdd-balance h4 {
+        margin: 0 0 13px;
+        font-size: 13px;
+        font-weight: 900;
+    }
+
+    .htdd-bar-row {
+        margin-bottom: 10px;
+    }
+
+    .htdd-bar-row:last-child {
+        margin-bottom: 0;
+    }
+
+    .htdd-bar-label {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 5px;
+        color: #829087;
+        font-size: 9px;
+        font-weight: 800;
+    }
+
+    .htdd-bar {
+        height: 7px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #1A241D;
+    }
+
+    .htdd-bar-fill {
+        height: 100%;
+        border-radius: inherit;
+    }
+
+    .htdd-protein { background: #22C55E; }
+    .htdd-carbs { background: #3B82F6; }
+    .htdd-fat { background: #F59E0B; }
+
+    @@media (max-width: 1100px) {
+        .htdd-content-grid,
+        .htdd-hero {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 800px) {
+        .htdd-stats {
+            grid-template-columns:
+                repeat(2,minmax(0,1fr));
+        }
+
+        .htdd-plan-meta,
+        .htdd-three {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 600px) {
+        .htdd-two,
+        .htdd-macro-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .htdd-stats {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+
+<div class="htdd-page">
+
+    <a
+        class="htdd-back"
+        href="@Url.Action(
+            "Index",
+            "DietPlans",
+            new { area = "Trainer" })">
+        &larr; Back to diet plans
+    </a>
+
+
+    @if (TempData["SuccessMessage"] != null)
     {
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
-                    <tr><th>Order</th><th>Meal</th><th>Name</th><th>Calories</th><th>Protein (g)</th><th>Carbs (g)</th><th>Fat (g)</th><th>Notes</th></tr>
-                </thead>
-                <tbody>
-                @foreach (var meal in Model.Meals)
+        <div class="htdd-alert htdd-alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="htdd-alert htdd-alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+
+    <div class="htdd-hero">
+
+        <section class="htdd-card htdd-main-summary">
+
+            <span class="htdd-plan-label">
+                Nutrition plan
+            </span>
+
+            <h2 class="htdd-plan-title">
+                @Model.PlanName
+            </h2>
+
+            <p class="htdd-plan-sub">
+                Meal structure and nutrition targets for
+                @Model.ClientName.
+            </p>
+
+
+            <div class="htdd-plan-meta">
+
+                <div class="htdd-meta-box">
+
+                    <span class="htdd-meta-label">
+                        Client
+                    </span>
+
+                    <span class="htdd-meta-value">
+                        @Model.ClientName
+                    </span>
+
+                </div>
+
+
+                <div class="htdd-meta-box">
+
+                    <span class="htdd-meta-label">
+                        Duration
+                    </span>
+
+                    <span class="htdd-meta-value">
+                        @Model.Dates
+                    </span>
+
+                </div>
+
+
+                <div class="htdd-meta-box">
+
+                    <span class="htdd-meta-label">
+                        Status
+                    </span>
+
+                    <span class="htdd-status @(Model.IsActive ? "htdd-status-active" : "htdd-status-inactive")">
+
+                        <span class="htdd-status-dot"></span>
+
+                        @(Model.IsActive
+                            ? "Active"
+                            : "Inactive")
+
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <aside class="htdd-card htdd-target">
+
+            <span class="htdd-target-label">
+                Daily calorie target
+            </span>
+
+            <span class="htdd-target-value">
+                @Model.Targets
+            </span>
+
+        </aside>
+
+    </div>
+
+
+    <div class="htdd-stats">
+
+        <div class="htdd-stat">
+            <span class="htdd-stat-label">Meals</span>
+            <span class="htdd-stat-value">@Model.Meals.Count</span>
+        </div>
+
+        <div class="htdd-stat">
+            <span class="htdd-stat-label">Planned calories</span>
+            <span class="htdd-stat-value">@totalCalories</span>
+        </div>
+
+        <div class="htdd-stat">
+            <span class="htdd-stat-label">Protein</span>
+            <span class="htdd-stat-value">@totalProtein.ToString("0.#")g</span>
+        </div>
+
+        <div class="htdd-stat">
+            <span class="htdd-stat-label">Carbohydrates</span>
+            <span class="htdd-stat-value">@totalCarbs.ToString("0.#")g</span>
+        </div>
+
+        <div class="htdd-stat">
+            <span class="htdd-stat-label">Fat</span>
+            <span class="htdd-stat-value">@totalFat.ToString("0.#")g</span>
+        </div>
+
+    </div>
+
+
+    @if (Model.Meals.Count > 0)
+    {
+        <div class="htdd-balance">
+
+            <h4>
+                Planned macronutrient calorie contribution
+            </h4>
+
+            <div class="htdd-bar-row">
+
+                <div class="htdd-bar-label">
+                    <span>Protein</span>
+                    <span>@proteinPercent.ToString("0")%</span>
+                </div>
+
+                <div class="htdd-bar">
+                    <div
+                        class="htdd-bar-fill htdd-protein"
+                        style="width:@proteinPercent.ToString("0.#")%;">
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="htdd-bar-row">
+
+                <div class="htdd-bar-label">
+                    <span>Carbohydrates</span>
+                    <span>@carbPercent.ToString("0")%</span>
+                </div>
+
+                <div class="htdd-bar">
+                    <div
+                        class="htdd-bar-fill htdd-carbs"
+                        style="width:@carbPercent.ToString("0.#")%;">
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="htdd-bar-row">
+
+                <div class="htdd-bar-label">
+                    <span>Fat</span>
+                    <span>@fatPercent.ToString("0")%</span>
+                </div>
+
+                <div class="htdd-bar">
+                    <div
+                        class="htdd-bar-fill htdd-fat"
+                        style="width:@fatPercent.ToString("0.#")%;">
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    }
+
+
+    <div class="htdd-content-grid">
+
+        <section class="htdd-card">
+
+            <div class="htdd-section-head">
+
+                <h3>Meal schedule</h3>
+
+                <p>
+                    Meals currently included in this nutrition plan.
+                </p>
+
+            </div>
+
+
+            <div class="htdd-meals">
+
+                @if (Model.Meals.Count == 0)
                 {
-                    <tr>
-                        <td>@meal.DisplayOrder</td>
-                        <td>@meal.MealType</td>
-                        <td>@meal.Name</td>
-                        <td>@meal.Calories</td>
-                        <td>@(meal.ProteinGrams.HasValue ? meal.ProteinGrams.Value.ToString("0.#") : "-")</td>
-                        <td>@(meal.CarbohydrateGrams.HasValue ? meal.CarbohydrateGrams.Value.ToString("0.#") : "-")</td>
-                        <td>@(meal.FatGrams.HasValue ? meal.FatGrams.Value.ToString("0.#") : "-")</td>
-                        <td>@meal.Description</td>
-                    </tr>
+                    <div class="htdd-empty">
+                        No meals have been added yet.
+                        Use the form to create the first meal.
+                    </div>
                 }
-                </tbody>
-            </table>
-        </div>
-    }
-</div>
+                else
+                {
+                    foreach (var meal in Model.Meals)
+                    {
+                        <article class="htdd-meal">
 
-<div class="ht-card">
-    <h3 class="ht-card-title">Add a meal</h3>
-    @using (Html.BeginForm("AddMeal", "DietPlans", new { area = "Trainer" }, FormMethod.Post, new { @class = "form-horizontal" }))
-    {
-        @Html.AntiForgeryToken()
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(m => m.MealForm.DietPlanId)
+                            <div class="htdd-meal-top">
 
-        <div class="form-group">
-            @Html.LabelFor(m => m.MealForm.MealType, new { @class = "col-md-3 control-label" })
-            <div class="col-md-9">
-                @Html.DropDownListFor(m => m.MealForm.MealType, Model.MealForm.MealTypes, "Select a meal", new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.MealForm.MealType, "", new { @class = "text-danger" })
+                                <div>
+
+                                    <span class="htdd-meal-type">
+                                        @meal.MealType
+                                    </span>
+
+                                    <h4 class="htdd-meal-name">
+                                        @meal.Name
+                                    </h4>
+
+                                </div>
+
+                                <span class="htdd-meal-order">
+                                    @meal.DisplayOrder
+                                </span>
+
+                            </div>
+
+
+                            @if (!string.IsNullOrWhiteSpace(meal.Description))
+                            {
+                                <p class="htdd-meal-description">
+                                    @meal.Description
+                                </p>
+                            }
+
+
+                            <div class="htdd-macro-grid">
+
+                                <div class="htdd-macro-box">
+                                    <span class="htdd-macro-label">
+                                        Calories
+                                    </span>
+                                    <span class="htdd-macro-value">
+                                        @meal.Calories kcal
+                                    </span>
+                                </div>
+
+                                <div class="htdd-macro-box">
+                                    <span class="htdd-macro-label">
+                                        Protein
+                                    </span>
+                                    <span class="htdd-macro-value">
+                                        @(meal.ProteinGrams.HasValue
+                                            ? meal.ProteinGrams.Value.ToString("0.#") + " g"
+                                            : "-")
+                                    </span>
+                                </div>
+
+                                <div class="htdd-macro-box">
+                                    <span class="htdd-macro-label">
+                                        Carbs
+                                    </span>
+                                    <span class="htdd-macro-value">
+                                        @(meal.CarbohydrateGrams.HasValue
+                                            ? meal.CarbohydrateGrams.Value.ToString("0.#") + " g"
+                                            : "-")
+                                    </span>
+                                </div>
+
+                                <div class="htdd-macro-box">
+                                    <span class="htdd-macro-label">
+                                        Fat
+                                    </span>
+                                    <span class="htdd-macro-value">
+                                        @(meal.FatGrams.HasValue
+                                            ? meal.FatGrams.Value.ToString("0.#") + " g"
+                                            : "-")
+                                    </span>
+                                </div>
+
+                            </div>
+
+                        </article>
+                    }
+                }
+
             </div>
-        </div>
 
-        <div class="form-group">
-            @Html.LabelFor(m => m.MealForm.Name, new { @class = "col-md-3 control-label" })
-            <div class="col-md-9">
-                @Html.TextBoxFor(m => m.MealForm.Name, new { @class = "form-control", placeholder = "e.g. Oats with banana" })
-                @Html.ValidationMessageFor(m => m.MealForm.Name, "", new { @class = "text-danger" })
-            </div>
-        </div>
+        </section>
 
-        <div class="form-group">
-            @Html.LabelFor(m => m.MealForm.Description, new { @class = "col-md-3 control-label" })
-            <div class="col-md-9">
-                @Html.TextAreaFor(m => m.MealForm.Description, new { @class = "form-control", rows = 2 })
-                @Html.ValidationMessageFor(m => m.MealForm.Description, "", new { @class = "text-danger" })
-            </div>
-        </div>
 
-        <div class="form-group">
-            @Html.LabelFor(m => m.MealForm.Calories, new { @class = "col-md-3 control-label" })
-            <div class="col-md-9">
-                @Html.TextBoxFor(m => m.MealForm.Calories, new { @class = "form-control", type = "number", min = 0, max = 10000 })
-                @Html.ValidationMessageFor(m => m.MealForm.Calories, "", new { @class = "text-danger" })
-            </div>
-        </div>
+        <aside class="htdd-card">
 
-        <div class="form-group">
-            @Html.LabelFor(m => m.MealForm.ProteinGrams, new { @class = "col-md-3 control-label" })
-            <div class="col-md-9">
-                @Html.TextBoxFor(m => m.MealForm.ProteinGrams, new { @class = "form-control", type = "number", step = "0.1", min = 0 })
-                @Html.ValidationMessageFor(m => m.MealForm.ProteinGrams, "", new { @class = "text-danger" })
-            </div>
-        </div>
+            <div class="htdd-section-head">
 
-        <div class="form-group">
-            @Html.LabelFor(m => m.MealForm.CarbohydrateGrams, new { @class = "col-md-3 control-label" })
-            <div class="col-md-9">
-                @Html.TextBoxFor(m => m.MealForm.CarbohydrateGrams, new { @class = "form-control", type = "number", step = "0.1", min = 0 })
-                @Html.ValidationMessageFor(m => m.MealForm.CarbohydrateGrams, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                <h3>Add a meal</h3>
 
-        <div class="form-group">
-            @Html.LabelFor(m => m.MealForm.FatGrams, new { @class = "col-md-3 control-label" })
-            <div class="col-md-9">
-                @Html.TextBoxFor(m => m.MealForm.FatGrams, new { @class = "form-control", type = "number", step = "0.1", min = 0 })
-                @Html.ValidationMessageFor(m => m.MealForm.FatGrams, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                <p>
+                    Add another meal to this client's nutrition plan.
+                </p>
 
-        <div class="form-group">
-            @Html.LabelFor(m => m.MealForm.DisplayOrder, new { @class = "col-md-3 control-label" })
-            <div class="col-md-9">
-                @Html.TextBoxFor(m => m.MealForm.DisplayOrder, new { @class = "form-control", type = "number", min = 1, max = 100 })
-                @Html.ValidationMessageFor(m => m.MealForm.DisplayOrder, "", new { @class = "text-danger" })
             </div>
-        </div>
 
-        <div class="form-group">
-            <div class="col-md-offset-3 col-md-9">
-                <button type="submit" class="btn btn-success">Add meal</button>
-            </div>
-        </div>
-    }
+
+            @using (Html.BeginForm(
+                "AddMeal",
+                "DietPlans",
+                new { area = "Trainer" },
+                FormMethod.Post,
+                new { @class = "htdd-form" }))
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.ValidationSummary(
+                    true,
+                    "",
+                    new { @class = "text-danger" })
+
+                @Html.HiddenFor(
+                    m => m.MealForm.DietPlanId)
+
+
+                <div class="htdd-two">
+
+                    <div class="htdd-field">
+
+                        <label
+                            class="htdd-label"
+                            for="MealForm_MealType">
+                            Meal type
+                            <span class="htdd-required">*</span>
+                        </label>
+
+                        @Html.DropDownListFor(
+                            m => m.MealForm.MealType,
+                            Model.MealForm.MealTypes,
+                            "Select a meal",
+                            new
+                            {
+                                @class = "form-control"
+                            })
+
+                        @Html.ValidationMessageFor(
+                            m => m.MealForm.MealType,
+                            "",
+                            new { @class = "text-danger htdd-validation" })
+
+                    </div>
+
+
+                    <div class="htdd-field">
+
+                        <label
+                            class="htdd-label"
+                            for="MealForm_DisplayOrder">
+                            Display order
+                        </label>
+
+                        @Html.TextBoxFor(
+                            m => m.MealForm.DisplayOrder,
+                            new
+                            {
+                                @class = "form-control",
+                                type = "number",
+                                min = "1",
+                                max = "100"
+                            })
+
+                        @Html.ValidationMessageFor(
+                            m => m.MealForm.DisplayOrder,
+                            "",
+                            new { @class = "text-danger htdd-validation" })
+
+                    </div>
+
+                </div>
+
+
+                <div class="htdd-field">
+
+                    <label
+                        class="htdd-label"
+                        for="MealForm_Name">
+                        Meal name
+                        <span class="htdd-required">*</span>
+                    </label>
+
+                    @Html.TextBoxFor(
+                        m => m.MealForm.Name,
+                        new
+                        {
+                            @class = "form-control",
+                            maxlength = "200",
+                            placeholder = "e.g. Oats and Eggs"
+                        })
+
+                    @Html.ValidationMessageFor(
+                        m => m.MealForm.Name,
+                        "",
+                        new { @class = "text-danger htdd-validation" })
+
+                </div>
+
+
+                <div class="htdd-field">
+
+                    <label
+                        class="htdd-label"
+                        for="MealForm_Description">
+                        Description
+                    </label>
+
+                    @Html.TextAreaFor(
+                        m => m.MealForm.Description,
+                        new
+                        {
+                            @class = "form-control",
+                            maxlength = "1000",
+                            placeholder =
+                                "Add preparation notes or meal details..."
+                        })
+
+                    @Html.ValidationMessageFor(
+                        m => m.MealForm.Description,
+                        "",
+                        new { @class = "text-danger htdd-validation" })
+
+                </div>
+
+
+                <div class="htdd-field">
+
+                    <label
+                        class="htdd-label"
+                        for="MealForm_Calories">
+                        Calories
+                        <span class="htdd-required">*</span>
+                    </label>
+
+                    @Html.TextBoxFor(
+                        m => m.MealForm.Calories,
+                        new
+                        {
+                            @class = "form-control",
+                            type = "number",
+                            min = "0",
+                            max = "10000"
+                        })
+
+                    @Html.ValidationMessageFor(
+                        m => m.MealForm.Calories,
+                        "",
+                        new { @class = "text-danger htdd-validation" })
+
+                </div>
+
+
+                <div class="htdd-three">
+
+                    <div class="htdd-field">
+
+                        <label
+                            class="htdd-label"
+                            for="MealForm_ProteinGrams">
+                            Protein
+                        </label>
+
+                        @Html.TextBoxFor(
+                            m => m.MealForm.ProteinGrams,
+                            new
+                            {
+                                @class = "form-control",
+                                type = "number",
+                                step = "0.1",
+                                min = "0",
+                                max = "500"
+                            })
+
+                        @Html.ValidationMessageFor(
+                            m => m.MealForm.ProteinGrams,
+                            "",
+                            new { @class = "text-danger htdd-validation" })
+
+                    </div>
+
+
+                    <div class="htdd-field">
+
+                        <label
+                            class="htdd-label"
+                            for="MealForm_CarbohydrateGrams">
+                            Carbs
+                        </label>
+
+                        @Html.TextBoxFor(
+                            m => m.MealForm.CarbohydrateGrams,
+                            new
+                            {
+                                @class = "form-control",
+                                type = "number",
+                                step = "0.1",
+                                min = "0",
+                                max = "1000"
+                            })
+
+                        @Html.ValidationMessageFor(
+                            m => m.MealForm.CarbohydrateGrams,
+                            "",
+                            new { @class = "text-danger htdd-validation" })
+
+                    </div>
+
+
+                    <div class="htdd-field">
+
+                        <label
+                            class="htdd-label"
+                            for="MealForm_FatGrams">
+                            Fat
+                        </label>
+
+                        @Html.TextBoxFor(
+                            m => m.MealForm.FatGrams,
+                            new
+                            {
+                                @class = "form-control",
+                                type = "number",
+                                step = "0.1",
+                                min = "0",
+                                max = "500"
+                            })
+
+                        @Html.ValidationMessageFor(
+                            m => m.MealForm.FatGrams,
+                            "",
+                            new { @class = "text-danger htdd-validation" })
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="htdd-submit">
+                    &#10003; Add meal
+                </button>
+            }
+
+        </aside>
+
+    </div>
+
 </div>
