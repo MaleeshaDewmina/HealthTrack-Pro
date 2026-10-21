@@ -17,7 +17,7 @@ namespace HealthTrackPro.Web.Areas.Trainer.Models
         public List<TrainerClientListItemViewModel> Clients { get; set; }
     }
 
-    /// <summary>One row of the assigned-clients table. Only the fields the page displays.</summary>
+    /// <summary>One row of the assigned-clients table.</summary>
     public class TrainerClientListItemViewModel
     {
         public string ClientUserId { get; set; }
@@ -27,7 +27,6 @@ namespace HealthTrackPro.Web.Areas.Trainer.Models
         public decimal? Bmi { get; set; }
         public string AssignmentStatus { get; set; }
 
-        /// <summary>Builds a row from the client's profile and their latest BMI.</summary>
         public static TrainerClientListItemViewModel FromProfile(
             ClientProfile profile,
             decimal? bmi)
@@ -52,7 +51,6 @@ namespace HealthTrackPro.Web.Areas.Trainer.Models
             };
         }
 
-        // "LoseWeight" -> "Lose Weight"
         private static string SplitPascalCase(string value)
         {
             return Regex.Replace(value, "(?<!^)([A-Z])", " $1");
@@ -62,7 +60,9 @@ namespace HealthTrackPro.Web.Areas.Trainer.Models
 
 namespace HealthTrackPro.Web.Areas.Trainer.Models
 {
-    /// <summary>Client Details page: profile, goals, measurements and plans, all for one assigned client.</summary>
+    /// <summary>
+    /// Client Details page: profile, goals, measurements and plans.
+    /// </summary>
     public class ClientDetailsViewModel
     {
         public ClientDetailsViewModel()
@@ -114,14 +114,27 @@ namespace HealthTrackPro.Web.Areas.Trainer.Models
 
 namespace HealthTrackPro.Web.Areas.Trainer.Models
 {
-    /// <summary>Trainer dashboard: counts and short lists, all for the logged-in trainer.</summary>
+    /// <summary>
+    /// Trainer dashboard summary and analytics for the logged-in trainer.
+    /// </summary>
     public class TrainerDashboardViewModel
     {
         public TrainerDashboardViewModel()
         {
-            RecentClients = new List<DashboardClientRowViewModel>();
-            UpcomingAppointments = new List<DashboardAppointmentRowViewModel>();
-            RecentNotifications = new List<DashboardNotificationRowViewModel>();
+            RecentClients =
+                new List<DashboardClientRowViewModel>();
+
+            UpcomingAppointments =
+                new List<DashboardAppointmentRowViewModel>();
+
+            RecentNotifications =
+                new List<DashboardNotificationRowViewModel>();
+
+            ClientProgress =
+                new List<DashboardClientProgressPointViewModel>();
+
+            GoalDistribution =
+                new List<DashboardGoalDistributionItemViewModel>();
         }
 
         public int AssignedClientCount { get; set; }
@@ -130,9 +143,44 @@ namespace HealthTrackPro.Web.Areas.Trainer.Models
         public int ActiveDietPlanCount { get; set; }
         public int UnreadNotificationCount { get; set; }
 
-        public List<DashboardClientRowViewModel> RecentClients { get; set; }
-        public List<DashboardAppointmentRowViewModel> UpcomingAppointments { get; set; }
-        public List<DashboardNotificationRowViewModel> RecentNotifications { get; set; }
+        public int ActiveGoalCount { get; set; }
+        public int CompletedGoalCount { get; set; }
+
+        public decimal AverageGoalProgressPercent { get; set; }
+
+        public List<DashboardClientRowViewModel> RecentClients
+        {
+            get;
+            set;
+        }
+
+        public List<DashboardAppointmentRowViewModel>
+            UpcomingAppointments
+        {
+            get;
+            set;
+        }
+
+        public List<DashboardNotificationRowViewModel>
+            RecentNotifications
+        {
+            get;
+            set;
+        }
+
+        public List<DashboardClientProgressPointViewModel>
+            ClientProgress
+        {
+            get;
+            set;
+        }
+
+        public List<DashboardGoalDistributionItemViewModel>
+            GoalDistribution
+        {
+            get;
+            set;
+        }
     }
 
     public class DashboardClientRowViewModel
@@ -140,6 +188,11 @@ namespace HealthTrackPro.Web.Areas.Trainer.Models
         public string ClientUserId { get; set; }
         public string FullName { get; set; }
         public string PrimaryGoal { get; set; }
+
+        public decimal? AverageGoalProgressPercent { get; set; }
+
+        public int CompletedGoals { get; set; }
+        public int TotalGoals { get; set; }
     }
 
     public class DashboardAppointmentRowViewModel
@@ -155,5 +208,17 @@ namespace HealthTrackPro.Web.Areas.Trainer.Models
         public string Message { get; set; }
         public string When { get; set; }
         public bool IsRead { get; set; }
+    }
+
+    public class DashboardClientProgressPointViewModel
+    {
+        public string ClientName { get; set; }
+        public decimal ProgressPercent { get; set; }
+    }
+
+    public class DashboardGoalDistributionItemViewModel
+    {
+        public string Goal { get; set; }
+        public int Count { get; set; }
     }
 }
