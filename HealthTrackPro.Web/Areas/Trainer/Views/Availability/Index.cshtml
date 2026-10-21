@@ -1,0 +1,94 @@
+@model HealthTrackPro.Web.Areas.Trainer.Models.AvailabilityIndexViewModel
+
+@{
+    ViewBag.Title = "Availability";
+}
+
+<div class="ht-card">
+    <h2 class="ht-card-title">Availability</h2>
+    <p class="text-muted">Add the times you can take appointments. Close a slot to hide it from clients.</p>
+
+    @if (TempData["SuccessMessage"] != null) { <div class="alert alert-success">@TempData["SuccessMessage"]</div> }
+    @if (TempData["ErrorMessage"] != null) { <div class="alert alert-danger">@TempData["ErrorMessage"]</div> }
+
+    @using (Html.BeginForm("Add", "Availability", new { area = "Trainer" }, FormMethod.Post, new { @class = "form-horizontal" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.Form.Date, new { @class = "col-md-3 control-label" })
+            <div class="col-md-9">
+                @Html.TextBoxFor(m => m.Form.Date, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+                @Html.ValidationMessageFor(m => m.Form.Date, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Form.StartTime, new { @class = "col-md-3 control-label" })
+            <div class="col-md-9">
+                @Html.TextBoxFor(m => m.Form.StartTime, new { @class = "form-control", type = "time" })
+                @Html.ValidationMessageFor(m => m.Form.StartTime, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Form.EndTime, new { @class = "col-md-3 control-label" })
+            <div class="col-md-9">
+                @Html.TextBoxFor(m => m.Form.EndTime, new { @class = "form-control", type = "time" })
+                @Html.ValidationMessageFor(m => m.Form.EndTime, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Form.Notes, new { @class = "col-md-3 control-label" })
+            <div class="col-md-9">
+                @Html.TextBoxFor(m => m.Form.Notes, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Form.Notes, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-3 col-md-9">
+                <button type="submit" class="btn btn-success">Add slot</button>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="ht-card">
+    <h3 class="ht-card-title">Upcoming slots</h3>
+    @if (Model.Slots.Count == 0)
+    {
+        <p class="text-muted">No upcoming availability slots.</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr><th>Date</th><th>Time</th><th>Notes</th><th>Status</th><th></th></tr>
+                </thead>
+                <tbody>
+                @foreach (var slot in Model.Slots)
+                {
+                    <tr>
+                        <td>@slot.Date</td>
+                        <td>@slot.Time</td>
+                        <td>@slot.Notes</td>
+                        <td>
+                            <span class="ht-status @(slot.IsOpen ? "ht-status-success" : "ht-status-warning")">
+                                @(slot.IsOpen ? "Open" : "Closed")
+                            </span>
+                        </td>
+                        <td>
+                            <form method="post" action="@Url.Action("Toggle", "Availability", new { area = "Trainer" })" style="display:inline;">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@slot.SlotId" />
+                                <input type="hidden" name="open" value="@(!slot.IsOpen)" />
+                                <button type="submit" class="btn btn-default btn-sm">@(slot.IsOpen ? "Close" : "Open")</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
