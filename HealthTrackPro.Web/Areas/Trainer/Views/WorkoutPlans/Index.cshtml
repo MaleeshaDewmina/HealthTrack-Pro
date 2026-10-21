@@ -1,55 +1,804 @@
 @model HealthTrackPro.Web.Areas.Trainer.Models.WorkoutPlanIndexViewModel
+@using System.Linq
 
 @{
     ViewBag.Title = "Workout Plans";
+
+    var activeCount = Model.Plans.Count(p => p.IsActive);
+    var inactiveCount = Model.Plans.Count - activeCount;
 }
 
-<div class="ht-card">
-    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
-        <h2 class="ht-card-title" style="margin:0;">Workout plans</h2>
-        <a class="btn btn-success" href="@Url.Action("Create", "WorkoutPlans", new { area = "Trainer" })">Create workout plan</a>
+<style>
+    .htwi-page {
+        max-width: 1450px;
+        margin: 0 auto;
+    }
+
+    .htwi-hero {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 22px;
+    }
+
+    .htwi-heading {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .htwi-heading-icon {
+        display: flex;
+        width: 48px;
+        height: 48px;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(74,222,128,.14);
+        border-radius: 14px;
+        background:
+            linear-gradient(
+                145deg,
+                rgba(34,197,94,.18),
+                rgba(34,197,94,.06)
+            );
+        color: #4ADE80;
+    }
+
+    .htwi-heading-icon svg {
+        width: 24px;
+        height: 24px;
+        fill: currentColor;
+    }
+
+    .htwi-hero h2 {
+        margin: 0 0 5px;
+        font-size: 27px;
+        font-weight: 800;
+        letter-spacing: -.4px;
+    }
+
+    .htwi-hero p {
+        margin: 0;
+        color: #829087;
+        font-size: 12px;
+    }
+
+    .htwi-create {
+        display: inline-flex;
+        min-height: 45px;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 0 18px;
+        border-radius: 10px;
+        background: linear-gradient(135deg,#22C55E,#16A34A);
+        color: #061009 !important;
+        font-size: 12px;
+        font-weight: 900;
+        text-decoration: none !important;
+        box-shadow: 0 10px 24px rgba(34,197,94,.13);
+    }
+
+    .htwi-create:hover {
+        transform: translateY(-1px);
+    }
+
+    .htwi-summary {
+        display: grid;
+        grid-template-columns: repeat(3,minmax(0,1fr));
+        gap: 13px;
+        margin-bottom: 18px;
+    }
+
+    .htwi-stat {
+        padding: 17px;
+        border: 1px solid #1F2A22;
+        border-radius: 13px;
+        background:
+            radial-gradient(
+                circle at 100% 0,
+                rgba(34,197,94,.08),
+                transparent 48%
+            ),
+            #101612;
+    }
+
+    .htwi-stat-label {
+        display: block;
+        margin-bottom: 8px;
+        color: #68766D;
+        font-size: 9px;
+        font-weight: 900;
+        letter-spacing: .8px;
+        text-transform: uppercase;
+    }
+
+    .htwi-stat-value {
+        color: #F1F5F2;
+        font-size: 25px;
+        font-weight: 900;
+    }
+
+    .htwi-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 17px;
+        padding: 13px;
+        border: 1px solid #1F2A22;
+        border-radius: 12px;
+        background: #101612;
+    }
+
+    .htwi-search {
+        width: 100%;
+        max-width: 420px;
+        height: 42px;
+        padding: 10px 13px;
+        border: 1px solid #26332A;
+        border-radius: 9px;
+        outline: none;
+        background: #0C120E;
+        color: #EEF3EF;
+    }
+
+    .htwi-search:focus {
+        border-color: #22C55E;
+        box-shadow: 0 0 0 3px rgba(34,197,94,.10);
+    }
+
+    .htwi-filters {
+        display: flex;
+        gap: 6px;
+    }
+
+    .htwi-filter {
+        min-height: 38px;
+        padding: 0 13px;
+        border: 1px solid #26332A;
+        border-radius: 8px;
+        background: #0D130F;
+        color: #8C9990;
+        font-size: 10px;
+        font-weight: 800;
+        cursor: pointer;
+    }
+
+    .htwi-filter.active {
+        border-color: #285C39;
+        background: rgba(34,197,94,.12);
+        color: #4ADE80;
+    }
+
+    .htwi-alert {
+        margin-bottom: 17px;
+        padding: 12px 14px;
+        border-radius: 10px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .htwi-alert-success {
+        border: 1px solid rgba(34,197,94,.22);
+        background: rgba(34,197,94,.08);
+        color: #86EFAC;
+    }
+
+    .htwi-alert-danger {
+        border: 1px solid rgba(239,68,68,.22);
+        background: rgba(239,68,68,.08);
+        color: #FCA5A5;
+    }
+
+    .htwi-grid {
+        display: grid;
+        grid-template-columns: repeat(3,minmax(0,1fr));
+        gap: 15px;
+    }
+
+    .htwi-plan {
+        position: relative;
+        overflow: hidden;
+        min-height: 265px;
+        border: 1px solid #1F2A22;
+        border-radius: 14px;
+        background:
+            radial-gradient(
+                circle at 100% 0,
+                rgba(34,197,94,.07),
+                transparent 46%
+            ),
+            #101612;
+        transition: .2s ease;
+    }
+
+    .htwi-plan:hover {
+        transform: translateY(-2px);
+        border-color: #2B4934;
+        box-shadow: 0 15px 30px rgba(0,0,0,.15);
+    }
+
+    .htwi-plan-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 18px 18px 14px;
+        border-bottom: 1px solid #1B251E;
+    }
+
+    .htwi-plan-icon {
+        display: flex;
+        width: 39px;
+        height: 39px;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 12px;
+        border-radius: 10px;
+        background: rgba(34,197,94,.11);
+        color: #4ADE80;
+    }
+
+    .htwi-plan-icon svg {
+        width: 19px;
+        height: 19px;
+        fill: currentColor;
+    }
+
+    .htwi-plan-name {
+        margin: 0;
+        color: #EEF3EF;
+        font-size: 15px;
+        font-weight: 900;
+        line-height: 1.35;
+    }
+
+    .htwi-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 8px;
+        border-radius: 999px;
+        font-size: 8px;
+        font-weight: 900;
+        letter-spacing: .5px;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .htwi-status-active {
+        background: rgba(34,197,94,.12);
+        color: #4ADE80;
+    }
+
+    .htwi-status-inactive {
+        background: rgba(245,158,11,.10);
+        color: #FBBF24;
+    }
+
+    .htwi-dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .htwi-plan-body {
+        padding: 16px 18px;
+    }
+
+    .htwi-meta {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-bottom: 17px;
+    }
+
+    .htwi-meta-item {
+        padding: 11px 12px;
+        border: 1px solid #1C2720;
+        border-radius: 9px;
+        background: #0D130F;
+    }
+
+    .htwi-meta-label {
+        display: block;
+        margin-bottom: 4px;
+        color: #637068;
+        font-size: 8px;
+        font-weight: 900;
+        letter-spacing: .7px;
+        text-transform: uppercase;
+    }
+
+    .htwi-meta-value {
+        color: #DDE5DF;
+        font-size: 11px;
+        font-weight: 800;
+        line-height: 1.45;
+    }
+
+    .htwi-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding-top: 2px;
+    }
+
+    .htwi-action-form {
+        margin: 0;
+    }
+
+    .htwi-toggle {
+        min-height: 36px;
+        padding: 0 13px;
+        border: 1px solid #2A382E;
+        border-radius: 8px;
+        background: #121A14;
+        color: #C4CDC7;
+        font-size: 10px;
+        font-weight: 800;
+    }
+
+    .htwi-toggle:hover {
+        border-color: #3A5742;
+        color: #4ADE80;
+    }
+
+    .htwi-empty {
+        grid-column: 1 / -1;
+        padding: 65px 25px;
+        border: 1px dashed #28352C;
+        border-radius: 14px;
+        background: #0E140F;
+        text-align: center;
+    }
+
+    .htwi-empty-icon {
+        display: flex;
+        width: 60px;
+        height: 60px;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px;
+        border-radius: 16px;
+        background: rgba(34,197,94,.08);
+        color: #4ADE80;
+    }
+
+    .htwi-empty-icon svg {
+        width: 28px;
+        height: 28px;
+        fill: currentColor;
+    }
+
+    .htwi-empty h3 {
+        margin: 0 0 7px;
+        font-size: 17px;
+        font-weight: 800;
+    }
+
+    .htwi-empty p {
+        margin: 0 auto 17px;
+        max-width: 460px;
+        color: #748078;
+        font-size: 11px;
+    }
+
+    .htwi-no-results {
+        display: none;
+        margin-top: 18px;
+        padding: 35px;
+        border: 1px dashed #28352C;
+        border-radius: 12px;
+        text-align: center;
+        color: #758178;
+        font-size: 11px;
+    }
+
+    @@media (max-width: 1150px) {
+        .htwi-grid {
+            grid-template-columns: repeat(2,minmax(0,1fr));
+        }
+    }
+
+    @@media (max-width: 750px) {
+        .htwi-hero,
+        .htwi-toolbar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .htwi-create {
+            width: 100%;
+        }
+
+        .htwi-summary,
+        .htwi-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .htwi-search {
+            max-width: none;
+        }
+
+        .htwi-filters {
+            overflow-x: auto;
+        }
+    }
+</style>
+
+
+<div class="htwi-page">
+
+    <div class="htwi-hero">
+
+        <div class="htwi-heading">
+
+            <div class="htwi-heading-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M1 9h3V6h2v12H4v-3H1V9Zm5 2h3V7h2v10H9v-4H6v-2Zm7-4h2v4h3V9h2v6h-2v-2h-3v4h-2V7Zm7-1h2v3h1v6h-1v3h-2V6Z"/>
+                </svg>
+            </div>
+
+            <div>
+                <h2>Workout Plans</h2>
+                <p>
+                    Create, review and manage personalized
+                    training plans for your assigned clients.
+                </p>
+            </div>
+
+        </div>
+
+        <a class="htwi-create"
+           href="@Url.Action("Create", "WorkoutPlans", new { area = "Trainer" })">
+            + Create workout plan
+        </a>
+
     </div>
 
-    @if (TempData["SuccessMessage"] != null) { <div class="alert alert-success">@TempData["SuccessMessage"]</div> }
-    @if (TempData["ErrorMessage"] != null) { <div class="alert alert-danger">@TempData["ErrorMessage"]</div> }
 
-    @if (Model.Plans.Count == 0)
+    @if (TempData["SuccessMessage"] != null)
     {
-        <p class="text-muted" style="margin-top:16px;">No workout plans yet.</p>
-    }
-    else
-    {
-        <div class="table-responsive" style="margin-top:16px;">
-            <table class="table table-hover">
-                <thead>
-                    <tr><th>Client</th><th>Plan</th><th>Dates</th><th>Status</th><th></th></tr>
-                </thead>
-                <tbody>
-                @foreach (var plan in Model.Plans)
-                {
-                    <tr>
-                        <td>@plan.ClientName</td>
-                        <td>@plan.PlanName</td>
-                        <td>@plan.Dates</td>
-                        <td>
-                            <span class="ht-status @(plan.IsActive ? "ht-status-success" : "ht-status-warning")">
-                                @(plan.IsActive ? "Active" : "Inactive")
-                            </span>
-                        </td>
-                        <td>
-                            <form method="post" action="@Url.Action("SetActive", "WorkoutPlans", new { area = "Trainer" })">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="id" value="@plan.WorkoutPlanId" />
-                                <input type="hidden" name="isActive" value="@(!plan.IsActive)" />
-                                <button type="submit" class="btn btn-default btn-sm">
-                                    @(plan.IsActive ? "Deactivate" : "Activate")
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                }
-                </tbody>
-            </table>
+        <div class="htwi-alert htwi-alert-success">
+            @TempData["SuccessMessage"]
         </div>
     }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="htwi-alert htwi-alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+
+    <div class="htwi-summary">
+
+        <div class="htwi-stat">
+            <span class="htwi-stat-label">
+                Total plans
+            </span>
+            <span class="htwi-stat-value">
+                @Model.Plans.Count
+            </span>
+        </div>
+
+        <div class="htwi-stat">
+            <span class="htwi-stat-label">
+                Active plans
+            </span>
+            <span class="htwi-stat-value">
+                @activeCount
+            </span>
+        </div>
+
+        <div class="htwi-stat">
+            <span class="htwi-stat-label">
+                Inactive plans
+            </span>
+            <span class="htwi-stat-value">
+                @inactiveCount
+            </span>
+        </div>
+
+    </div>
+
+
+    @if (Model.Plans.Count > 0)
+    {
+        <div class="htwi-toolbar">
+
+            <input
+                id="htwiSearch"
+                class="htwi-search"
+                type="search"
+                placeholder="Search by plan or client..." />
+
+            <div class="htwi-filters">
+
+                <button
+                    type="button"
+                    class="htwi-filter active"
+                    data-filter="all">
+                    All
+                </button>
+
+                <button
+                    type="button"
+                    class="htwi-filter"
+                    data-filter="active">
+                    Active
+                </button>
+
+                <button
+                    type="button"
+                    class="htwi-filter"
+                    data-filter="inactive">
+                    Inactive
+                </button>
+
+            </div>
+
+        </div>
+    }
+
+
+    <div id="htwiGrid" class="htwi-grid">
+
+        @if (Model.Plans.Count == 0)
+        {
+            <div class="htwi-empty">
+
+                <div class="htwi-empty-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M1 9h3V6h2v12H4v-3H1V9Zm5 2h3V7h2v10H9v-4H6v-2Zm7-4h2v4h3V9h2v6h-2v-2h-3v4h-2V7Zm7-1h2v3h1v6h-1v3h-2V6Z"/>
+                    </svg>
+                </div>
+
+                <h3>No workout plans yet</h3>
+
+                <p>
+                    Create your first personalized workout plan
+                    for one of your assigned clients.
+                </p>
+
+                <a class="htwi-create"
+                   href="@Url.Action("Create", "WorkoutPlans", new { area = "Trainer" })">
+                    + Create first plan
+                </a>
+
+            </div>
+        }
+        else
+        {
+            foreach (var plan in Model.Plans)
+            {
+                var state = plan.IsActive ? "active" : "inactive";
+
+                <article
+                    class="htwi-plan"
+                    data-status="@state"
+                    data-search="@((plan.ClientName + " " + plan.PlanName).ToLowerInvariant())">
+
+                    <div class="htwi-plan-top">
+
+                        <div>
+
+                            <div class="htwi-plan-icon">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M1 9h3V6h2v12H4v-3H1V9Zm5 2h3V7h2v10H9v-4H6v-2Zm7-4h2v4h3V9h2v6h-2v-2h-3v4h-2V7Zm7-1h2v3h1v6h-1v3h-2V6Z"/>
+                                </svg>
+                            </div>
+
+                            <h3 class="htwi-plan-name">
+                                @plan.PlanName
+                            </h3>
+
+                        </div>
+
+                        <span class="htwi-status @(plan.IsActive ? "htwi-status-active" : "htwi-status-inactive")">
+                            <span class="htwi-dot"></span>
+                            @(plan.IsActive ? "Active" : "Inactive")
+                        </span>
+
+                    </div>
+
+
+                    <div class="htwi-plan-body">
+
+                        <div class="htwi-meta">
+
+                            <div class="htwi-meta-item">
+
+                                <span class="htwi-meta-label">
+                                    Client
+                                </span>
+
+                                <span class="htwi-meta-value">
+                                    @plan.ClientName
+                                </span>
+
+                            </div>
+
+                            <div class="htwi-meta-item">
+
+                                <span class="htwi-meta-label">
+                                    Plan duration
+                                </span>
+
+                                <span class="htwi-meta-value">
+                                    @plan.Dates
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="htwi-actions">
+
+                            <form
+                                class="htwi-action-form"
+                                method="post"
+                                action="@Url.Action("SetActive", "WorkoutPlans", new { area = "Trainer" })">
+
+                                @Html.AntiForgeryToken()
+
+                                <input
+                                    type="hidden"
+                                    name="id"
+                                    value="@plan.WorkoutPlanId" />
+
+                                <input
+                                    type="hidden"
+                                    name="isActive"
+                                    value="@(!plan.IsActive)" />
+
+                                <button
+                                    type="submit"
+                                    class="htwi-toggle">
+                                    @(plan.IsActive
+                                        ? "Deactivate plan"
+                                        : "Activate plan")
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                </article>
+            }
+        }
+
+    </div>
+
+
+    @if (Model.Plans.Count > 0)
+    {
+        <div id="htwiNoResults" class="htwi-no-results">
+            No workout plans match your search or filter.
+        </div>
+    }
+
 </div>
+
+
+@section scripts {
+
+<script>
+(function () {
+
+    "use strict";
+
+    var search =
+        document.getElementById("htwiSearch");
+
+    var cards =
+        Array.prototype.slice.call(
+            document.querySelectorAll(".htwi-plan")
+        );
+
+    var buttons =
+        Array.prototype.slice.call(
+            document.querySelectorAll(".htwi-filter")
+        );
+
+    var empty =
+        document.getElementById("htwiNoResults");
+
+    if (!search || cards.length === 0) {
+        return;
+    }
+
+    var currentFilter = "all";
+
+
+    function refresh() {
+
+        var term =
+            search.value
+                .trim()
+                .toLowerCase();
+
+        var visible = 0;
+
+        cards.forEach(function (card) {
+
+            var status =
+                card.getAttribute("data-status");
+
+            var searchable =
+                card.getAttribute("data-search") || "";
+
+            var matchesFilter =
+                currentFilter === "all" ||
+                status === currentFilter;
+
+            var matchesSearch =
+                !term ||
+                searchable.indexOf(term) !== -1;
+
+            var show =
+                matchesFilter &&
+                matchesSearch;
+
+            card.style.display =
+                show ? "" : "none";
+
+            if (show) {
+                visible++;
+            }
+        });
+
+        if (empty) {
+            empty.style.display =
+                visible === 0
+                    ? "block"
+                    : "none";
+        }
+    }
+
+
+    buttons.forEach(function (button) {
+
+        button.addEventListener(
+            "click",
+            function () {
+
+                currentFilter =
+                    button.getAttribute(
+                        "data-filter"
+                    );
+
+                buttons.forEach(
+                    function (item) {
+                        item.classList.remove(
+                            "active"
+                        );
+                    });
+
+                button.classList.add(
+                    "active"
+                );
+
+                refresh();
+            }
+        );
+    });
+
+
+    search.addEventListener(
+        "input",
+        refresh
+    );
+
+})();
+</script>
+
+}
