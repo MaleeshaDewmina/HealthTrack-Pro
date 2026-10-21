@@ -52,6 +52,32 @@
         type="text/css" />
 
     @Scripts.Render("~/bundles/modernizr")
+
+    <!-- HT-THEME-BOOTSTRAP -->
+    <script>
+        (function () {
+            try {
+                var savedTheme =
+                    localStorage.getItem("healthtrack-theme");
+
+                var theme =
+                    savedTheme === "light"
+                        ? "light"
+                        : "dark";
+
+                document.documentElement.setAttribute(
+                    "data-theme",
+                    theme
+                );
+            }
+            catch (e) {
+                document.documentElement.setAttribute(
+                    "data-theme",
+                    "dark"
+                );
+            }
+        })();
+    </script>
 </head>
 
 <body>
@@ -322,6 +348,20 @@
                 </h1>
 
                 <div class="ht-topbar-right">
+                    <!-- HT-THEME-TOGGLE -->
+                    <button
+                        type="button"
+                        id="htThemeToggle"
+                        class="ht-theme-toggle"
+                        aria-label="Switch colour theme"
+                        title="Switch colour theme">
+                        <span
+                            id="htThemeIcon"
+                            class="ht-theme-icon"
+                            aria-hidden="true">&#9788;</span>
+                        <span id="htThemeText">Light</span>
+                    </button>
+
 
                     @if (User.IsInRole("Trainer"))
                     {
@@ -424,6 +464,78 @@ else
     required: false
 )
 
+
+    <!-- HT-THEME-SCRIPT -->
+    <script>
+        (function () {
+
+            var button =
+                document.getElementById("htThemeToggle");
+
+            var icon =
+                document.getElementById("htThemeIcon");
+
+            var text =
+                document.getElementById("htThemeText");
+
+            if (!button) {
+                return;
+            }
+
+            function getTheme() {
+                return document.documentElement
+                    .getAttribute("data-theme") === "light"
+                    ? "light"
+                    : "dark";
+            }
+
+            function updateButton() {
+
+                var theme = getTheme();
+
+                if (theme === "light") {
+                    icon.innerHTML = "&#9790;";
+                    text.textContent = "Dark";
+                    button.title = "Switch to dark mode";
+                }
+                else {
+                    icon.innerHTML = "&#9788;";
+                    text.textContent = "Light";
+                    button.title = "Switch to light mode";
+                }
+            }
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    var nextTheme =
+                        getTheme() === "dark"
+                            ? "light"
+                            : "dark";
+
+                    document.documentElement.setAttribute(
+                        "data-theme",
+                        nextTheme
+                    );
+
+                    try {
+                        localStorage.setItem(
+                            "healthtrack-theme",
+                            nextTheme
+                        );
+                    }
+                    catch (e) {
+                    }
+
+                    updateButton();
+                }
+            );
+
+            updateButton();
+
+        })();
+    </script>
 </body>
 </html>
 

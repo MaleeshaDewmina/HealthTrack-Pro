@@ -1,4 +1,4 @@
-﻿/* Set padding to keep content from hitting the edges */
+/* Set padding to keep content from hitting the edges */
 .body-content {
     margin-top: 15px;
     padding-left: 15px;
@@ -17,4 +17,221 @@ input,
 select,
 textarea {
     max-width: 280px;
+}
+
+
+/* ==========================================================
+   HEALTHTRACK-GLOBAL-THEME-V1
+   ========================================================== */
+
+:root,
+html[data-theme="dark"] {
+    color-scheme: dark;
+
+    --ht-page-bg: #070B08;
+    --ht-sidebar-bg: #050806;
+    --ht-topbar-bg: #0A0F0C;
+
+    --ht-surface: #0F1711;
+    --ht-surface-2: #131D16;
+    --ht-surface-hover: #17251B;
+
+    --ht-text: #F3F4F6;
+    --ht-text-soft: #D1D5DB;
+    --ht-muted: #91A096;
+
+    --ht-border: #213126;
+    --ht-border-strong: #304535;
+
+    --ht-accent: #22C55E;
+    --ht-accent-hover: #2DD46B;
+    --ht-accent-soft: rgba(34, 197, 94, .12);
+
+    --ht-input-bg: #101812;
+    --ht-shadow: rgba(0, 0, 0, .25);
+}
+
+
+html[data-theme="light"] {
+    color-scheme: light;
+
+    --ht-page-bg: #F4F7F5;
+    --ht-sidebar-bg: #FFFFFF;
+    --ht-topbar-bg: #FFFFFF;
+
+    --ht-surface: #FFFFFF;
+    --ht-surface-2: #EEF4F0;
+    --ht-surface-hover: #E7F2EA;
+
+    --ht-text: #17221A;
+    --ht-text-soft: #33483A;
+    --ht-muted: #6B7B70;
+
+    --ht-border: #D6E1D9;
+    --ht-border-strong: #BFCFC4;
+
+    --ht-accent: #16A34A;
+    --ht-accent-hover: #15803D;
+    --ht-accent-soft: rgba(22, 163, 74, .11);
+
+    --ht-input-bg: #FFFFFF;
+    --ht-shadow: rgba(31, 51, 38, .10);
+}
+
+
+/* Smooth theme transition */
+
+body,
+.ht-sidebar,
+.ht-topbar,
+.ht-nav-link,
+.ht-theme-toggle,
+input,
+textarea,
+select {
+    transition:
+        background-color .18s ease,
+        color .18s ease,
+        border-color .18s ease,
+        box-shadow .18s ease;
+}
+
+
+/* Shared application shell */
+
+html[data-theme] body {
+    background: var(--ht-page-bg);
+    color: var(--ht-text);
+}
+
+html[data-theme] .ht-sidebar {
+    background: var(--ht-sidebar-bg);
+    border-color: var(--ht-border);
+}
+
+html[data-theme] .ht-topbar {
+    background: var(--ht-topbar-bg);
+    border-color: var(--ht-border);
+    color: var(--ht-text);
+}
+
+html[data-theme] .ht-nav-title {
+    color: var(--ht-muted);
+}
+
+html[data-theme] .ht-nav-link {
+    color: var(--ht-text-soft);
+}
+
+html[data-theme] .ht-nav-link:hover {
+    color: var(--ht-accent);
+    background: var(--ht-surface-hover);
+}
+
+html[data-theme] .ht-nav-link.active {
+    color: var(--ht-accent);
+    background: var(--ht-accent-soft);
+}
+
+
+/* Theme switch */
+
+.ht-theme-toggle {
+    min-height: 38px;
+    padding: 7px 11px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    background: var(--ht-surface);
+    color: var(--ht-text-soft);
+
+    border: 1px solid var(--ht-border);
+    border-radius: 10px;
+
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.ht-theme-toggle:hover {
+    color: var(--ht-accent);
+    border-color: var(--ht-accent);
+    background: var(--ht-surface-hover);
+}
+
+.ht-theme-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 17px;
+    font-size: 17px;
+    line-height: 1;
+}
+
+
+/* Shared form controls */
+
+html[data-theme] input:not([type="checkbox"]):not([type="radio"]),
+html[data-theme] textarea,
+html[data-theme] select {
+    background-color: var(--ht-input-bg);
+    color: var(--ht-text);
+    border-color: var(--ht-border);
+}
+
+html[data-theme] input::placeholder,
+html[data-theme] textarea::placeholder {
+    color: var(--ht-muted);
+}
+
+
+/* Common Bootstrap surfaces */
+
+html[data-theme="light"] .panel,
+html[data-theme="light"] .card,
+html[data-theme="light"] .well,
+html[data-theme="light"] .modal-content,
+html[data-theme="light"] .dropdown-menu {
+    background-color: var(--ht-surface);
+    color: var(--ht-text);
+    border-color: var(--ht-border);
+}
+
+
+/* Tables */
+
+html[data-theme="light"] table {
+    color: var(--ht-text);
+}
+
+html[data-theme="light"] .table > thead > tr > th,
+html[data-theme="light"] .table > tbody > tr > td {
+    border-color: var(--ht-border);
+}
+
+
+/* Keep the HealthTrack green identity in both modes */
+
+html[data-theme] a {
+    text-decoration-color: currentColor;
+}
+
+
+/* Small screens */
+
+@media (max-width: 520px) {
+    .ht-theme-toggle {
+        width: 38px;
+        padding: 7px;
+    }
+
+    .ht-theme-toggle #htThemeText {
+        display: none;
+    }
 }

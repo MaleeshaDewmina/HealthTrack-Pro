@@ -194,8 +194,8 @@
         min-width: 0;
         min-height: 158px;
         padding: 21px;
-        background: #111713;
-        border: 1px solid #1F2A22;
+        background: var(--ht-tone-111713);
+        border: 1px solid var(--ht-tone-1f2a22);
         border-radius: 11px;
         transition: border-color 0.2s ease;
     }
@@ -266,12 +266,12 @@
         overflow: hidden;
         appearance: none;
         -webkit-appearance: none;
-        background: #27342B;
+        background: var(--ht-tone-27342b);
         accent-color: #22C55E;
     }
 
         .htd-goal-progress::-webkit-progress-bar {
-            background: #27342B;
+            background: var(--ht-tone-27342b);
             border-radius: 10px;
         }
 
@@ -299,8 +299,8 @@
     .htd-panel {
         min-width: 0;
         padding: 23px;
-        background: #111713;
-        border: 1px solid #1F2A22;
+        background: var(--ht-tone-111713);
+        border: 1px solid var(--ht-tone-1f2a22);
         border-radius: 11px;
     }
 
@@ -337,7 +337,7 @@
 
     .htd-chart-tab {
         padding: 9px 15px;
-        background: #151F18;
+        background: var(--ht-tone-151f18);
         color: #9CA3AF;
         border: 1px solid #304535;
         border-radius: 8px;
@@ -355,7 +355,7 @@
 
         .htd-chart-tab.active {
             color: #4ADE80;
-            background: #1A3A25;
+            background: var(--ht-tone-1a3a25);
             border-color: #22C55E;
         }
 
@@ -407,7 +407,7 @@
         width: 46px;
         height: 46px;
         margin-bottom: 14px;
-        background: #173221;
+        background: var(--ht-tone-173221);
         color: #4ADE80;
         border: 1px solid #2A4A33;
         border-radius: 12px;
@@ -444,7 +444,7 @@
         display: inline-flex;
         align-items: center;
         padding: 8px 12px;
-        background: #18261C;
+        background: var(--ht-tone-18261c);
         color: #C8E7D1;
         border: 1px solid #28432F;
         border-radius: 8px;
@@ -501,7 +501,7 @@
         justify-content: center;
         align-self: flex-start;
         padding: 11px 16px;
-        background: #15251A;
+        background: var(--ht-tone-15251a);
         color: #4ADE80;
         border: 1px solid #2D4834;
         border-radius: 8px;
@@ -513,7 +513,7 @@
 
         .htd-action-link:hover,
         .htd-action-link:focus {
-            background: #1B3523;
+            background: var(--ht-tone-1b3523);
             border-color: #22C55E;
             color: #F3F4F6;
             text-decoration: none;
@@ -549,7 +549,7 @@
         align-items: center;
         padding: 8px 13px;
         color: #D1D5DB;
-        background: #1B2420;
+        background: var(--ht-tone-1b2420);
         border: 1px solid #334039;
         border-radius: 8px;
         font-size: 11px;
@@ -1172,6 +1172,51 @@
             // CREATE GREEN LINE CHART
             // =====================================
 
+            // HTD-THEME-AWARE-CHART
+            // Resolve colours whenever the chart is rendered,
+            // so switching Light/Dark mode updates the chart too.
+
+            var isLightTheme =
+                document.documentElement.getAttribute(
+                    "data-theme"
+                ) === "light";
+
+            var chartTickColor =
+                isLightTheme
+                    ? "#64748B"
+                    : "#9CA3AF";
+
+            var chartGridColor =
+                isLightTheme
+                    ? "rgba(100, 116, 139, 0.16)"
+                    : "#1F2A22";
+
+            var chartGridColorY =
+                isLightTheme
+                    ? "rgba(100, 116, 139, 0.16)"
+                    : "#26342A";
+
+            var chartAxisBorderColor =
+                isLightTheme
+                    ? "#CBD5E1"
+                    : "#344638";
+
+            var chartTooltipBackground =
+                isLightTheme
+                    ? "#17221A"
+                    : "#111713";
+
+            var chartTooltipTitle =
+                "#F8FAFC";
+
+            var chartTooltipBody =
+                "#4ADE80";
+
+            var chartTooltipBorder =
+                isLightTheme
+                    ? "#35533D"
+                    : "#35533D";
+
             healthChart = new Chart(canvas, {
 
                 type: "line",
@@ -1196,7 +1241,7 @@
                                 "rgba(34, 197, 94, 0.10)",
 
                             pointBackgroundColor:
-                                "#4ADE80",
+                                chartTooltipBody,
 
                             pointBorderColor:
                                 "#22C55E",
@@ -1245,16 +1290,16 @@
                         tooltip: {
 
                             backgroundColor:
-                                "#111713",
+                                chartTooltipBackground,
 
                             titleColor:
-                                "#F3F4F6",
+                                chartTooltipTitle,
 
                             bodyColor:
-                                "#4ADE80",
+                                chartTooltipBody,
 
                             borderColor:
-                                "#35533D",
+                                chartTooltipBorder,
 
                             borderWidth: 1,
 
@@ -1272,7 +1317,7 @@
 
                             ticks: {
 
-                                color: "#9CA3AF",
+                                color: chartTickColor,
 
                                 maxRotation: 35,
 
@@ -1284,13 +1329,13 @@
 
                             grid: {
 
-                                color: "#1F2A22"
+                                color: chartGridColor
 
                             },
 
                             border: {
 
-                                color: "#344638"
+                                color: chartAxisBorderColor
 
                             }
 
@@ -1302,19 +1347,19 @@
 
                             ticks: {
 
-                                color: "#9CA3AF"
+                                color: chartTickColor
 
                             },
 
                             grid: {
 
-                                color: "#26342A"
+                                color: chartGridColorY
 
                             },
 
                             border: {
 
-                                color: "#344638"
+                                color: chartAxisBorderColor
 
                             }
 
@@ -1337,7 +1382,32 @@
             "click",
             function () {
 
-                showChart("weight");
+                // Re-render the current chart when Light/Dark mode changes.
+        if (typeof MutationObserver !== "undefined") {
+
+            var htdThemeObserver =
+                new MutationObserver(
+                    function () {
+
+                        var activeType =
+                            weightTab.classList.contains("active")
+                                ? "weight"
+                                : "bmi";
+
+                        showChart(activeType);
+                    }
+                );
+
+            htdThemeObserver.observe(
+                document.documentElement,
+                {
+                    attributes: true,
+                    attributeFilter: ["data-theme"]
+                }
+            );
+        }
+
+        showChart("weight");
 
             }
         );
@@ -1360,6 +1430,31 @@
         // =====================================
         // INITIAL CHART
         // =====================================
+
+        // Re-render the current chart when Light/Dark mode changes.
+        if (typeof MutationObserver !== "undefined") {
+
+            var htdThemeObserver =
+                new MutationObserver(
+                    function () {
+
+                        var activeType =
+                            weightTab.classList.contains("active")
+                                ? "weight"
+                                : "bmi";
+
+                        showChart(activeType);
+                    }
+                );
+
+            htdThemeObserver.observe(
+                document.documentElement,
+                {
+                    attributes: true,
+                    attributeFilter: ["data-theme"]
+                }
+            );
+        }
 
         showChart("weight");
 
