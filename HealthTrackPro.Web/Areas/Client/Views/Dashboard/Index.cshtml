@@ -1,4 +1,4 @@
-
+﻿
 @model HealthTrackPro.Web.Areas.Client.Models.ClientDashboardViewModel
 @using System
 @using System.Linq
@@ -703,31 +703,23 @@
         </div>
 
 
-        <!-- CALORIES -->
-
+                <!-- CALORIES - HT-VIVA-DASHBOARD -->
         <div class="htd-stat-card">
-
             <span class="htd-stat-dot htd-stat-dot-muted"></span>
-
-            <div class="htd-stat-label">
-                CALORIES
-            </div>
-
+            <div class="htd-stat-label">CALORIES BURNED TODAY</div>
             <div class="htd-stat-value">
-                --
-                <span class="htd-stat-unit">
-                    KCAL
-                </span>
+                @(Model.CaloriesBurnedToday.HasValue
+                    ? Model.CaloriesBurnedToday.Value.ToString("0") : "--")
+                <span class="htd-stat-unit">KCAL</span>
             </div>
-
             <p class="htd-stat-description">
-                Calorie tracking not connected yet
+                @(Model.CaloriesBurnedToday.HasValue
+                    ? "From your recorded activity today"
+                    : "No calorie activity recorded today")
             </p>
-
         </div>
 
-
-        <!-- FITNESS GOAL -->
+<!-- FITNESS GOAL -->
 
         <div class="htd-stat-card">
 
@@ -885,31 +877,37 @@
         </div>
 
 
-        <!-- TODAY'S WORKOUT -->
-
+                <!-- ACTIVE WORKOUT PLAN - HT-VIVA-DASHBOARD -->
         <div class="htd-panel htd-workout-panel">
-
-            <span class="htd-section-label">
-                TODAY'S WORKOUT
-            </span>
-
+            <span class="htd-section-label">YOUR WORKOUT PLAN</span>
             <h2 class="htd-workout-title">
-                No workout loaded
+                @(string.IsNullOrWhiteSpace(Model.ActiveWorkoutName)
+                    ? "No active workout plan"
+                    : Model.ActiveWorkoutName)
             </h2>
-
             <p class="htd-workout-description">
-                Your trainer-assigned workout will
-                appear here when workout plan
-                information is connected.
+                @if (string.IsNullOrWhiteSpace(Model.ActiveWorkoutName))
+                {
+                    @:Your trainer-assigned workout will appear here when a plan is active.
+                }
+                else
+                {
+                    @(Model.ActiveWorkoutDescription ?? "Personalised workout plan assigned by your trainer.")
+                }
             </p>
-
+            @if (!string.IsNullOrWhiteSpace(Model.ActiveWorkoutName))
+            {
+                <p class="htd-workout-description">
+                    @Model.ActiveWorkoutExerciseCount exercise(s) in this plan
+                    @if (!string.IsNullOrWhiteSpace(Model.ActiveWorkoutTrainer))
+                    {
+                        <text> - Trainer: @Model.ActiveWorkoutTrainer</text>
+                    }
+                </p>
+            }
             <div class="htd-workout-spacer"></div>
-
-            <a href="@goalsUrl"
-               class="htd-action-link">
-                VIEW FITNESS GOALS &rarr;
-            </a>
-
+            <a href="@Url.Action("Index", "Workout", new { area = "Client" })"
+               class="htd-action-link">VIEW WORKOUT PLAN &rarr;</a>
         </div>
 
     </section>
