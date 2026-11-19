@@ -1,4 +1,4 @@
-
+﻿
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,11 +16,13 @@ namespace HealthTrackPro.Web.Areas.Client.Controllers
     {
         private readonly IClientService _clientService;
         private readonly IProgressService _progressService;
+        private readonly IWorkoutService _workoutService;
 
         public DashboardController()
         {
             _clientService = new ClientService();
             _progressService = new ProgressService();
+            _workoutService = new WorkoutService();
         }
 
         [HttpGet]
@@ -44,6 +46,33 @@ namespace HealthTrackPro.Web.Areas.Client.Controllers
             // Retrieve historical health measurements
             var healthMetrics = await _progressService
                 .GetHealthMetricsAsync(userId);
+
+            // HT-VIVA-DASHBOARD: existing active workout and recorded calorie data.
+            var activeWorkoutPlan = await _workoutService.GetActivePlanAsync(userId);
+            var workoutHistory = await _workoutService.GetWorkoutHistoryAsync(userId);
+            int? caloriesBurnedToday = null;
+            var today = DateTime.Today;
+
+            // Prefer completed workout logs; use a health-metric entry only when
+            // there are no calories recorded in today's completed workouts.
+            if (workoutHistory != null)
+            {
+                var loggedToday = workoutHistory
+                    .Where(w => w.IsCompleted && w.CompletedAt.HasValue &&
+                        w.CompletedAt.Value.Date == today && w.CaloriesBurned.HasValue)
+                    .ToList();
+                if (loggedToday.Count > 0)
+                    caloriesBurnedToday = loggedToday.Sum(w => w.CaloriesBurned.Value);
+            }
+            if (!caloriesBurnedToday.HasValue && healthMetrics != null)
+            {
+                var latestRecordedCalories = healthMetrics
+                    .Where(m => m.RecordedAt.Date == today && m.CaloriesBurned.HasValue)
+                    .OrderByDescending(m => m.RecordedAt)
+                    .FirstOrDefault();
+                if (latestRecordedCalories != null)
+                    caloriesBurnedToday = latestRecordedCalories.CaloriesBurned;
+            }
 
             // Calculate fitness goal statistics
             decimal? averageProgress = null;
@@ -84,7 +113,14 @@ namespace HealthTrackPro.Web.Areas.Client.Controllers
 
                 TotalGoals = totalGoals,
 
-                CompletedGoals = completedGoals
+                CompletedGoals = completedGoals,
+                CaloriesBurnedToday = caloriesBurnedToday,
+                ActiveWorkoutName = activeWorkoutPlan != null ? activeWorkoutPlan.Name : null,
+                ActiveWorkoutDescription = activeWorkoutPlan != null ? activeWorkoutPlan.Description : null,
+                ActiveWorkoutTrainer = activeWorkoutPlan != null && activeWorkoutPlan.Trainer != null
+                    ? activeWorkoutPlan.Trainer.FullName : null,
+                ActiveWorkoutExerciseCount = activeWorkoutPlan != null && activeWorkoutPlan.WorkoutExercises != null
+                    ? activeWorkoutPlan.WorkoutExercises.Count : 0
             };
 
             // Prepare the latest 10 historical measurements.
@@ -135,6 +171,7 @@ namespace HealthTrackPro.Web.Areas.Client.Controllers
                 }
             }
 
+            if (disposing) (_workoutService as IDisposable)?.Dispose();
             base.Dispose(disposing);
         }
     }

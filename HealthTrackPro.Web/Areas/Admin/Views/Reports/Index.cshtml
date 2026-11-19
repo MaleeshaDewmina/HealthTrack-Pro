@@ -1,4 +1,4 @@
-@model HealthTrackPro.Web.Areas.Admin.Models.AdminReportsViewModel
+﻿@model HealthTrackPro.Web.Areas.Admin.Models.AdminReportsViewModel
 
 @{
     ViewBag.Title = "Reports & Analytics";
@@ -265,6 +265,30 @@
 
     </section>
 
+
+    <!-- HT-VIVA-REPORT-FILTER: optional time period and print/export controls -->
+    <form method="get" action="@Url.Action("Index", "Reports", new { area = "Admin" })" class="ht-viva-report-tools">
+        <label>
+            From date
+            <input type="date" name="fromDate" value="@ViewBag.ReportFrom" aria-label="Report from date" />
+        </label>
+        <label>
+            To date
+            <input type="date" name="toDate" value="@ViewBag.ReportTo" aria-label="Report to date" />
+        </label>
+        <button class="ht-viva-report-primary" type="submit">Apply dates</button>
+        <button type="submit" formaction="@Url.Action("ExportExcel", "Reports", new { area = "Admin" })">Export to Excel (CSV)</button>
+        <button type="button" onclick="window.print()">Print report</button>
+        <a href="@Url.Action("Index", "Reports", new { area = "Admin" })">Clear</a>
+    </form>
+    @if (ViewBag.ReportError != null)
+    {
+        <p class="ht-viva-report-error">@ViewBag.ReportError</p>
+    }
+    <div class="ht-viva-report-caption">
+        @(ViewBag.ReportFiltered ? "Selected date range" : "All-time activity")
+        <span>Dates are inclusive. Appointments use their scheduled dates; plans and goals use start dates.</span>
+    </div>
 
     <section class="har-kpis">
 
@@ -732,3 +756,149 @@
 
 })();
 </script>
+<style>
+/* HT-VIVA-REPORT-FILTER: scoped to the existing Administrator Reports page */
+.ht-viva-report-tools {display:flex;flex-wrap:wrap;align-items:end;gap:10px;padding:14px 16px;margin:0 0 12px;border:1px solid #284130;border-radius:13px;background:#111b15;}
+.ht-viva-report-tools label {display:flex;flex-direction:column;gap:6px;font-size:11px;color:#b4cabc;font-weight:700;}
+.ht-viva-report-tools input {min-height:39px;padding:7px 10px;border:1px solid #32523b;border-radius:8px;background:#0b130e;color:#edf7ef;color-scheme:dark;font-size:13px;}
+.ht-viva-report-tools button,.ht-viva-report-tools a {min-height:39px;border:1px solid #34533e;border-radius:8px;background:#16251b;color:#d7efe0;padding:9px 12px;font-size:11px;font-weight:800;text-decoration:none;cursor:pointer;display:inline-flex;align-items:center;}
+.ht-viva-report-tools .ht-viva-report-primary {background:#22c55e;border-color:#22c55e;color:#06140a;}
+.ht-viva-report-tools button:hover,.ht-viva-report-tools a:hover {border-color:#22c55e;}
+.ht-viva-report-caption {display:flex;flex-wrap:wrap;gap:10px;color:#4ade80;font-size:11px;font-weight:700;margin:0 0 14px;}
+.ht-viva-report-caption span {color:#94aa9a;font-weight:400;}
+.ht-viva-report-error {color:#fca5a5;margin:0 0 12px;font-size:12px;}
+html[data-theme="light"] .ht-viva-report-tools {background:#f5faf6;border-color:#c7decf;}
+html[data-theme="light"] .ht-viva-report-tools label, html[data-theme="light"] .ht-viva-report-caption span {color:#405f4a;}
+html[data-theme="light"] .ht-viva-report-tools input {background:#fff;color:#17271c;border-color:#bfd4c5;color-scheme:light;}
+html[data-theme="light"] .ht-viva-report-tools button,html[data-theme="light"] .ht-viva-report-tools a {background:#e9f6ed;color:#21643b;}
+html[data-theme="light"] .ht-viva-report-tools .ht-viva-report-primary {background:#22c55e;color:#06140a;}
+@@media print {
+ @@page {size:A4 landscape; margin:12mm;}
+ .ht-sidebar,.ht-topbar,.ht-viva-report-tools,.ht-nav,.ht-notification-button {display:none!important;}
+ .ht-main {margin-left:0!important;width:100%!important;}
+ .ht-page-content {padding:0!important;}
+ .har-page {max-width:none!important;color:#111!important;}
+ .har-hero,.har-kpi,.har-progress-card,.har-panel {break-inside:avoid;box-shadow:none!important;}
+ .har-charts {break-inside:avoid;}
+ .har-hero h1,.har-kpi strong,.har-panel h3 {color:#111!important;}
+ .har-hero,.har-kpi,.har-progress-card,.har-panel {background:#fff!important;border-color:#b6c5b9!important;}
+ .ht-viva-report-caption {color:#111!important;}
+}
+</style>
+
+<!-- HT-VIVA-POLISH-PRINT: separate, print-only report instead of printing dashboard cards -->
+<section class="ht-viva-print-sheet" aria-label="Printable HealthTrack analytics summary">
+    <header class="ht-viva-print-heading">
+        <div>
+            <p class="ht-viva-print-eyebrow">HEALTHTRACK PRO / ADMINISTRATION</p>
+            <h1>Reports &amp; Analytics</h1>
+            <p>Activity, engagement and operational statistics</p>
+        </div>
+        <div class="ht-viva-print-meta">
+            <div><strong>Period</strong></div>
+            <div>@(string.IsNullOrWhiteSpace(ViewBag.ReportFrom as string) ? "All dates" : (string)ViewBag.ReportFrom)
+                to @(string.IsNullOrWhiteSpace(ViewBag.ReportTo as string) ? "All dates" : (string)ViewBag.ReportTo)</div>
+            <div>Generated @DateTime.Now.ToString("dd MMM yyyy, HH:mm")</div>
+        </div>
+    </header>
+    <div class="ht-viva-print-rule"></div>
+    <div class="ht-viva-print-grid">
+        <section class="ht-viva-print-panel">
+            <h2>Users &amp; assignments</h2>
+            <table><tbody>
+                <tr><th>Registered clients</th><td>@Model.TotalClients</td></tr>
+                <tr><th>Registered trainers</th><td>@Model.TotalTrainers</td></tr>
+                <tr><th>Active assignments</th><td>@Model.ActiveAssignments</td></tr>
+                <tr><th>Unassigned clients</th><td>@Model.UnassignedClients</td></tr>
+                <tr><th>Suspended users*</th><td>@Model.SuspendedUsers</td></tr>
+                <tr><th>Assignment coverage</th><td>@Model.AssignmentCoveragePercentage%</td></tr>
+            </tbody></table>
+        </section>
+        <section class="ht-viva-print-panel">
+            <h2>Appointment workflow</h2>
+            <table><tbody>
+                <tr><th>Total appointments</th><td>@Model.TotalAppointments</td></tr>
+                <tr><th>Pending</th><td>@Model.PendingAppointments</td></tr>
+                <tr><th>Approved</th><td>@Model.ApprovedAppointments</td></tr>
+                <tr><th>Rejected</th><td>@Model.RejectedAppointments</td></tr>
+                <tr><th>Cancelled</th><td>@Model.CancelledAppointments</td></tr>
+                <tr><th>Completed</th><td>@Model.CompletedAppointments</td></tr>
+                <tr><th>Completion rate</th><td>@Model.AppointmentCompletionPercentage%</td></tr>
+            </tbody></table>
+        </section>
+        <section class="ht-viva-print-panel">
+            <h2>Fitness &amp; nutrition</h2>
+            <table><tbody>
+                <tr><th>Workout plans</th><td>@Model.TotalWorkoutPlans</td></tr>
+                <tr><th>Active workout plans</th><td>@Model.ActiveWorkoutPlans</td></tr>
+                <tr><th>Workout logs</th><td>@Model.WorkoutLogs</td></tr>
+                <tr><th>Diet plans</th><td>@Model.TotalDietPlans</td></tr>
+                <tr><th>Active diet plans</th><td>@Model.ActiveDietPlans</td></tr>
+                <tr><th>Meal logs</th><td>@Model.MealLogs</td></tr>
+            </tbody></table>
+        </section>
+        <section class="ht-viva-print-panel">
+            <h2>Progress &amp; communication</h2>
+            <table><tbody>
+                <tr><th>Fitness goals</th><td>@Model.TotalGoals</td></tr>
+                <tr><th>Completed goals</th><td>@Model.CompletedGoals</td></tr>
+                <tr><th>Goal completion</th><td>@Model.GoalCompletionPercentage%</td></tr>
+                <tr><th>Health measurements</th><td>@Model.HealthMeasurements</td></tr>
+                <tr><th>Notifications</th><td>@Model.Notifications</td></tr>
+                <tr><th>Unread notifications*</th><td>@Model.UnreadNotifications</td></tr>
+            </tbody></table>
+        </section>
+    </div>
+    <footer class="ht-viva-print-footer">
+        <p>Dates are inclusive. Appointment counts use scheduled dates; workout and diet plans use start dates; other activity uses its recorded date.</p>
+        <p>*Suspensions and unread status are current values, not historical snapshots. Other status figures show the present state of records in the selected period.</p>
+        <div>HealthTrack Pro • Administrator Reports • Locally generated</div>
+    </footer>
+</section>
+<style>
+/* HT-VIVA-POLISH-PRINT: screen remains exactly as before. */
+.ht-viva-print-sheet { display: none; }
+@@media print {
+    @@page { size: A4 landscape; margin: 12mm; }
+    html, body { background: #fff !important; color: #17231b !important; height: auto !important; }
+    body, .ht-app-shell, .ht-main, .ht-page-content {
+        background: #fff !important; min-height: 0 !important;
+        height: auto !important; width: 100% !important;
+        margin: 0 !important; padding: 0 !important;
+        overflow: visible !important;
+    }
+    .ht-sidebar, .ht-topbar, .har-page { display: none !important; }
+    .ht-viva-print-sheet {
+        display: block !important; width: 100% !important; max-width: none !important;
+        color: #17231b !important; font-family: Arial, 'Segoe UI', sans-serif !important;
+        font-size: 9pt !important; line-height: 1.35 !important;
+        margin: 0 !important; padding: 0 !important;
+        background: #fff !important;
+    }
+    .ht-viva-print-sheet *, .ht-viva-print-sheet *::before, .ht-viva-print-sheet *::after {
+        box-sizing: border-box !important;
+        background-image: none !important;
+        box-shadow: none !important;
+        color: #17231b !important;
+    }
+    .ht-viva-print-heading { display:flex; justify-content:space-between; align-items:end; gap:18mm; padding:0 0 5mm; }
+    .ht-viva-print-heading h1 { font-size:19pt !important; line-height:1.2; margin:2mm 0 1mm; font-weight:800; }
+    .ht-viva-print-heading p { font-size:8pt; color:#5b6c60 !important; margin:0; }
+    .ht-viva-print-sheet .ht-viva-print-eyebrow {font-size:7.5pt !important; letter-spacing:.8pt;color:#178b4e!important;font-weight:bold;}
+    .ht-viva-print-meta {text-align:right;font-size:8pt;min-width:47mm;line-height:1.6;}
+    .ht-viva-print-meta strong {font-size:9pt;}
+    .ht-viva-print-rule {height:2px; background:#1a9b55!important;margin:0 0 5mm;}
+    .ht-viva-print-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5mm;align-items:start;}
+    .ht-viva-print-panel {break-inside:avoid;page-break-inside:avoid;border:1px solid #c5d5c9;border-radius:3mm;padding:4mm;}
+    .ht-viva-print-panel h2 {font-size:11pt!important;margin:0 0 2mm;color:#146738!important;font-weight:bold;border-bottom:1px solid #d9e6dc;padding-bottom:2mm;}
+    .ht-viva-print-panel table {width:100%;border-collapse:collapse;table-layout:fixed;}
+    .ht-viva-print-panel th,.ht-viva-print-panel td {padding:1.2mm 0!important;border-bottom:1px solid #e5ece7!important;font-size:8.5pt!important;line-height:1.3!important;}
+    .ht-viva-print-panel tr:last-child th,.ht-viva-print-panel tr:last-child td {border-bottom:0!important;}
+    .ht-viva-print-panel th {font-weight:normal;text-align:left;width:74%;}
+    .ht-viva-print-panel td {font-weight:bold;text-align:right;white-space:nowrap;}
+    .ht-viva-print-footer {padding-top:5mm;font-size:7.5pt;line-height:1.4;color:#53675a!important;}
+    .ht-viva-print-footer p {margin:1.5mm 0;color:#53675a!important;}
+    .ht-viva-print-footer div {margin-top:3mm;padding-top:2mm;border-top:1px solid #d9e6dc;text-align:right;font-size:7pt;color:#718477!important;}
+}
+</style>
+

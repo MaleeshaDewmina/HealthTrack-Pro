@@ -26,6 +26,13 @@ namespace HealthTrackPro.Web.Areas.Client.Models
         public List<ClientHealthTrendPointViewModel> HealthTrend
         { get; set; }
 
+        // HT-VIVA-DASHBOARD: data from actual stored activity (never estimated).
+        public int? CaloriesBurnedToday { get; set; }
+        public string ActiveWorkoutName { get; set; }
+        public string ActiveWorkoutDescription { get; set; }
+        public string ActiveWorkoutTrainer { get; set; }
+        public int ActiveWorkoutExerciseCount { get; set; }
+
         public ClientDashboardViewModel()
         {
             HealthTrend =
