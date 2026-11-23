@@ -1,0 +1,41 @@
+name: HealthTrack Pro - Windows build and MSTest
+
+on:
+  push:
+    branches:
+      - post-viva/healthtrack-improvements-20261120
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    name: Build and run MSTest (.NET Framework 4.8)
+    runs-on: windows-2022
+    timeout-minutes: 25
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      - name: Install NuGet CLI
+        uses: nuget/setup-nuget@v2
+      - name: Configure MSBuild
+        uses: microsoft/setup-msbuild@v2
+      - name: Restore solution packages
+        run: nuget restore HealthTrackPro.sln -NonInteractive
+      - name: Build solution
+        run: msbuild HealthTrackPro.sln /m /p:Configuration=Release /p:Platform="Any CPU" /verbosity:minimal
+      - name: Execute MSTest unit tests
+        shell: pwsh
+        run: |
+          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+          if (-not (Test-Path $vswhere)) { throw "vswhere.exe is missing on runner" }
+          $vsInstall = & $vswhere -latest -products '*' -property installationPath
+          if (-not $vsInstall) { throw "Visual Studio installation not found" }
+          $vstest = Join-Path $vsInstall 'Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe'
+          if (-not (Test-Path $vstest)) { throw "vstest.console.exe not found: $vstest" }
+          & $vstest 'HealthTrackPro.Web.Tests\bin\Release\HealthTrackPro.Web.Tests.dll' '/Logger:trx'
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
