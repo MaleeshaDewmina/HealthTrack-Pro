@@ -1,4 +1,4 @@
-
+﻿
 @model HealthTrackPro.Web.Areas.Client.Models.ClientAppointmentsViewModel
 @using System
 @using System.Linq
@@ -1008,4 +1008,39 @@
             dateInput.min = minValue;
         }
     })();
+</script>
+
+<style>
+/* HT-VIVA-DATE-PICKER: accessible control that opens Chrome's real picker. */
+.ht-viva-date-wrap {position:relative;display:flex;align-items:center;}
+.ht-viva-date-wrap .ap-input {width:100%;padding-right:48px;}
+.ht-viva-date-open {position:absolute;right:5px;top:50%;transform:translateY(-50%);width:38px;height:38px;display:grid;place-items:center;background:#173d23;border:1px solid #2f7950;border-radius:8px;color:#80ecaa;cursor:pointer;z-index:2;}
+.ht-viva-date-open:hover,.ht-viva-date-open:focus {background:#225735;outline:2px solid #36cf74;outline-offset:1px;}
+.ht-viva-date-open svg {width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
+html[data-theme="light"] .ht-viva-date-open {background:#e8f8ed;color:#15803d;}
+</style>
+<script>
+(function () {
+    var input = document.getElementById('NewBooking_AppointmentDateTime');
+    if (!input || input.closest('.ht-viva-date-wrap')) return;
+    var wrapper = document.createElement('div');
+    wrapper.className = 'ht-viva-date-wrap';
+    input.parentNode.insertBefore(wrapper, input);
+    wrapper.appendChild(input);
+    var button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'ht-viva-date-open';
+    button.setAttribute('aria-label', 'Open appointment date and time picker');
+    button.title = 'Choose date and time';
+    button.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M7 3v4M17 3v4M3 10h18"></path></svg>';
+    wrapper.appendChild(button);
+    function openPicker() {
+        if (typeof input.showPicker === 'function') {
+            try { input.showPicker(); return; } catch (e) { /* fallback */ }
+        }
+        input.focus();
+        input.click();
+    }
+    button.addEventListener('click', openPicker);
+})();
 </script>

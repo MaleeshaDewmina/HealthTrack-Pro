@@ -200,6 +200,7 @@
     <Compile Include="Areas\Client\Services\ClientAiCoachService.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\NotificationDropdownController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -314,6 +315,7 @@
     <Content Include="Scripts\bootstrap.esm.js" />
     <Content Include="Scripts\bootstrap.esm.min.js" />
     <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\healthtrack-notifications.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Areas\Client\Views\Profile\Index.cshtml" />
     <Content Include="Areas\Client\Views\Goals\Index.cshtml" />
@@ -347,6 +349,7 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Shared\_NotificationDropdown.cshtml" />
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
@@ -394,6 +397,7 @@
     <Content Include="Areas\Admin\Views\web.config" />
     <Content Include="Areas\Admin\Views\_ViewStart.cshtml" />
     <Content Include="Content\healthtrack-theme.css" />
+    <Content Include="Content\healthtrack-notification-dropdown.css" />
     <Content Include="Areas\Admin\Views\Trainers\Index.cshtml" />
     <Content Include="Areas\Admin\Views\Trainers\Create.cshtml" />
     <Content Include="Areas\Admin\Views\Users\Index.cshtml" />
